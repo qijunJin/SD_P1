@@ -1,7 +1,8 @@
 
 import java.io.*;
+import java.math.BigInteger;
 
-import utils.ComUtils;
+import utils.Endianness;
 
 public class Communication {
     private final int STRSIZE = 40;
@@ -31,6 +32,43 @@ public class Communication {
     }
 
 
+    public void write_hash(int number) throws IOException {
+        byte hashBytes[] = new byte[33];
+
+        hashBytes[0] = (byte) '2';
+
+        for (int i = 0; i < 8; i++) {
+            byte bytes[] = int32ToBytes(number, Endianness.BIG_ENNDIAN);
+            for (int j = 0; j < 4; j++) {
+                hashBytes[i * 4 + j + 1] = bytes[j];
+            }
+            number /= Math.pow(2, 32);
+        }
+
+        dataOutputStream.write(hashBytes, 0, 33);
+    }
+
+    public int read_hash() throws IOException {
+        int opcode = Integer.parseInt(String.valueOf(read_char()));
+
+        BigInteger number = BigInteger.valueOf(0);
+        double multiplier = Math.pow(2, 32);
+
+        if (opcode == 2) {
+
+            BigInteger aux = BigInteger.valueOf(1);
+            int value;
+            for (int i = 0; i < 8; i++) {
+                byte intBytes[] = read_bytes(4);
+                value = bytesToInt32(intBytes, Endianness.BIG_ENNDIAN);
+                if(i!=0){
+                    aux = aux.multiply(BigInteger.valueOf((long) multiplier));
+                }
+                number = number.add(BigInteger.valueOf(value));
+            }
+        }
+        return number.intValue();
+    }
 
     public String read_hello() throws IOException {
         int opcode = Integer.parseInt(String.valueOf(read_char()));
@@ -69,5 +107,34 @@ public class Communication {
     }
 
 
+    private byte[] int32ToBytes(int number, Endianness endianness) {
+        byte[] bytes = new byte[4];
+
+        if (Endianness.BIG_ENNDIAN == endianness) {
+            bytes[0] = (byte) ((number >> 24) & 0xFF);
+            bytes[1] = (byte) ((number >> 16) & 0xFF);
+            bytes[2] = (byte) ((number >> 8) & 0xFF);
+            bytes[3] = (byte) (number & 0xFF);
+        } else {
+            bytes[0] = (byte) (number & 0xFF);
+            bytes[1] = (byte) ((number >> 8) & 0xFF);
+            bytes[2] = (byte) ((number >> 16) & 0xFF);
+            bytes[3] = (byte) ((number >> 24) & 0xFF);
+        }
+        return bytes;
+    }
+
+    private int bytesToInt32(byte bytes[], Endianness endianness) {
+        int number;
+
+        if (Endianness.BIG_ENNDIAN == endianness) {
+            number = ((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16) |
+                    ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF);
+        } else {
+            number = (bytes[0] & 0xFF) | ((bytes[1] & 0xFF) << 8) |
+                    ((bytes[2] & 0xFF) << 16) | ((bytes[3] & 0xFF) << 24);
+        }
+        return number;
+    }
 
 }

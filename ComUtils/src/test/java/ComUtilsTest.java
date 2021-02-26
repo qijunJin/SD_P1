@@ -53,10 +53,10 @@ public class ComUtilsTest {
         try {
             file.createNewFile();
             Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
-            com.write_hash(1);
+            com.write_hash(1025);
             int readedHash = com.read_hash();
 
-            assertEquals("1", readedHash);
+            assertEquals(1025, readedHash);
 
         } catch (IOException e) {
             e.printStackTrace();
