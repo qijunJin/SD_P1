@@ -53,10 +53,27 @@ public class ComUtilsTest {
         try {
             file.createNewFile();
             Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
-            com.write_hash(1025);
+            com.write_hash(238043245);
             int readedHash = com.read_hash();
 
-            assertEquals(1025, readedHash);
+            assertEquals(238043245, readedHash);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Test
+    public void secret_test() {
+        File file = new File("test");
+        try {
+            file.createNewFile();
+            Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
+            com.write_secret("secret");
+            String readedStr = com.read_secret();
+
+            assertEquals("secret", readedStr);
 
         } catch (IOException e) {
             e.printStackTrace();

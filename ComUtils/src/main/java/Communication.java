@@ -31,6 +31,22 @@ public class Communication {
         dataOutputStream.write(bStr, 0, numBytes);
     }
 
+    public void write_secret(String str) throws IOException {
+        int lenStr = str.length();
+        int numBytes = lenStr + 2;
+
+        byte bStr[] = new byte[numBytes];
+
+        bStr[0] = (byte) '3';
+
+        for (int i = 0; i < lenStr; i++)
+            bStr[i + 1] = (byte) str.charAt(i);
+
+        bStr[numBytes - 1] = (byte) '0';
+
+        dataOutputStream.write(bStr, 0, numBytes);
+    }
+
 
     public void write_hash(int number) throws IOException {
         byte hashBytes[] = new byte[33];
@@ -69,6 +85,25 @@ public class Communication {
         }
         return number.intValue();
     }
+
+    public String read_secret() throws IOException {
+        int opcode = Integer.parseInt(String.valueOf(read_char()));
+
+        char cStr[] = new char[100];
+
+        if (opcode == 3) {
+            int pos = 0;
+            do {
+                char charToPut = read_char();
+                if (charToPut == '0') break;
+                cStr[pos] = charToPut;
+                pos++;
+            } while (true);
+        }
+
+        return String.valueOf(cStr).trim();
+    }
+
 
     public String read_hello() throws IOException {
         int opcode = Integer.parseInt(String.valueOf(read_char()));
