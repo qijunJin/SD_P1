@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class ComUtilsTest {
 
@@ -38,7 +39,7 @@ public class ComUtilsTest {
             file.createNewFile();
             Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
             com.write_hello("joe");
-            String readedStr = com.read_hello();
+            String readedStr = com.reader();
 
             assertEquals("joe", readedStr);
 
@@ -53,10 +54,12 @@ public class ComUtilsTest {
         try {
             file.createNewFile();
             Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
-            com.write_hash(238043245);
-            int readedHash = com.read_hash();
+            byte[] bytes = new byte[32];
+            bytes[0] = 1;
+            com.write_hash(bytes);
+            byte[] readedBytes = com.read_hash();
 
-            assertEquals(238043245, readedHash);
+            assertArrayEquals(bytes, readedBytes);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -71,7 +74,7 @@ public class ComUtilsTest {
             file.createNewFile();
             Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
             com.write_secret("secret");
-            String readedStr = com.read_secret();
+            String readedStr = com.reader();
 
             assertEquals("secret", readedStr);
 
