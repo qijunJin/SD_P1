@@ -153,10 +153,6 @@ public class ComUtils {
         dataOutputStream.writeBytes(str);
     }
 
-    public enum Endianness {
-        BIG_ENNDIAN,
-        LITTLE_ENDIAN
-    }
 }
 
 
