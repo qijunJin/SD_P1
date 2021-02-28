@@ -1,14 +1,12 @@
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
-import utils.ComUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class ComUtilsTest {
 
@@ -32,16 +30,17 @@ public class ComUtilsTest {
 */
 
 
-   @Test
+    @Test
     public void hello_test() {
-        File file = new File("test");
+        File file = new File("hello_test");
         try {
             file.createNewFile();
             Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
-            com.write_hello("joe");
+            String str = "hello test";
+            com.write_hello(str);
             String readedStr = com.reader();
 
-            assertEquals("joe", readedStr);
+            assertEquals(str, readedStr);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -50,7 +49,7 @@ public class ComUtilsTest {
 
     @Test
     public void hash_test() {
-        File file = new File("test");
+        File file = new File("hash_test");
         try {
             file.createNewFile();
             Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
@@ -69,14 +68,15 @@ public class ComUtilsTest {
 
     @Test
     public void secret_test() {
-        File file = new File("test");
+        File file = new File("secret_test");
         try {
             file.createNewFile();
             Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
-            com.write_secret("secret");
+            String str = "secret test";
+            com.write_secret(str);
             String readedStr = com.reader();
 
-            assertEquals("secret", readedStr);
+            assertEquals(str, readedStr);
 
         } catch (IOException e) {
             e.printStackTrace();
