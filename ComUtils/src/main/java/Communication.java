@@ -70,6 +70,18 @@ public class Communication {
         dataOutputStream.write(bStr, 0, numBytes);
     }
 
+    public void write_hash(byte[] bytes) throws IOException {
+        byte hashBytes[] = new byte[33];
+
+        hashBytes[0] = (byte) '2';
+
+        for (int i = 0; i < 32; i++) {
+            hashBytes[i + 1] = bytes[i];
+        }
+
+        dataOutputStream.write(hashBytes, 0, 33);
+    }
+
     public void write_secret(String str) throws IOException {
         int lenStr = str.length();
         int numBytes = lenStr + 2;
@@ -86,17 +98,68 @@ public class Communication {
         dataOutputStream.write(bStr, 0, numBytes);
     }
 
+    public void write_insult(String str) throws IOException {
+        int lenStr = str.length();
+        int numBytes = lenStr + 2;
 
-    public void write_hash(byte[] bytes) throws IOException {
-        byte hashBytes[] = new byte[33];
+        byte bStr[] = new byte[numBytes];
 
-        hashBytes[0] = (byte) '2';
+        bStr[0] = (byte) '4';
 
-        for (int i = 0; i < 32; i++) {
-            hashBytes[i + 1] = bytes[i];
-        }
+        for (int i = 0; i < lenStr; i++)
+            bStr[i + 1] = (byte) str.charAt(i);
 
-        dataOutputStream.write(hashBytes, 0, 33);
+        bStr[numBytes - 1] = (byte) '0';
+
+        dataOutputStream.write(bStr, 0, numBytes);
+    }
+
+    public void write_comeback(String str) throws IOException {
+        int lenStr = str.length();
+        int numBytes = lenStr + 2;
+
+        byte bStr[] = new byte[numBytes];
+
+        bStr[0] = (byte) '5';
+
+        for (int i = 0; i < lenStr; i++)
+            bStr[i + 1] = (byte) str.charAt(i);
+
+        bStr[numBytes - 1] = (byte) '0';
+
+        dataOutputStream.write(bStr, 0, numBytes);
+    }
+
+    public void write_shout(String str) throws IOException {
+        int lenStr = str.length();
+        int numBytes = lenStr + 2;
+
+        byte bStr[] = new byte[numBytes];
+
+        bStr[0] = (byte) '6';
+
+        for (int i = 0; i < lenStr; i++)
+            bStr[i + 1] = (byte) str.charAt(i);
+
+        bStr[numBytes - 1] = (byte) '0';
+
+        dataOutputStream.write(bStr, 0, numBytes);
+    }
+
+    public void write_error(String str) throws IOException {
+        int lenStr = str.length();
+        int numBytes = lenStr + 2;
+
+        byte bStr[] = new byte[numBytes];
+
+        bStr[0] = (byte) '7';
+
+        for (int i = 0; i < lenStr; i++)
+            bStr[i + 1] = (byte) str.charAt(i);
+
+        bStr[numBytes - 1] = (byte) '0';
+
+        dataOutputStream.write(bStr, 0, numBytes);
     }
 
 
