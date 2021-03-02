@@ -1,6 +1,9 @@
 
 import java.io.*;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import utils.Endianness;
 
@@ -75,8 +78,13 @@ public class Communication {
 
         hashBytes[0] = (byte) '2';
 
-        for (int i = 0; i < 32; i++) {
-            hashBytes[i + 1] = bytes[i];
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] encodedhash = digest.digest(bytes);
+            for (int i = 0; i < 32; i++)
+                hashBytes[i + 1] = encodedhash[i];
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         dataOutputStream.write(hashBytes, 0, 33);
