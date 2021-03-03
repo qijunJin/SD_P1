@@ -1,11 +1,5 @@
-
 import java.io.*;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
-import utils.Endianness;
 
 public class Communication {
     private final int STRSIZE = 40;
@@ -19,7 +13,7 @@ public class Communication {
     }
 
     public String reader() throws IOException {
-        int opcode = Integer.parseInt(String.valueOf(read_char()));
+        int opcode = read_opcode();
 
         char cStr[] = new char[100];
         int pos;
@@ -63,7 +57,7 @@ public class Communication {
 
         byte bStr[] = new byte[numBytes];
 
-        bStr[0] = (byte) '1';
+        bStr[0] = (byte) 1;
 
         for (int i = 0; i < lenStr; i++)
             bStr[i + 1] = (byte) str.charAt(i);
@@ -188,5 +182,8 @@ public class Communication {
         return bStr;
     }
 
+    private byte read_opcode() throws IOException {
+        return read_bytes(1)[0];
+    }
 
 }

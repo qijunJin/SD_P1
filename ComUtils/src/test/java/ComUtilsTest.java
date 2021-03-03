@@ -1,20 +1,19 @@
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
-import utils.ComUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class ComUtilsTest {
 
-   @Test
+
+    @Test
     public void hello_test() {
         File file = new File("test");
         try {
