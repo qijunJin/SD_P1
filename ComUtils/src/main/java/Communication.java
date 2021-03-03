@@ -13,7 +13,7 @@ public class Communication {
     }
 
     public String reader() throws IOException {
-        int opcode = read_opcode();
+        int opcode = readByte();
 
         char cStr[] = new char[100];
         int pos;
@@ -27,7 +27,7 @@ public class Communication {
             case 7:
                 pos = 0;
                 do {
-                    char charToPut = read_char();
+                    char charToPut = (char) readByte();
                     if (charToPut == '0') break;
                     cStr[pos] = charToPut;
                     pos++;
@@ -41,11 +41,11 @@ public class Communication {
     }
 
     public byte[] read_hash() throws IOException {
-        int opcode = Integer.parseInt(String.valueOf(read_char()));
+        int opcode = readByte();
         byte hashBytes[] = new byte[32];
 
         if (opcode == 2) {
-           hashBytes = read_bytes(32);
+            hashBytes = read_bytes(32);
         }
         return hashBytes;
     }
@@ -70,7 +70,7 @@ public class Communication {
     public void write_hash(byte[] bytes) throws IOException {
         byte hashBytes[] = new byte[33];
 
-        hashBytes[0] = (byte) '2';
+        hashBytes[0] = (byte) 2;
 
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -90,7 +90,7 @@ public class Communication {
 
         byte bStr[] = new byte[numBytes];
 
-        bStr[0] = (byte) '3';
+        bStr[0] = (byte) 3;
 
         for (int i = 0; i < lenStr; i++)
             bStr[i + 1] = (byte) str.charAt(i);
@@ -106,7 +106,7 @@ public class Communication {
 
         byte bStr[] = new byte[numBytes];
 
-        bStr[0] = (byte) '4';
+        bStr[0] = (byte) 4;
 
         for (int i = 0; i < lenStr; i++)
             bStr[i + 1] = (byte) str.charAt(i);
@@ -122,7 +122,7 @@ public class Communication {
 
         byte bStr[] = new byte[numBytes];
 
-        bStr[0] = (byte) '5';
+        bStr[0] = (byte) 5;
 
         for (int i = 0; i < lenStr; i++)
             bStr[i + 1] = (byte) str.charAt(i);
@@ -138,7 +138,7 @@ public class Communication {
 
         byte bStr[] = new byte[numBytes];
 
-        bStr[0] = (byte) '6';
+        bStr[0] = (byte) 6;
 
         for (int i = 0; i < lenStr; i++)
             bStr[i + 1] = (byte) str.charAt(i);
@@ -154,7 +154,7 @@ public class Communication {
 
         byte bStr[] = new byte[numBytes];
 
-        bStr[0] = (byte) '7';
+        bStr[0] = (byte) 7;
 
         for (int i = 0; i < lenStr; i++)
             bStr[i + 1] = (byte) str.charAt(i);
@@ -162,11 +162,6 @@ public class Communication {
         bStr[numBytes - 1] = (byte) '0';
 
         dataOutputStream.write(bStr, 0, numBytes);
-    }
-
-
-    private char read_char() throws IOException {
-        return (char) read_bytes(1)[0];
     }
 
     private byte[] read_bytes(int numBytes) throws IOException {
@@ -182,8 +177,7 @@ public class Communication {
         return bStr;
     }
 
-    private byte read_opcode() throws IOException {
-        return read_bytes(1)[0];
+    private byte readByte() throws IOException {
+        return dataInputStream.readByte();
     }
-
 }
