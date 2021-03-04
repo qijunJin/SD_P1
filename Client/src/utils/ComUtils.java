@@ -1,17 +1,23 @@
 package utils;
 
 import java.io.*;
+import java.net.Socket;
 import java.security.MessageDigest;
 
-public class Communication {
+public class ComUtils {
     private final int STRSIZE = 40;
 
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
 
-    public Communication(InputStream inputStream, OutputStream outputStream) throws IOException {
+    public ComUtils(InputStream inputStream, OutputStream outputStream) throws IOException {
         dataInputStream = new DataInputStream(inputStream);
         dataOutputStream = new DataOutputStream(outputStream);
+    }
+
+    public ComUtils(Socket socket) throws IOException {
+        dataInputStream = new DataInputStream(socket.getInputStream());
+        dataOutputStream = new DataOutputStream(socket.getOutputStream());
     }
 
     /* OPCODE 1: HELLO */

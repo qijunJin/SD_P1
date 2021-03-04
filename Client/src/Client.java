@@ -22,7 +22,9 @@ public class Client {
             if (options.containsKey("-i")) {
                 mode = Integer.parseInt(options.get("-i"));
             }
-            Game game = new Game();
+            Datagram datagram = new Datagram();
+
+            Game game = new Game(datagram, mode);
         } catch (Exception e) {
             throw new Exception("Parameters introduced are wrong!");
         }
