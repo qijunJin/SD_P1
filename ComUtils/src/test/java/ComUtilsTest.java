@@ -20,7 +20,7 @@ public class ComUtilsTest {
             file.createNewFile();
             Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
             com.write_hello("joe");
-            String readedStr = com.reader();
+            String readedStr = com.read_hello();
 
             assertEquals("joe", readedStr);
 
@@ -64,7 +64,7 @@ public class ComUtilsTest {
             file.createNewFile();
             Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
             com.write_secret("secret");
-            String readedStr = com.reader();
+            String readedStr = com.read_secret();
 
             assertEquals("secret", readedStr);
 
@@ -80,7 +80,7 @@ public class ComUtilsTest {
             file.createNewFile();
             Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
             com.write_insult("Obtuve esta cicatriz en una batalla a muerte!");
-            String readedStr = com.reader();
+            String readedStr = com.read_insult();
 
             assertEquals("Obtuve esta cicatriz en una batalla a muerte!", readedStr);
 
@@ -96,7 +96,7 @@ public class ComUtilsTest {
             file.createNewFile();
             Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
             com.write_comeback("Espero que ya hayas aprendido a no tocarte la nariz");
-            String readedStr = com.reader();
+            String readedStr = com.read_comeback();
 
             assertEquals("Espero que ya hayas aprendido a no tocarte la nariz", readedStr);
 
@@ -112,7 +112,7 @@ public class ComUtilsTest {
             file.createNewFile();
             Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
             com.write_shout("!He ganado, Name2!");
-            String readedStr = com.reader();
+            String readedStr = com.read_shout();
 
             assertEquals("!He ganado, Name2!", readedStr);
 
@@ -128,11 +128,11 @@ public class ComUtilsTest {
             file.createNewFile();
             Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
             com.write_insult("Espero que ya hayas aprendido a no tocarte la nariz!");
-            String readedStr = com.reader();
+            String readedStr = com.read_insult();
 
              if (!readedStr.equals("Espero que ya hayas aprendido a no tocarte la nariz")){
                  com.write_error("!Mensaje incompleto, grumete! !Hasta la vista!");
-                 readedStr = com.reader();
+                 readedStr = com.read_error();
                  assertEquals("!Mensaje incompleto, grumete! !Hasta la vista!", readedStr);
             }
 
