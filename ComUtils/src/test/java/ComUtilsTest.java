@@ -1,38 +1,19 @@
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
-import utils.ComUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class ComUtilsTest {
 
-/*
 
     @Test
-    public void example_test() {
-        File file = new File("test");
-        try {
-            file.createNewFile();
-            ComUtils comUtils = new ComUtils(new FileInputStream(file), new FileOutputStream(file));
-            comUtils.write_int32(2);
-            int readedInt = comUtils.read_int32();
-
-            assertEquals(2, readedInt);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-*/
-
-
-   @Test
     public void hello_test() {
         File file = new File("test");
         try {
@@ -55,11 +36,20 @@ public class ComUtilsTest {
             file.createNewFile();
             Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
             byte[] bytes = new byte[32];
-            bytes[0] = 1;
+            bytes[0] = 1; // Assign secret_number
+
             com.write_hash(bytes);
             byte[] readedBytes = com.read_hash();
 
-            assertArrayEquals(bytes, readedBytes);
+            byte[] encodedhash = new byte[32]; // Create h(secret_number) with propose to test
+            try {
+                MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                encodedhash = digest.digest(bytes);
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+
+            assertArrayEquals(encodedhash, readedBytes); // Ensure test passed
 
         } catch (IOException e) {
             e.printStackTrace();
