@@ -1,9 +1,7 @@
-import java.io.IOException;
-import java.net.Socket;
 import java.util.HashMap;
 
 public class Client {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         //Tractament de paràmetres de consola
 
@@ -20,14 +18,15 @@ public class Client {
         try {
             String hostname = options.get("-s");
             int port = Integer.parseInt(options.get("-p"));
+            int mode = 0;
             if (options.containsKey("-i")) {
-
+                mode = Integer.parseInt(options.get("-i"));
             }
+            Game game = new Game();
         } catch (Exception e) {
-
+            throw new Exception("Parameters introduced are wrong!");
         }
-
-
+        /*
         String nomMaquina = "";
         int numPort = 0;
         try {
@@ -35,6 +34,6 @@ public class Client {
             socket.setSoTimeout(500); //en ms.
         } catch (IOException e) {
             System.out.println("IOException: " + e.getMessage());
-        }
+        }*/
     }
 }
