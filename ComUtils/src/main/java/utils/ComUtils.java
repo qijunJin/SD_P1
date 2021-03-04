@@ -75,6 +75,7 @@ public class ComUtils {
             bytes[2] = (byte)((number >> 16) & 0xFF);
             bytes[3] = (byte)((number >> 24) & 0xFF);
         }
+
         return bytes;
     }
 

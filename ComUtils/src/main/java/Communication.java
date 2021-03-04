@@ -27,9 +27,10 @@ public class Communication {
             case 7:
                 pos = 0;
                 do {
-                    char charToPut = (char) readByte();
-                    if (charToPut == '0') break;
-                    cStr[pos] = charToPut;
+                    byte b = readByte();
+                    if (b == 0) break;
+                    char c = (char) b;
+                    cStr[pos] = c;
                     pos++;
                 } while (true);
                 break;
@@ -62,7 +63,7 @@ public class Communication {
         for (int i = 0; i < lenStr; i++)
             bStr[i + 1] = (byte) str.charAt(i);
 
-        bStr[numBytes - 1] = (byte) '0';
+        bStr[numBytes - 1] = (byte) 0;
 
         dataOutputStream.write(bStr, 0, numBytes);
     }
@@ -95,7 +96,7 @@ public class Communication {
         for (int i = 0; i < lenStr; i++)
             bStr[i + 1] = (byte) str.charAt(i);
 
-        bStr[numBytes - 1] = (byte) '0';
+        bStr[numBytes - 1] = (byte) 0;
 
         dataOutputStream.write(bStr, 0, numBytes);
     }
@@ -111,7 +112,7 @@ public class Communication {
         for (int i = 0; i < lenStr; i++)
             bStr[i + 1] = (byte) str.charAt(i);
 
-        bStr[numBytes - 1] = (byte) '0';
+        bStr[numBytes - 1] = (byte) 0;
 
         dataOutputStream.write(bStr, 0, numBytes);
     }
@@ -127,7 +128,7 @@ public class Communication {
         for (int i = 0; i < lenStr; i++)
             bStr[i + 1] = (byte) str.charAt(i);
 
-        bStr[numBytes - 1] = (byte) '0';
+        bStr[numBytes - 1] = (byte) 0;
 
         dataOutputStream.write(bStr, 0, numBytes);
     }
@@ -143,7 +144,7 @@ public class Communication {
         for (int i = 0; i < lenStr; i++)
             bStr[i + 1] = (byte) str.charAt(i);
 
-        bStr[numBytes - 1] = (byte) '0';
+        bStr[numBytes - 1] = (byte) 0;
 
         dataOutputStream.write(bStr, 0, numBytes);
     }
@@ -159,7 +160,7 @@ public class Communication {
         for (int i = 0; i < lenStr; i++)
             bStr[i + 1] = (byte) str.charAt(i);
 
-        bStr[numBytes - 1] = (byte) '0';
+        bStr[numBytes - 1] = (byte) 0;
 
         dataOutputStream.write(bStr, 0, numBytes);
     }
