@@ -18,13 +18,13 @@ public class DatagramTest {
             file.createNewFile();
             Socket socket = new Socket();
             //Datagram datagram = new Datagram(socket);
-            
+
             Datagram datagram = new Datagram(new FileInputStream(file), new FileOutputStream(file));
 
-            datagram.send_hello(97, "joe");
-            String readedStr = datagram.receive_hello();
+            datagram.write_hello(40, "joe");
+            String readedStr = datagram.read_hello();
 
-            assertEquals("ajoe", readedStr);
+            assertEquals("joe", readedStr);
 
         } catch (IOException e) {
             e.printStackTrace();

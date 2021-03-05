@@ -20,31 +20,6 @@ public class ComUtils {
         dataOutputStream = new DataOutputStream(socket.getOutputStream());
     }
 
-    /* OPCODE 1: HELLO */
-    public String read_hello() throws IOException {
-        int opcode = readByte();
-        //int id = 0;
-        char cStr[] = new char[100];
-        byte bytes[];
-
-        if (opcode == 1) {
-            //id = read_int32();
-            bytes = read_bytes(4);
-            cStr[0] = (char) bytes[0];
-            cStr[1] = (char) bytes[1];
-            cStr[2] = (char) bytes[2];
-            cStr[3] = (char) bytes[3];
-            int pos = 4;
-            do {
-                byte b = readByte();
-                if (b == 0) break;
-                cStr[pos] = (char) b;
-                pos++;
-            } while (true);
-        }
-        return String.valueOf(cStr).trim();
-    }
-
     public void write_hello(int id, String str) throws IOException {
         int lenStr = str.length();
         int numBytes = lenStr + 6;
@@ -65,6 +40,7 @@ public class ComUtils {
 
         dataOutputStream.write(bStr, 0, numBytes);
     }
+
 
     /* OPCODE 2: HASH */
     public byte[] read_hash() throws IOException {
@@ -260,7 +236,7 @@ public class ComUtils {
     }
 
     /* Functions */
-    private byte[] read_bytes(int numBytes) throws IOException {
+    protected byte[] read_bytes(int numBytes) throws IOException {
         int len = 0;
         byte bStr[] = new byte[numBytes];
         int bytesread = 0;
@@ -273,7 +249,7 @@ public class ComUtils {
         return bStr;
     }
 
-    private byte readByte() throws IOException {
+    protected byte readByte() throws IOException {
         return dataInputStream.readByte();
     }
 
@@ -289,7 +265,7 @@ public class ComUtils {
         dataOutputStream.write(bytes, 0, 4);
     }
 
-    private byte[] int32ToBytes(int number, Endianness endianness) {
+    protected byte[] int32ToBytes(int number, Endianness endianness) {
         byte[] bytes = new byte[4];
 
         if (Endianness.BIG_ENNDIAN == endianness) {
