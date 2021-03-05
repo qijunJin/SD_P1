@@ -23,10 +23,18 @@ public class ComUtils {
     /* OPCODE 1: HELLO */
     public String read_hello() throws IOException {
         int opcode = readByte();
+        //int id = 0;
         char cStr[] = new char[100];
+        byte bytes[];
 
         if (opcode == 1) {
-            int pos = 0;
+            //id = read_int32();
+            bytes = read_bytes(4);
+            cStr[0] = (char) bytes[0];
+            cStr[1] = (char) bytes[1];
+            cStr[2] = (char) bytes[2];
+            cStr[3] = (char) bytes[3];
+            int pos = 4;
             do {
                 byte b = readByte();
                 if (b == 0) break;
@@ -37,16 +45,21 @@ public class ComUtils {
         return String.valueOf(cStr).trim();
     }
 
-    public void write_hello(String str) throws IOException {
+    public void write_hello(int id, String str) throws IOException {
         int lenStr = str.length();
-        int numBytes = lenStr + 2;
+        int numBytes = lenStr + 6;
 
         byte bStr[] = new byte[numBytes];
 
         bStr[0] = (byte) 1;
 
+        byte id_bytes[] = int32ToBytes(id, Endianness.BIG_ENNDIAN);
+
+        for (int i = 0; i < 4; i++)
+            bStr[i + 1] = id_bytes[i];
+
         for (int i = 0; i < lenStr; i++)
-            bStr[i + 1] = (byte) str.charAt(i);
+            bStr[i + 5] = (byte) str.charAt(i);
 
         bStr[numBytes - 1] = (byte) 0;
 
@@ -246,6 +259,7 @@ public class ComUtils {
         dataOutputStream.write(bStr, 0, numBytes);
     }
 
+    /* Functions */
     private byte[] read_bytes(int numBytes) throws IOException {
         int len = 0;
         byte bStr[] = new byte[numBytes];
@@ -261,5 +275,48 @@ public class ComUtils {
 
     private byte readByte() throws IOException {
         return dataInputStream.readByte();
+    }
+
+    public int read_int32() throws IOException {
+        byte bytes[] = read_bytes(4);
+
+        return bytesToInt32(bytes, Endianness.BIG_ENNDIAN);
+    }
+
+    public void write_int32(int number) throws IOException {
+        byte bytes[] = int32ToBytes(number, Endianness.BIG_ENNDIAN);
+
+        dataOutputStream.write(bytes, 0, 4);
+    }
+
+    private byte[] int32ToBytes(int number, Endianness endianness) {
+        byte[] bytes = new byte[4];
+
+        if (Endianness.BIG_ENNDIAN == endianness) {
+            bytes[0] = (byte) ((number >> 24) & 0xFF);
+            bytes[1] = (byte) ((number >> 16) & 0xFF);
+            bytes[2] = (byte) ((number >> 8) & 0xFF);
+            bytes[3] = (byte) (number & 0xFF);
+        } else {
+            bytes[0] = (byte) (number & 0xFF);
+            bytes[1] = (byte) ((number >> 8) & 0xFF);
+            bytes[2] = (byte) ((number >> 16) & 0xFF);
+            bytes[3] = (byte) ((number >> 24) & 0xFF);
+        }
+
+        return bytes;
+    }
+
+    private int bytesToInt32(byte bytes[], Endianness endianness) {
+        int number;
+
+        if (Endianness.BIG_ENNDIAN == endianness) {
+            number = ((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16) |
+                    ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF);
+        } else {
+            number = (bytes[0] & 0xFF) | ((bytes[1] & 0xFF) << 8) |
+                    ((bytes[2] & 0xFF) << 16) | ((bytes[3] & 0xFF) << 24);
+        }
+        return number;
     }
 }

@@ -19,8 +19,8 @@ public class Datagram {
         this.comUtils = new ComUtils(i, o);
     }
 
-    public void send_hello(String s) throws IOException {
-        comUtils.write_hello(s);
+    public void send_hello(int id, String s) throws IOException {
+        comUtils.write_hello(id, s);
     }
 
     public String receive_hello() throws IOException {

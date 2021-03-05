@@ -21,10 +21,10 @@ public class DatagramTest {
             
             Datagram datagram = new Datagram(new FileInputStream(file), new FileOutputStream(file));
 
-            datagram.send_hello("joe");
+            datagram.send_hello(97, "joe");
             String readedStr = datagram.receive_hello();
 
-            assertEquals("joe", readedStr);
+            assertEquals("ajoe", readedStr);
 
         } catch (IOException e) {
             e.printStackTrace();
