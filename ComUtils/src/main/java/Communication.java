@@ -12,44 +12,22 @@ public class Communication {
         dataOutputStream = new DataOutputStream(outputStream);
     }
 
-    public String reader() throws IOException {
+    /* OPCODE 1: HELLO */
+    public String read_hello() throws IOException {
         int opcode = readByte();
-
         char cStr[] = new char[100];
-        int pos;
 
-        switch (opcode) {
-            case 1:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-                pos = 0;
-                do {
-                    char charToPut = (char) readByte();
-                    if (charToPut == '0') break;
-                    cStr[pos] = charToPut;
-                    pos++;
-                } while (true);
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + opcode);
+        if (opcode == 1) {
+            int pos = 0;
+            do {
+                byte b = readByte();
+                if (b == 0) break;
+                cStr[pos] = (char) b;
+                pos++;
+            } while (true);
         }
-
         return String.valueOf(cStr).trim();
     }
-
-    public byte[] read_hash() throws IOException {
-        int opcode = readByte();
-        byte hashBytes[] = new byte[32];
-
-        if (opcode == 2) {
-            hashBytes = read_bytes(32);
-        }
-        return hashBytes;
-    }
-
 
     public void write_hello(String str) throws IOException {
         int lenStr = str.length();
@@ -62,9 +40,20 @@ public class Communication {
         for (int i = 0; i < lenStr; i++)
             bStr[i + 1] = (byte) str.charAt(i);
 
-        bStr[numBytes - 1] = (byte) '0';
+        bStr[numBytes - 1] = (byte) 0;
 
         dataOutputStream.write(bStr, 0, numBytes);
+    }
+
+    /* OPCODE 2: HASH */
+    public byte[] read_hash() throws IOException {
+        int opcode = readByte();
+        byte hashBytes[] = new byte[32];
+
+        if (opcode == 2) {
+            hashBytes = read_bytes(32);
+        }
+        return hashBytes;
     }
 
     public void write_hash(byte[] bytes) throws IOException {
@@ -84,6 +73,23 @@ public class Communication {
         dataOutputStream.write(hashBytes, 0, 33);
     }
 
+    /* OPCODE 3: SECRET */
+    public String read_secret() throws IOException {
+        int opcode = readByte();
+        char cStr[] = new char[100];
+
+        if (opcode == 3) {
+            int pos = 0;
+            do {
+                byte b = readByte();
+                if (b == 0) break;
+                cStr[pos] = (char) b;
+                pos++;
+            } while (true);
+        }
+        return String.valueOf(cStr).trim();
+    }
+
     public void write_secret(String str) throws IOException {
         int lenStr = str.length();
         int numBytes = lenStr + 2;
@@ -95,9 +101,26 @@ public class Communication {
         for (int i = 0; i < lenStr; i++)
             bStr[i + 1] = (byte) str.charAt(i);
 
-        bStr[numBytes - 1] = (byte) '0';
+        bStr[numBytes - 1] = (byte) 0;
 
         dataOutputStream.write(bStr, 0, numBytes);
+    }
+
+    /* OPCODE 4: INSULT */
+    public String read_insult() throws IOException {
+        int opcode = readByte();
+        char cStr[] = new char[100];
+
+        if (opcode == 4) {
+            int pos = 0;
+            do {
+                byte b = readByte();
+                if (b == 0) break;
+                cStr[pos] = (char) b;
+                pos++;
+            } while (true);
+        }
+        return String.valueOf(cStr).trim();
     }
 
     public void write_insult(String str) throws IOException {
@@ -111,9 +134,26 @@ public class Communication {
         for (int i = 0; i < lenStr; i++)
             bStr[i + 1] = (byte) str.charAt(i);
 
-        bStr[numBytes - 1] = (byte) '0';
+        bStr[numBytes - 1] = (byte) 0;
 
         dataOutputStream.write(bStr, 0, numBytes);
+    }
+
+    /* OPCODE 5: COMEBACK */
+    public String read_comeback() throws IOException {
+        int opcode = readByte();
+        char cStr[] = new char[100];
+
+        if (opcode == 5) {
+            int pos = 0;
+            do {
+                byte b = readByte();
+                if (b == 0) break;
+                cStr[pos] = (char) b;
+                pos++;
+            } while (true);
+        }
+        return String.valueOf(cStr).trim();
     }
 
     public void write_comeback(String str) throws IOException {
@@ -127,9 +167,26 @@ public class Communication {
         for (int i = 0; i < lenStr; i++)
             bStr[i + 1] = (byte) str.charAt(i);
 
-        bStr[numBytes - 1] = (byte) '0';
+        bStr[numBytes - 1] = (byte) 0;
 
         dataOutputStream.write(bStr, 0, numBytes);
+    }
+
+    /* OPCODE 6: SHOUT */
+    public String read_shout() throws IOException {
+        int opcode = readByte();
+        char cStr[] = new char[100];
+
+        if (opcode == 6) {
+            int pos = 0;
+            do {
+                byte b = readByte();
+                if (b == 0) break;
+                cStr[pos] = (char) b;
+                pos++;
+            } while (true);
+        }
+        return String.valueOf(cStr).trim();
     }
 
     public void write_shout(String str) throws IOException {
@@ -143,9 +200,26 @@ public class Communication {
         for (int i = 0; i < lenStr; i++)
             bStr[i + 1] = (byte) str.charAt(i);
 
-        bStr[numBytes - 1] = (byte) '0';
+        bStr[numBytes - 1] = (byte) 0;
 
         dataOutputStream.write(bStr, 0, numBytes);
+    }
+
+    /* OPCODE 7: ERROR */
+    public String read_error() throws IOException {
+        int opcode = readByte();
+        char cStr[] = new char[100];
+
+        if (opcode == 7) {
+            int pos = 0;
+            do {
+                byte b = readByte();
+                if (b == 0) break;
+                cStr[pos] = (char) b;
+                pos++;
+            } while (true);
+        }
+        return String.valueOf(cStr).trim();
     }
 
     public void write_error(String str) throws IOException {
@@ -159,7 +233,7 @@ public class Communication {
         for (int i = 0; i < lenStr; i++)
             bStr[i + 1] = (byte) str.charAt(i);
 
-        bStr[numBytes - 1] = (byte) '0';
+        bStr[numBytes - 1] = (byte) 0;
 
         dataOutputStream.write(bStr, 0, numBytes);
     }
