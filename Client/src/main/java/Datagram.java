@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 public class Datagram extends ComUtils {
 
@@ -26,6 +30,21 @@ public class Datagram extends ComUtils {
 
     public int getIdOponent(){
         return this.id;
+
+    public boolean proofHash(String secret, byte[] hash) {
+
+        // FOR TEST
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        byte[] encodedhash = digest.digest(
+                secret.getBytes(StandardCharsets.UTF_8));
+
+        return Arrays.equals(encodedhash, hash);
+
     }
 
 
@@ -49,20 +68,25 @@ public class Datagram extends ComUtils {
     }
 
     /* OPCODE 2: HASH */
-    public byte[] read_hash() throws IOException {
+    public byte[] readHash() throws IOException {
         int opcode = readByte();
         byte hashBytes[] = new byte[32];
 
         if (opcode == 2) {
-            hashBytes = readHash();
+            hashBytes = read_hash();
         }
 
         return hashBytes;
     }
 
+    public void writeHash(String str) throws IOException {
+        writeByte(2); // OPCODE
+        write_hash(str); // HASH
+    }
+
     public void writeHash(byte[] bytes) throws IOException {
         writeByte(2); // OPCODE
-        writeHash(bytes); // HASH
+        write_hash(bytes); // HASH
     }
 
 
