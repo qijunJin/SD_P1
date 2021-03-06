@@ -93,7 +93,6 @@ public class DatagramTest {
             Datagram datagram = new Datagram(new FileInputStream(file), new FileOutputStream(file));
 
             String s = "21394735986548847365534907392897867"; // Secret
-            Boolean bool = false;
 
             // FOR TEST
             MessageDigest digest = null;
@@ -105,7 +104,7 @@ public class DatagramTest {
             byte[] encodedhash = digest.digest(
                     s.getBytes(StandardCharsets.UTF_8));
 
-            bool = datagram.proofHash(s, encodedhash);
+            Boolean bool = datagram.proofHash(s, encodedhash);
 
             assertTrue(bool);
 
