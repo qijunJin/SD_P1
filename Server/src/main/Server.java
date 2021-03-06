@@ -12,15 +12,13 @@ public class Server {
         for (int i = 0; i < args.length; i = i + 2)
             options.put(args[i], args[i + 1]);
 
-        ServerSocket serverSocket = null;
+        ServerSocket serverSocket;
         Socket socket = null;
 
-        String hostname;
         int numPort;
         int mode = 0; // By default
 
         try {
-            hostname = options.get("-s");
             numPort = Integer.parseInt(options.get("-p"));
             if (options.containsKey("-i")) {
                 mode = Integer.parseInt(options.get("-i"));
