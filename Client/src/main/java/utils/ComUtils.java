@@ -20,23 +20,20 @@ public class ComUtils {
         dataOutputStream = new DataOutputStream(socket.getOutputStream());
     }
 
-    public void write_hello(int id, String str) throws IOException {
+    public void writeByte(int i) throws IOException {
+        byte bStr[] = new byte[1];
+        bStr[0] = (byte) i;
+        dataOutputStream.write(bStr, 0, 1);
+    }
+
+    public void writeString(String str) throws IOException {
         int lenStr = str.length();
-        int numBytes = lenStr + 6;
+        int numBytes = lenStr;
 
         byte bStr[] = new byte[numBytes];
 
-        bStr[0] = (byte) 1;
-
-        byte id_bytes[] = int32ToBytes(id, Endianness.BIG_ENNDIAN);
-
-        for (int i = 0; i < 4; i++)
-            bStr[i + 1] = id_bytes[i];
-
         for (int i = 0; i < lenStr; i++)
-            bStr[i + 5] = (byte) str.charAt(i);
-
-        bStr[numBytes - 1] = (byte) 0;
+            bStr[i] = (byte) str.charAt(i);
 
         dataOutputStream.write(bStr, 0, numBytes);
     }
