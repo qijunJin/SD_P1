@@ -18,6 +18,13 @@ public class Datagram extends ComUtils {
         super(socket);
     }
 
+    public boolean isEven(String s1, String s2) {
+        int n1 = Integer.parseInt(s1);
+        int n2 = Integer.parseInt(s2);
+        return ((n1 + n2) % 2 == 0);
+    }
+
+
     /* OPCODE 1: HELLO */
     public String read_hello() throws IOException {
         int opcode = readByte();
@@ -68,7 +75,7 @@ public class Datagram extends ComUtils {
     }
 
     public void write_secret(String str) throws IOException {
-        writeByte(1);
+        writeByte(3);
         writeString(str);
         writeByte(0);
     }
@@ -123,7 +130,7 @@ public class Datagram extends ComUtils {
     }
 
     public void write_shout(String str) throws IOException {
-        writeByte(7);
+        writeByte(6);
         writeString(str);
         writeByte(0);
     }
