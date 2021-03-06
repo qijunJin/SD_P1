@@ -24,6 +24,10 @@ public class Datagram extends ComUtils {
         return ((n1 + n2) % 2 == 0);
     }
 
+    public int getIdOponent(){
+        return this.id;
+    }
+
 
     /* OPCODE 1: HELLO */
     public String read_hello() throws IOException {
