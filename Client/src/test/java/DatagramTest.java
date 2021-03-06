@@ -5,8 +5,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class DatagramTest {
 
@@ -25,6 +28,86 @@ public class DatagramTest {
             String readedStr = datagram.read_hello();
 
             assertEquals("joe", readedStr);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Test
+    public void hash_test() {
+        File file = new File("test");
+        try {
+            file.createNewFile();
+            Datagram datagram = new Datagram(new FileInputStream(file), new FileOutputStream(file));
+
+            String s = "21394735986548847365534907392897867"; // Secret
+
+            datagram.writeHash(s); // WRITE
+            byte[] readedBytes = datagram.readHash(); // READ
+
+            // FOR TEST
+            MessageDigest digest = null;
+            try {
+                digest = MessageDigest.getInstance("SHA-256");
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+            byte[] encodedhash = digest.digest(
+                    s.getBytes(StandardCharsets.UTF_8));
+
+            // Ensure test passed
+            assertArrayEquals(encodedhash, readedBytes);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Test
+    public void secret_test() {
+        File file = new File("test");
+        try {
+            file.createNewFile();
+            Datagram datagram = new Datagram(new FileInputStream(file), new FileOutputStream(file));
+
+            String str = "123456";
+            datagram.write_secret(str);
+
+            String readedStr = datagram.read_secret();
+
+            assertEquals(str, readedStr);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void proof_test() {
+        File file = new File("test");
+        try {
+            file.createNewFile();
+            Datagram datagram = new Datagram(new FileInputStream(file), new FileOutputStream(file));
+
+            String s = "21394735986548847365534907392897867"; // Secret
+            Boolean bool = false;
+
+            // FOR TEST
+            MessageDigest digest = null;
+            try {
+                digest = MessageDigest.getInstance("SHA-256");
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+            byte[] encodedhash = digest.digest(
+                    s.getBytes(StandardCharsets.UTF_8));
+
+            bool = datagram.proofHash(s, encodedhash);
+
+            assertTrue(bool);
 
         } catch (IOException e) {
             e.printStackTrace();

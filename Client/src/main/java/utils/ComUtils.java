@@ -2,7 +2,9 @@ package utils;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class ComUtils {
     private final int STRSIZE = 40;
@@ -20,7 +22,7 @@ public class ComUtils {
         dataOutputStream = new DataOutputStream(socket.getOutputStream());
     }
 
-    public void writeByte(int i) throws IOException {
+    public void writeByte(int i) throws IOException { // ERROR FOR OPCODE
         byte bStr[] = new byte[1];
         bStr[0] = (byte) i;
         dataOutputStream.write(bStr, 0, 1);
@@ -38,7 +40,7 @@ public class ComUtils {
         dataOutputStream.write(bStr, 0, numBytes);
     }
 
-    public byte[] readHash() throws IOException {
+    public byte[] read_hash() throws IOException {
         byte hashBytes[] = new byte[32];
 
         hashBytes = read_bytes(32);
@@ -46,14 +48,30 @@ public class ComUtils {
         return hashBytes;
     }
 
-    public void writeHash(byte[] bytes) throws IOException {
+    public void write_hash(String originalString) throws IOException {
+        byte hashBytes[] = new byte[32];
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        byte[] encodedhash = digest.digest(
+                originalString.getBytes(StandardCharsets.UTF_8));
+        for (int i = 0; i < 32; i++)
+            hashBytes[i] = encodedhash[i];
+
+        dataOutputStream.write(hashBytes, 0, 32);
+    }
+
+    public void write_hash(byte[] bytes) throws IOException {
         byte hashBytes[] = new byte[32];
 
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] encodedhash = digest.digest(bytes);
             for (int i = 0; i < 32; i++)
-                hashBytes[i + 1] = encodedhash[i];
+                hashBytes[i] = encodedhash[i];
         } catch (Exception e) {
             e.printStackTrace();
         }
