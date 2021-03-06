@@ -28,6 +28,9 @@ public class Datagram extends ComUtils {
         return ((n1 + n2) % 2 == 0);
     }
 
+    public int getIdOponent(){
+        return this.id;
+
     public boolean proofHash(String secret, byte[] hash) {
 
         // FOR TEST
@@ -41,6 +44,7 @@ public class Datagram extends ComUtils {
                 secret.getBytes(StandardCharsets.UTF_8));
 
         return Arrays.equals(encodedhash, hash);
+
     }
 
 
