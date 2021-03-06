@@ -38,22 +38,16 @@ public class ComUtils {
         dataOutputStream.write(bStr, 0, numBytes);
     }
 
-
-    /* OPCODE 2: HASH */
-    public byte[] read_hash() throws IOException {
-        int opcode = readByte();
+    public byte[] readHash() throws IOException {
         byte hashBytes[] = new byte[32];
 
-        if (opcode == 2) {
-            hashBytes = read_bytes(32);
-        }
+        hashBytes = read_bytes(32);
+
         return hashBytes;
     }
 
-    public void write_hash(byte[] bytes) throws IOException {
-        byte hashBytes[] = new byte[33];
-
-        hashBytes[0] = (byte) 2;
+    public void writeHash(byte[] bytes) throws IOException {
+        byte hashBytes[] = new byte[32];
 
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -64,173 +58,23 @@ public class ComUtils {
             e.printStackTrace();
         }
 
-        dataOutputStream.write(hashBytes, 0, 33);
+        dataOutputStream.write(hashBytes, 0, 32);
     }
 
-    /* OPCODE 3: SECRET */
-    public String read_secret() throws IOException {
-        int opcode = readByte();
+    public String readString() throws IOException {
         char cStr[] = new char[100];
+        int pos = 0;
 
-        if (opcode == 3) {
-            int pos = 0;
-            do {
-                byte b = readByte();
-                if (b == 0) break;
-                cStr[pos] = (char) b;
-                pos++;
-            } while (true);
-        }
+        do {
+            byte b = readByte();
+            if (b == 0) break;
+            cStr[pos] = (char) b;
+            pos++;
+        } while (true);
+
         return String.valueOf(cStr).trim();
     }
 
-    public void write_secret(String str) throws IOException {
-        int lenStr = str.length();
-        int numBytes = lenStr + 2;
-
-        byte bStr[] = new byte[numBytes];
-
-        bStr[0] = (byte) 3;
-
-        for (int i = 0; i < lenStr; i++)
-            bStr[i + 1] = (byte) str.charAt(i);
-
-        bStr[numBytes - 1] = (byte) 0;
-
-        dataOutputStream.write(bStr, 0, numBytes);
-    }
-
-    /* OPCODE 4: INSULT */
-    public String read_insult() throws IOException {
-        int opcode = readByte();
-        char cStr[] = new char[100];
-
-        if (opcode == 4) {
-            int pos = 0;
-            do {
-                byte b = readByte();
-                if (b == 0) break;
-                cStr[pos] = (char) b;
-                pos++;
-            } while (true);
-        }
-        return String.valueOf(cStr).trim();
-    }
-
-    public void write_insult(String str) throws IOException {
-        int lenStr = str.length();
-        int numBytes = lenStr + 2;
-
-        byte bStr[] = new byte[numBytes];
-
-        bStr[0] = (byte) 4;
-
-        for (int i = 0; i < lenStr; i++)
-            bStr[i + 1] = (byte) str.charAt(i);
-
-        bStr[numBytes - 1] = (byte) 0;
-
-        dataOutputStream.write(bStr, 0, numBytes);
-    }
-
-    /* OPCODE 5: COMEBACK */
-    public String read_comeback() throws IOException {
-        int opcode = readByte();
-        char cStr[] = new char[100];
-
-        if (opcode == 5) {
-            int pos = 0;
-            do {
-                byte b = readByte();
-                if (b == 0) break;
-                cStr[pos] = (char) b;
-                pos++;
-            } while (true);
-        }
-        return String.valueOf(cStr).trim();
-    }
-
-    public void write_comeback(String str) throws IOException {
-        int lenStr = str.length();
-        int numBytes = lenStr + 2;
-
-        byte bStr[] = new byte[numBytes];
-
-        bStr[0] = (byte) 5;
-
-        for (int i = 0; i < lenStr; i++)
-            bStr[i + 1] = (byte) str.charAt(i);
-
-        bStr[numBytes - 1] = (byte) 0;
-
-        dataOutputStream.write(bStr, 0, numBytes);
-    }
-
-    /* OPCODE 6: SHOUT */
-    public String read_shout() throws IOException {
-        int opcode = readByte();
-        char cStr[] = new char[100];
-
-        if (opcode == 6) {
-            int pos = 0;
-            do {
-                byte b = readByte();
-                if (b == 0) break;
-                cStr[pos] = (char) b;
-                pos++;
-            } while (true);
-        }
-        return String.valueOf(cStr).trim();
-    }
-
-    public void write_shout(String str) throws IOException {
-        int lenStr = str.length();
-        int numBytes = lenStr + 2;
-
-        byte bStr[] = new byte[numBytes];
-
-        bStr[0] = (byte) 6;
-
-        for (int i = 0; i < lenStr; i++)
-            bStr[i + 1] = (byte) str.charAt(i);
-
-        bStr[numBytes - 1] = (byte) 0;
-
-        dataOutputStream.write(bStr, 0, numBytes);
-    }
-
-    /* OPCODE 7: ERROR */
-    public String read_error() throws IOException {
-        int opcode = readByte();
-        char cStr[] = new char[100];
-
-        if (opcode == 7) {
-            int pos = 0;
-            do {
-                byte b = readByte();
-                if (b == 0) break;
-                cStr[pos] = (char) b;
-                pos++;
-            } while (true);
-        }
-        return String.valueOf(cStr).trim();
-    }
-
-    public void write_error(String str) throws IOException {
-        int lenStr = str.length();
-        int numBytes = lenStr + 2;
-
-        byte bStr[] = new byte[numBytes];
-
-        bStr[0] = (byte) 7;
-
-        for (int i = 0; i < lenStr; i++)
-            bStr[i + 1] = (byte) str.charAt(i);
-
-        bStr[numBytes - 1] = (byte) 0;
-
-        dataOutputStream.write(bStr, 0, numBytes);
-    }
 
     /* Functions */
     protected byte[] read_bytes(int numBytes) throws IOException {
