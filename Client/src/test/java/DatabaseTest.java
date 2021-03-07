@@ -13,7 +13,6 @@ public class DatabaseTest {
         try {
             file.createNewFile();
 
-
             Database database = new Database();
 
             String insult = "¡Me das ganas de vomitar!";
