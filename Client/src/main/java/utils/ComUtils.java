@@ -5,6 +5,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 public class ComUtils {
     private final int STRSIZE = 40;
@@ -80,7 +81,7 @@ public class ComUtils {
     }
 
     public String readString() throws IOException {
-        char cStr[] = new char[100];
+        char cStr[] = new char[1];
         int pos = 0;
 
         do {
@@ -88,11 +89,11 @@ public class ComUtils {
             if (b == 0) break;
             cStr[pos] = (char) b;
             pos++;
+            cStr = Arrays.copyOf(cStr, cStr.length + 1);
         } while (true);
 
         return String.valueOf(cStr).trim();
     }
-
 
     /* Functions */
     protected byte[] read_bytes(int numBytes) throws IOException {
