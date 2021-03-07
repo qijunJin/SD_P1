@@ -28,15 +28,16 @@ public class Game {
 
 
 
-    public Game(Datagram datagram, Menu menu, int mode) {
+    public Game(Datagram datagram, Menu menu, int mode) throws IOException {
         this.datagram = datagram;
         this.menu = menu;
         this.mode = mode;
         state = 0;
+        this.run();
 
     }
 
-    private void round() throws IOException {
+    private void run() throws IOException {
         while (gameBool) {
             if (state == 0) {             //Recopilación de datos del jugador y mensaje HELLO
 
