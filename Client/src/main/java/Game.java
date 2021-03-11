@@ -1,9 +1,12 @@
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Game {
     private Datagram datagram;
+    private Database data = new Database();
     private Menu menu;
     private int mode;
     private int state;
@@ -13,15 +16,22 @@ public class Game {
 
     private String name, oponentName;
     private int id, oponentId;
-    private byte[] hash, oponentHash;
+    private byte[] oponentHash;
     private String secret, oponentSecret;
 
     private int duel = 0;
-    private int round = 1;
-    private int points = 0;
+    private int round = 0;
+    private int duelWins = 0;
+    private int roundWins = 0;
+    private int oponentDuelWins = 0;
+    private int oponentRoundWins = 0;
 
-    private String[] insultsLearned = {"Tonto", "Estúpido"};
-    private String[] comebacksLearned = {"Te rebota", "Lo mismo digo"};
+    private String[] all_insults = data.getInsults();           //Todos los insultos
+    private String[] all_comebacks = data.getComebacks();       //Todos los comebacks
+
+    private ArrayList<String> insultsLearned = new ArrayList<String>();      //Aqui guardamos los insultos que aprendemos
+    private ArrayList<String> comebacksLearned = new ArrayList<String>();    //Aqui guardamos los comebacks que aprendemos
+
     private int insultId, comebackId;
     private String insult, comeback;
     private String oponentInsult, oponentComeback;
@@ -41,8 +51,15 @@ public class Game {
         while (gameBool) {
             if (state == 0) {             //Recopilación de datos del jugador y mensaje HELLO
 
-                this.name = this.menu.getName();
-                this.id = this.menu.getId();
+                Random rand = new Random();                   //Insultos y Comebacks aprendidos aleatoriamente
+                for (int i = 0; i<2; i++){
+                    int numRan = rand.nextInt(17);
+                    this.insultsLearned.add(this.all_insults[numRan]);
+                    this.comebacksLearned.add(this.all_comebacks[numRan]);
+                }
+
+                this.name = this.menu.getName();              //Id aleatorio
+                this.id = rand.nextInt((int) Math.pow((double) 2, 31));
 
                 try {
                     this.datagram.write_hello(this.id, this.name);
@@ -116,109 +133,151 @@ public class Game {
                 }
 
 
-            }else if (state == 4){
+            }else if (state == 4) {                   //Comprobación de los duelos
 
-                if (this.duel == 3) {           //Ganamos la partida por haber ganado 3 duelos.
-                    try {
-                        this.datagram.write_shout("¡He ganado, " + this.oponentName + " !");
-                        System.out.println(this.datagram.read_shout());
-                    } catch (IOException e){
-                        System.out.println("ERROR SHOUT");
-                    }
-                    this.duel = 0;           //Reiniciamos contador de duelos ganados
-                    this.state = 7;          //Estado de victoria
-                    this.gameBool = false;   //Cerramos bucle infinito
+                if (this.duel < 3) {
+                    this.state = 5;                   //Seguimos jugando
+
                 } else {
-                    if (this.round < 3) {
-                        this.state = 5;                 //Seguimos jugando
-                    } else {
-                        if (this.points == 0) {         //He perdido 2 rondas de 2
 
-                            try {
-                                this.datagram.write_shout("¡Has ganado, " + this.oponentName + " !");
-                                System.out.println(this.datagram.read_shout());
-                            }catch (IOException e){
-                                System.out.println("ERROR");
-                            }
-
-                        } else if (this.points == 2) {   //He ganado 2 rondas de 2
+                    if (this.duelWins == 3 || this.oponentDuelWins == 3) {        //Se acaba la parida pq hay un ganador
+                        if (this.duelWins == 3) {        //Ganamos la partida
 
                             try {
                                 this.datagram.write_shout("¡He ganado, " + this.oponentName + " !");
                                 System.out.println(this.datagram.read_shout());
-                            }catch (IOException e){
+                            } catch (IOException e) {
+                                System.out.println("ERROR SHOUT");
+                            }
+
+                        } else {            //Perdemos la partida
+
+                            try {
+                                this.datagram.write_shout("¡Has ganado, " + this.oponentName + " !");
+                                System.out.println(this.datagram.read_shout());
+                            } catch (IOException e) {
                                 System.out.println("ERROR");
                             }
 
-                            this.duel++;         //+1 a duelos ganados
-                            this.round = 1;      //Reiniciamos rondas para el siguiente duelo
-
-                        } else {
-                            if (this.round == 4) {      //He perdido 2 rondas de 3
-
-                                try {
-                                    this.datagram.write_shout("¡Has ganado, " + this.oponentName + " !");
-                                    System.out.println(this.datagram.read_shout());
-                                }catch (IOException e){
-                                    System.out.println("ERROR");
-                                }
-
-                                this.round = 1;  //Reiniciamos rondas para el siguiente duelo
-
-                                /*
-                                Alomejor pasamos a otro estado en el que preguntamos
-                                al jugador si quiere seguir jugando?
-                                */
-
-                            } else {                     //Empate 1 a 1, sigue el juego.
-                                this.state = 5;
-                            }
                         }
+
+                        //Reseteamos marcadores pq se acaba la partida
+                        this.duel = 0;
+                        this.round = 0;
+                        this.duelWins = 0;
+                        this.roundWins = 0;
+                        this.oponentDuelWins = 0;
+                        this.oponentRoundWins = 0;
+                        this.state = 1;             //Al acabar una partida volvemos a enviar Hash
+
+                    }else{
+                        this.state = 5;                   //Seguimos jugando
                     }
                 }
 
-            }else if (this.state == 5){       //Envio de INSULTS y COMEBACKS
+            }else if (this.state == 5) {            //Comporbacion de las rondas
 
-                    if (this.player == 0) {  //Empieza el cliente insultando
+                if (this.round < 2) {
+                    this.state = 6;                 //Seguimos jugando
 
-                        this.menu.showInsults(insultsLearned);          //Mostramos insultos aprendidos
-                        this.insultId = sc.nextInt();
-                        this.insult  = this.insultsLearned[this.insultId-1];
+                } else {
 
-                        try {
-                            this.datagram.write_insult(this.insult);
-                            this.oponentComeback = this.datagram.read_comeback();
-                        } catch (IOException e) {
-                            System.out.println("ERROR");
+                    if (this.roundWins == 2 || this.oponentRoundWins == 2) {     //Se acaba el duelo pq alguien ha ganado
+                        if (this.roundWins == 2) {         //Ganamos el duelo
+
+                            try {
+                                this.datagram.write_shout("¡He ganado, " + this.oponentName + " !");
+                                System.out.println(this.datagram.read_shout());
+                            } catch (IOException e) {
+                                System.out.println("ERROR");
+                            }
+
+                            this.duelWins++;
+
+                        }else {          //Perdemos el duelo
+
+                            try {
+                                this.datagram.write_shout("¡Has ganado, " + this.oponentName + " !");
+                                System.out.println(this.datagram.read_shout());
+                            } catch (IOException e) {
+                                System.out.println("ERROR");
+                            }
+
+                            this.oponentDuelWins++;
+
                         }
 
-                        this.state = 6;
+                        //resetamos rondas pq pasamos a otro duelo
+                        this.round = 0;
+                        this.roundWins = 0;
+                        this.oponentRoundWins = 0;
+                        this.duel++;
+                        this.state = 4;
 
-                    }else{                   //Empieza el server insultando
-
-                        try {
-                            System.out.println(this.datagram.read_insult());
-                        } catch (IOException e) {
-                            System.out.println("ERROR");
-                        }
-
-                        this.menu.showComebacks(comebacksLearned);          //Mostramos insultos aprendidos
-                        this.comebackId = sc.nextInt();
-                        this.comeback  = this.comebacksLearned[this.comebackId-1];
-
-                        try {
-                            this.datagram.write_comeback(this.comeback);
-                        } catch (IOException e) {
-                            System.out.println("ERROR");
-                        }
-
-                        this.state = 6;
-
+                    }else{
+                        this.state = 6;                 //Seguimos jugando
                     }
 
-            }else if(this.state == 6){
+                }
 
-                //Comprobar si el comeback o insulto es correcto.
+            }else if (this.state == 6){       //Envio de INSULTS y COMEBACKS
+
+                if (this.player == 0) {  //Empieza el cliente insultando
+
+                    this.menu.showInsults(insultsLearned);          //Mostramos insultos aprendidos
+                    this.insultId = sc.nextInt();
+                    this.insult  = this.insultsLearned.get(this.insultId-1);
+                    System.out.println(this.insult);
+
+                    try {
+                        this.datagram.write_insult(this.insult);
+                        this.oponentComeback = this.datagram.read_comeback();
+                        System.out.println(this.oponentComeback);
+                    } catch (IOException e) {
+                        System.out.println("ERROR");
+                    }
+
+                    if (this.data.isRightComeback(this.insult, this.oponentComeback)){  //Comporbamos quien gana la ronda
+                        this.oponentRoundWins++;
+                        this.round++;
+                        this.player = 1;
+                    }else{
+                        this.roundWins++;
+                        this.round++;
+                    }
+                    this.state = 4;
+
+                }else{                   //Empieza el server insultando
+
+                    try {
+                        this.oponentInsult = this.datagram.read_insult();
+                        System.out.println(this.oponentInsult);
+                    } catch (IOException e) {
+                        System.out.println("ERROR");
+                    }
+
+                    this.menu.showComebacks(comebacksLearned);          //Mostramos insultos aprendidos
+                    this.comebackId = sc.nextInt();
+                    this.comeback  = this.comebacksLearned.get(this.comebackId-1);
+                    System.out.println(this.comeback);
+
+                    try {
+                        this.datagram.write_comeback(this.comeback);
+                    } catch (IOException e) {
+                        System.out.println("ERROR");
+                    }
+
+                    if (this.data.isRightComeback(this.oponentInsult, this.comeback)){  //Comporbamos quien gana la ronda
+                        this.roundWins++;
+                        this.round++;
+                        this.player = 0;
+                    }else{
+                        this.oponentRoundWins++;
+                        this.round++;
+                    }
+                    this.state = 4;
+
+                }
 
             }
         }

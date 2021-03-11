@@ -26,4 +26,24 @@ public class DatabaseTest {
         }
     }
 
+    @Test
+    public void insult_test() {
+        Database data = new Database();
+        String[] insults;
+        insults = data.getInsults();
+        for (int i = 0; i < insults.length - 1; i++){
+            System.out.println(insults[i]);
+        }
+    }
+
+    @Test
+    public void comeback_test() {
+        Database data = new Database();
+        String[] comebacks;
+        comebacks = data.getComebacks();
+        for (int i = 0; i < comebacks.length - 1; i++){
+            System.out.println(comebacks[i]);
+        }
+    }
+
 }
