@@ -232,6 +232,7 @@ public class Game {
                     try {
                         this.datagram.write_insult(this.insult);
                         this.oponentComeback = this.datagram.read_comeback();
+                        this.comebacksLearned.add(this.oponentComeback);
                         System.out.println(this.oponentComeback);
                     } catch (IOException e) {
                         System.out.println("ERROR");
@@ -251,6 +252,7 @@ public class Game {
 
                     try {
                         this.oponentInsult = this.datagram.read_insult();
+                        this.insultsLearned.add(this.oponentInsult);
                         System.out.println(this.oponentInsult);
                     } catch (IOException e) {
                         System.out.println("ERROR");
