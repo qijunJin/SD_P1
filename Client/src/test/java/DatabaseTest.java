@@ -27,6 +27,7 @@ public class DatabaseTest {
         }
     }
 
+
     @Test
     public void random_insult_test() {
         Database data = new Database();
