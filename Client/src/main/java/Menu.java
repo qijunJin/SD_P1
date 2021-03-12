@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Menu {
@@ -9,28 +10,23 @@ public class Menu {
         return scan.nextLine();
     }
 
-    public int getId(){
-        System.out.println("Insert your id:");
-        return scan.nextInt();
-    }
-
     public String getSecret(){
         System.out.println("Insert your secret number:");
         return scan.nextLine();
     }
 
-    public void showInsults(String[] insults){
+    public void showInsults(ArrayList<String> insults){
         System.out.println("Inserta el numero del insulto que quieras:");
-        for (int i = 0; i <= insults.length - 1; i++){
-            System.out.println(i+1 + ". " + insults[i]);
+        for (int i = 0; i <= insults.size() - 1; i++){
+            System.out.println(i+1 + ". " + insults.get(i));
         }
 
     }
 
-    public void showComebacks(String[] comebacks){
+    public void showComebacks(ArrayList<String> comebacks){
         System.out.println("Inserta el numero del comeback que quieras:");
-        for (int i = 0; i <= comebacks.length - 1; i++){
-            System.out.println(i+1 + ". " + comebacks[i]);
+        for (int i = 0; i <= comebacks.size() - 1; i++){
+            System.out.println(i+1 + ". " + comebacks.get(i));
         }
 
     }
