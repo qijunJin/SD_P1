@@ -19,10 +19,10 @@ public class DatagramTest {
         File file = new File("test");
         try {
             file.createNewFile();
-            Socket socket = new Socket();
-            //Datagram datagram = new Datagram(socket);
+            Socket socket = new SocketMock();
+            Datagram datagram = new Datagram(socket);
 
-            Datagram datagram = new Datagram(new FileInputStream(file), new FileOutputStream(file));
+            //Datagram datagram = new Datagram(new FileInputStream(file), new FileOutputStream(file));
 
             datagram.write_hello(40, "joe");
             String readedStr = datagram.read_hello();

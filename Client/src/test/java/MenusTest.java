@@ -41,32 +41,4 @@ public class MenusTest {
         }
 
     }
-
-    @Test
-    public void random_insult_comeback_test() {
-        Database data = new Database();
-
-        String[] all_insults = data.getInsults();           //Todos los insultos
-        String[] all_comebacks = data.getComebacks();       //Todos los comebacks
-
-        ArrayList<String> insultsLearned = new ArrayList<String>();
-        ArrayList<String> comebacksLearned = new ArrayList<String>();
-
-        Random rand = new Random();
-        for (int i = 0; i<2; i++){
-            int numRan = rand.nextInt(17);
-            insultsLearned.add(all_insults[numRan]);
-            comebacksLearned.add(all_comebacks[numRan]);
-        }
-
-
-        for (int i = 0; i<=insultsLearned.size()-1; i++){
-            System.out.println(insultsLearned.get(i));
-            System.out.println(comebacksLearned.get(i));
-            System.out.println(i);
-        }
-
-
-
-    }
 }

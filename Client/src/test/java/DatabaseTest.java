@@ -2,6 +2,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import static org.junit.Assert.assertTrue;
 
@@ -27,23 +28,17 @@ public class DatabaseTest {
     }
 
     @Test
-    public void insult_test() {
+    public void random_insult_test() {
         Database data = new Database();
-        String[] insults;
-        insults = data.getInsults();
-        for (int i = 0; i < insults.length - 1; i++){
-            System.out.println(insults[i]);
-        }
-    }
+        data.getRandomInsultComeback();
+        ArrayList<String> insults = data.getRandomInsults();
+        ArrayList<String> comebacks = data.getRandomComebacks();
 
-    @Test
-    public void comeback_test() {
-        Database data = new Database();
-        String[] comebacks;
-        comebacks = data.getComebacks();
-        for (int i = 0; i < comebacks.length - 1; i++){
-            System.out.println(comebacks[i]);
+        for (int i = 0; i<2; i++){
+            System.out.println(insults.get(i));
+            System.out.println(comebacks.get(i));
         }
+
     }
 
 }

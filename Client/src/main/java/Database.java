@@ -1,8 +1,10 @@
-import java.util.HashMap;
+import java.util.*;
 
 public class Database {
 
     private HashMap<String, String> source;
+    private ArrayList<String> insultLearned = new ArrayList<>();
+    private ArrayList<String> comebackLearned = new ArrayList<>();
 
     public Database() {
         this.source = new HashMap<>();
@@ -34,11 +36,37 @@ public class Database {
         return this.source.get(insult).equals(comeback);
     }
 
-    public String[] getInsults(){
-        return this.source.keySet().toArray(new String[this.source.size()]);
+    public void getRandomInsultComeback(){
+        ArrayList<String> insults = this.getInsults();
+        ArrayList<String> comebacks = this.getComebacks();
+        Random rand = new Random();
+        int index = 16;
+        for (int i = 0; i<2; i++){
+            int numRan = rand.nextInt(index);
+            insultLearned.add(insults.get(numRan));
+            comebackLearned.add(comebacks.get(numRan));
+            insults.remove(insults.get(numRan));
+            comebacks.remove(comebacks.get(numRan));
+            index--;
+        }
+
     }
 
-    public String [] getComebacks(){
-        return this.source.values().toArray(new String[this.source.size()]);
+    public ArrayList<String> getRandomInsults(){
+        return this.insultLearned;
+    }
+
+    public ArrayList<String> getRandomComebacks(){
+        return this.comebackLearned;
+    }
+
+    public ArrayList<String> getInsults(){
+        Set<String> keySet = this.source.keySet();
+        return new ArrayList<String>(keySet);
+    }
+
+    public ArrayList<String> getComebacks(){
+        Collection<String> keySet = this.source.values();
+        return new ArrayList<String>(keySet);
     }
 }
