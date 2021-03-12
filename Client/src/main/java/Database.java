@@ -33,4 +33,12 @@ public class Database {
     public boolean isRightComeback(String insult, String comeback) {
         return this.source.get(insult).equals(comeback);
     }
+
+    public String[] getInsults(){
+        return this.source.keySet().toArray(new String[this.source.size()]);
+    }
+
+    public String [] getComebacks(){
+        return this.source.values().toArray(new String[this.source.size()]);
+    }
 }
