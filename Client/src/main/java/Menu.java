@@ -12,7 +12,7 @@ public class Menu {
 
     public String getSecret(){
         System.out.println("Insert your secret number:");
-        return scan.nextLine();
+        return String.valueOf(scan.nextInt());
     }
 
     public void showInsults(ArrayList<String> insults){
@@ -28,6 +28,5 @@ public class Menu {
         for (int i = 0; i <= comebacks.size() - 1; i++){
             System.out.println(i+1 + ". " + comebacks.get(i));
         }
-
     }
 }

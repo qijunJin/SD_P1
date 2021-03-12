@@ -7,6 +7,7 @@
     <groupId>org.example</groupId>
     <artifactId>client</artifactId>
     <version>1.0</version>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -15,16 +16,16 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.example</groupId>
-            <artifactId>server</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
+            <groupId>groupId</groupId>
+            <artifactId>comutils</artifactId>
+            <version>1.0</version>
         </dependency>
     </dependencies>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
 </project>

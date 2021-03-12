@@ -1,12 +1,16 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 public class Database {
 
     private HashMap<String, String> source;
+    private ArrayList<String> indexedKeys = new ArrayList<>();
 
     public Database() {
         this.source = new HashMap<>();
         this.initDatabase();
+        this.initIndexedKeys();
     }
 
     private void initDatabase() {
@@ -30,15 +34,49 @@ public class Database {
 
     }
 
+    private void initIndexedKeys() {
+
+        this.indexedKeys.addAll(new ArrayList<>(this.source.keySet()));
+
+    }
+
     public boolean isRightComeback(String insult, String comeback) {
         return this.source.get(insult).equals(comeback);
     }
 
-    public String[] getInsults(){
-        return this.source.keySet().toArray(new String[this.source.size()]);
+    private ArrayList<Integer> getRandomIndexes() {
+        Random rand = new Random(); // Insultos y Comebacks aprendidos aleatoriamente
+
+        ArrayList<Integer> indexes = new ArrayList<>();
+        ArrayList<Integer> searchedIndexes = new ArrayList<>();
+
+        for (int i = 0; i < 16; i++) indexes.add(i);
+
+        for (int j = 0; j < 2; j++) {
+            int pos = rand.nextInt(15 - j); // 0 - 15
+            searchedIndexes.add(indexes.get(pos));
+            indexes.remove(pos);
+        }
+
+        return searchedIndexes;
     }
 
-    public String [] getComebacks(){
-        return this.source.values().toArray(new String[this.source.size()]);
+    public ArrayList<String> getRandomInsults() {
+        ArrayList<String> insults = new ArrayList<>();
+        ArrayList<Integer> indexes = this.getRandomIndexes();
+        for (int i = 0; i < 2; i++) {
+            int index = indexes.get(i);
+            insults.add(this.indexedKeys.get(index));
+        }
+        return insults;
+    }
+
+    public ArrayList<String> getRandomComebacks() {
+        ArrayList<String> comebacks = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            String key = this.indexedKeys.get(i);
+            comebacks.add(this.source.get(key));
+        }
+        return comebacks;
     }
 }
