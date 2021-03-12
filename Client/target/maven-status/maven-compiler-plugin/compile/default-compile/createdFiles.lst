@@ -1,5 +1,5 @@
-Game.class
 Datagram.class
 Client.class
-Menu.class
 Database.class
+Game.class
+Menu.class

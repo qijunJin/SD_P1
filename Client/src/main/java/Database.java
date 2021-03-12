@@ -1,16 +1,14 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 public class Database {
 
     private HashMap<String, String> source;
-    private ArrayList<String> indexedKeys = new ArrayList<>();
+    private ArrayList<String> insultLearned = new ArrayList<>();
+    private ArrayList<String> comebackLearned = new ArrayList<>();
 
     public Database() {
         this.source = new HashMap<>();
         this.initDatabase();
-        this.initIndexedKeys();
     }
 
     private void initDatabase() {
@@ -34,49 +32,41 @@ public class Database {
 
     }
 
-    private void initIndexedKeys() {
-
-        this.indexedKeys.addAll(new ArrayList<>(this.source.keySet()));
-
-    }
-
     public boolean isRightComeback(String insult, String comeback) {
         return this.source.get(insult).equals(comeback);
     }
 
-    private ArrayList<Integer> getRandomIndexes() {
-        Random rand = new Random(); // Insultos y Comebacks aprendidos aleatoriamente
-
-        ArrayList<Integer> indexes = new ArrayList<>();
-        ArrayList<Integer> searchedIndexes = new ArrayList<>();
-
-        for (int i = 0; i < 16; i++) indexes.add(i);
-
-        for (int j = 0; j < 2; j++) {
-            int pos = rand.nextInt(15 - j); // 0 - 15
-            searchedIndexes.add(indexes.get(pos));
-            indexes.remove(pos);
+    public void getRandomInsultComeback(){
+        ArrayList<String> insults = this.getInsults();
+        ArrayList<String> comebacks = this.getComebacks();
+        Random rand = new Random();
+        int index = 16;
+        for (int i = 0; i<2; i++){
+            int numRan = rand.nextInt(index);
+            insultLearned.add(insults.get(numRan));
+            comebackLearned.add(comebacks.get(numRan));
+            insults.remove(insults.get(numRan));
+            comebacks.remove(comebacks.get(numRan));
+            index--;
         }
 
-        return searchedIndexes;
     }
 
-    public ArrayList<String> getRandomInsults() {
-        ArrayList<String> insults = new ArrayList<>();
-        ArrayList<Integer> indexes = this.getRandomIndexes();
-        for (int i = 0; i < 2; i++) {
-            int index = indexes.get(i);
-            insults.add(this.indexedKeys.get(index));
-        }
-        return insults;
+    public ArrayList<String> getRandomInsults(){
+        return this.insultLearned;
     }
 
-    public ArrayList<String> getRandomComebacks() {
-        ArrayList<String> comebacks = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
-            String key = this.indexedKeys.get(i);
-            comebacks.add(this.source.get(key));
-        }
-        return comebacks;
+    public ArrayList<String> getRandomComebacks(){
+        return this.comebackLearned;
+    }
+
+    public ArrayList<String> getInsults(){
+        Set<String> keySet = this.source.keySet();
+        return new ArrayList<String>(keySet);
+    }
+
+    public ArrayList<String> getComebacks(){
+        Collection<String> keySet = this.source.values();
+        return new ArrayList<String>(keySet);
     }
 }

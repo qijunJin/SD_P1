@@ -1,5 +1,5 @@
-utils/ComUtils.class
 Communication.class
 Main.class
-utils/ComUtilsService.class
-utils/Endianness.class
+utils\ComUtilsService.class
+utils\ComUtils.class
+utils\Endianness.class

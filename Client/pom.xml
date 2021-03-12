@@ -7,7 +7,6 @@
     <groupId>org.example</groupId>
     <artifactId>client</artifactId>
     <version>1.0</version>
-
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -19,6 +18,7 @@
             <groupId>groupId</groupId>
             <artifactId>comutils</artifactId>
             <version>1.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
