@@ -5,10 +5,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class ComUtilsService {
-    private ComUtils comUtils;
+    private utils.ComUtils comUtils;
 
     public ComUtilsService(InputStream inputStream, OutputStream outputStream) throws IOException {
-        comUtils = new ComUtils(inputStream, outputStream);
+        comUtils = new utils.ComUtils(inputStream, outputStream);
     }
 
     public void writeTest() {

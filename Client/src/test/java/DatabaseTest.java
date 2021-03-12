@@ -26,6 +26,7 @@ public class DatabaseTest {
         }
     }
 
+
     @Test
     public void insult_test() {
         Database data = new Database();

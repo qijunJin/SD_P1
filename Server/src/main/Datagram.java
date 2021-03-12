@@ -5,26 +5,34 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-public class Datagram {
+public class Datagram extends ComUtils {
 
     private Socket socket;
-    private ComUtils utils;
+    private int id;
+
+    public Datagram(InputStream inputStream, OutputStream outputStream) throws IOException {
+        super(inputStream, outputStream);
+    }
 
     public Datagram(Socket socket) throws IOException {
-        this.socket = socket;
-        this.utils = new ComUtils(this.socket);
+        super(socket);
     }
 
-    public Datagram(InputStream i, OutputStream o) throws IOException {
-        this.utils = new ComUtils(i, o);
-    }
-
-
-    public void write_hello(int id, String name) throws IOException {
-        this.utils.write_hello(id, name);
+    public void write_hello(int id, String str) throws IOException {
+        writeByte(1); // OPCODE
+        write_int32(id); // ID
+        writeString(str); //STRING
+        writeByte(0); // END
     }
 
     public String read_hello() throws IOException {
-        return this.utils.read_hello();
+        int opcode = readByte();
+        String str = "";
+
+        if (opcode == 1) {
+            id = read_int32();
+            str = readString();
+        }
+        return str;
     }
 }
