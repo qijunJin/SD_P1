@@ -1,9 +1,11 @@
 import org.junit.Test;
+import utils.ComUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -12,17 +14,37 @@ import static org.junit.Assert.assertEquals;
 
 public class ComUtilsTest {
 
-
     @Test
-    public void hello_test() {
+    public void byte_test() {
         File file = new File("test");
         try {
             file.createNewFile();
-            Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
-            com.write_hello("joe");
-            String readedStr = com.read_hello();
+            ComUtils com = new ComUtils(new FileInputStream(file), new FileOutputStream(file));
 
-            assertEquals("joe", readedStr);
+            int i = 12;
+            com.writeByte(i);
+            byte readedByte = com.readByte();
+
+            assertEquals(i, readedByte);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void string_test() {
+        File file = new File("test");
+        try {
+            file.createNewFile();
+            ComUtils com = new ComUtils(new FileInputStream(file), new FileOutputStream(file));
+
+            String s = "joe";
+            com.writeString(s);
+            com.writeByte(0);
+            String readedStr = com.readString();
+
+            assertEquals(s, readedStr);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -34,39 +56,24 @@ public class ComUtilsTest {
         File file = new File("test");
         try {
             file.createNewFile();
-            Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
-            byte[] bytes = new byte[32];
-            bytes[0] = 1; // Assign secret_number
+            ComUtils com = new ComUtils(new FileInputStream(file), new FileOutputStream(file));
 
-            com.write_hash(bytes);
-            byte[] readedBytes = com.read_hash();
+            String s = "21394735986548847365534907392897867";
 
-            byte[] encodedhash = new byte[32]; // Create h(secret_number) with propose to test
+            com.writeHash(s);
+            byte[] readedBytes = com.readHash();
+
+            MessageDigest digest = null;
+
             try {
-                MessageDigest digest = MessageDigest.getInstance("SHA-256");
-                encodedhash = digest.digest(bytes);
+                digest = MessageDigest.getInstance("SHA-256");
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }
 
-            assertArrayEquals(encodedhash, readedBytes); // Ensure test passed
+            byte[] encodedhash = digest.digest(s.getBytes(StandardCharsets.UTF_8));
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    @Test
-    public void secret_test() {
-        File file = new File("test");
-        try {
-            file.createNewFile();
-            Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
-            com.write_secret("secret");
-            String readedStr = com.read_secret();
-
-            assertEquals("secret", readedStr);
+            assertArrayEquals(encodedhash, readedBytes);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -74,67 +81,17 @@ public class ComUtilsTest {
     }
 
     @Test
-    public void insult_test() {
+    public void int32_test() {
         File file = new File("test");
         try {
             file.createNewFile();
-            Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
-            com.write_insult("Obtuve esta cicatriz en una batalla a muerte!");
-            String readedStr = com.read_insult();
+            ComUtils com = new ComUtils(new FileInputStream(file), new FileOutputStream(file));
 
-            assertEquals("Obtuve esta cicatriz en una batalla a muerte!", readedStr);
+            int i = 2349230;
+            com.writeInt32(i);
+            int readedInt = com.readInt32();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void comeback_test() {
-        File file = new File("test");
-        try {
-            file.createNewFile();
-            Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
-            com.write_comeback("Espero que ya hayas aprendido a no tocarte la nariz");
-            String readedStr = com.read_comeback();
-
-            assertEquals("Espero que ya hayas aprendido a no tocarte la nariz", readedStr);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void shout_test() {
-        File file = new File("test");
-        try {
-            file.createNewFile();
-            Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
-            com.write_shout("!He ganado, Name2!");
-            String readedStr = com.read_shout();
-
-            assertEquals("!He ganado, Name2!", readedStr);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void error_test() {
-        File file = new File("test");
-        try {
-            file.createNewFile();
-            Communication com = new Communication(new FileInputStream(file), new FileOutputStream(file));
-            com.write_insult("Espero que ya hayas aprendido a no tocarte la nariz!");
-            String readedStr = com.read_insult();
-
-             if (!readedStr.equals("Espero que ya hayas aprendido a no tocarte la nariz")){
-                 com.write_error("!Mensaje incompleto, grumete! !Hasta la vista!");
-                 readedStr = com.read_error();
-                 assertEquals("!Mensaje incompleto, grumete! !Hasta la vista!", readedStr);
-            }
+            assertEquals(i, readedInt);
 
         } catch (IOException e) {
             e.printStackTrace();

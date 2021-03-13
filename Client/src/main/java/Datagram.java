@@ -30,13 +30,12 @@ public class Datagram extends ComUtils {
         return ((n1 + n2) % 2 == 0);
     }
 
-    public int getIdOponent() {
+    public int getIdOpponent() {
         return this.id;
     }
 
     public boolean proofHash(String secret, byte[] hash) {
 
-        // FOR TEST
         MessageDigest digest = null;
         try {
             digest = MessageDigest.getInstance("SHA-256");
@@ -57,7 +56,7 @@ public class Datagram extends ComUtils {
         String str = "";
 
         if (opcode == 1) {
-            id = read_int32();
+            id = readInt32();
             str = readString();
         }
         return str;
@@ -65,31 +64,26 @@ public class Datagram extends ComUtils {
 
     public void write_hello(int id, String str) throws IOException {
         writeByte(1); // OPCODE
-        write_int32(id); // ID
+        writeInt32(id); // ID
         writeString(str); //STRING
         writeByte(0); // END
     }
 
     /* OPCODE 2: HASH */
-    public byte[] readHash() throws IOException {
+    public byte[] read_hash() throws IOException {
         int opcode = readByte();
         byte hashBytes[] = new byte[32];
 
         if (opcode == 2) {
-            hashBytes = read_hash();
+            hashBytes = readHash();
         }
 
         return hashBytes;
     }
 
-    public void writeHash(String str) throws IOException {
+    public void write_hash(String str) throws IOException {
         writeByte(2); // OPCODE
-        write_hash(str); // HASH
-    }
-
-    public void writeHash(byte[] bytes) throws IOException {
-        writeByte(2); // OPCODE
-        write_hash(bytes); // HASH
+        writeHash(str); // HASH
     }
 
 

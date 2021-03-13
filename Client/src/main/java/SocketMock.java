@@ -8,21 +8,21 @@ public class SocketMock extends Socket {
 
     private List<Byte> bytes = new ArrayList<>();
 
-    public InputStream getInputStream(){
+    public InputStream getInputStream() {
         return new InputStream() {
             @Override
-            public int read(){
+            public int read() {
                 return bytes.remove(0);
             }
         };
     }
 
-    public OutputStream getOutputStream(){
+    public OutputStream getOutputStream() {
 
         return new OutputStream() {
             @Override
-            public void write(int b){
-                bytes.add((byte)b);
+            public void write(int b) {
+                bytes.add((byte) b);
             }
         };
     }
