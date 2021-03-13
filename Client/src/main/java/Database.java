@@ -1,3 +1,5 @@
+import enumType.ErrorType;
+
 import java.util.*;
 
 public class Database {

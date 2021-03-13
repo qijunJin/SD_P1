@@ -1,3 +1,4 @@
+import enumType.ErrorType;
 import org.junit.Test;
 
 import java.util.ArrayList;
