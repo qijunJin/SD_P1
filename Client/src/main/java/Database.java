@@ -1,27 +1,29 @@
 import enumType.ErrorType;
+import enumType.ShoutType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Database {
 
     private HashMap<Integer, String> insults;
     private HashMap<Integer, String> comebacks;
     private HashMap<String, String> source;
+    private HashMap<ShoutType, String> shouts;
     private HashMap<ErrorType, String> errors;
-
-    private ArrayList<String> insultLearned = new ArrayList<>();
-    private ArrayList<String> comebackLearned = new ArrayList<>();
 
     public Database() {
         this.insults = new HashMap<>();
         this.comebacks = new HashMap<>();
         this.source = new HashMap<>();
+        this.shouts = new HashMap<>();
         this.errors = new HashMap<>();
 
         this.initInsultsIndexed();
         this.initComebacksIndexed();
         this.initInsultsComebacks();
-        this.initErrorsIndexed();
+        this.initErrorsTyped();
+        this.initShoutsTyped();
     }
 
     private void initInsultsIndexed() {
@@ -87,7 +89,7 @@ public class Database {
 
     }
 
-    private void initErrorsIndexed() {
+    private void initErrorsTyped() {
 
         this.errors.put(ErrorType.WRONG_OPCODE, "¡Código de operación inválido, marinero de agua dulce! ¡Hasta la vista!");
         this.errors.put(ErrorType.INCOMPLETE_MESSAGE, "¡Mensaje incompleto, grumete! ¡Hasta la vista!");
@@ -95,35 +97,18 @@ public class Database {
 
     }
 
+
+    private void initShoutsTyped() {
+
+        this.shouts.put(ShoutType.I_WIN, "¡He ganado, *!");
+        this.shouts.put(ShoutType.YOU_WIN, "¡Has ganado, *!");
+        this.shouts.put(ShoutType.YOU_WIN_FINAL, "¡Has ganado, Name1. Eres tan bueno que podrias luchar contra la Sword Master de la isla Mêlée!");
+
+    }
+
     public boolean isRightComeback(String insult, String comeback) {
         return this.source.get(insult).equals(comeback);
     }
-
-/*    private ArrayList<Integer> getRandomIndexes() {
-        Random rand = new Random(); // Insultos y Comebacks aprendidos aleatoriamente
-
-        ArrayList<Integer> indexes = new ArrayList<>();
-        ArrayList<Integer> searchedIndexes = new ArrayList<>();
-
-        for (int i = 0; i < 16; i++) indexes.add(i);
-
-        for (int j = 0; j < 2; j++) {
-            int pos = rand.nextInt(15 - j); // 0 - 15
-            searchedIndexes.add(indexes.get(pos));
-            indexes.remove(pos);
-        }
-
-        return searchedIndexes;
-    }*/
-
-/*    public HashMap<String, String> getRandomInsultComeback2() {
-        ArrayList<Integer> indexes = getRandomIndexes();
-        HashMap<String, String> learned = new HashMap<>();
-        for (int i : indexes) {
-            learned.put(this.insults.get(i), this.comebacks.get(i));
-        }
-        return learned;
-    }*/
 
     public ArrayList<String> getInsultsByIndexes(ArrayList<Integer> indexes) {
         ArrayList<String> insults = new ArrayList<>();
@@ -149,38 +134,8 @@ public class Database {
         return this.comebacks.get(index);
     }
 
-    public void getRandomInsultComeback() {
-        ArrayList<String> insults = this.getInsults();
-        ArrayList<String> comebacks = this.getComebacks();
-        Random rand = new Random();
-        int index = 16;
-        for (int i = 0; i < 2; i++) {
-            int numRan = rand.nextInt(index);
-            insultLearned.add(insults.get(numRan));
-            comebackLearned.add(comebacks.get(numRan));
-            insults.remove(insults.get(numRan));
-            comebacks.remove(comebacks.get(numRan));
-            index--;
-        }
-
-    }
-
-    public ArrayList<String> getRandomInsults() {
-        return this.insultLearned;
-    }
-
-    public ArrayList<String> getRandomComebacks() {
-        return this.comebackLearned;
-    }
-
-    public ArrayList<String> getInsults() {
-        Set<String> keySet = this.source.keySet();
-        return new ArrayList<>(keySet);
-    }
-
-    public ArrayList<String> getComebacks() {
-        Collection<String> keySet = this.source.values();
-        return new ArrayList<>(keySet);
+    public String getShoutByEnum(ShoutType s) {
+        return this.shouts.get(s);
     }
 
     public String getErrorByEnum(ErrorType e) {

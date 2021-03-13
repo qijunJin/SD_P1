@@ -1,4 +1,5 @@
 import enumType.ErrorType;
+import enumType.ShoutType;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -146,12 +147,14 @@ public class DatagramTest {
             Datagram datagram = new Datagram(socket);
             Database database = new Database();
 
-            String str = database.getComebackByIndex(2);
+            String str = database.getShoutByEnum(ShoutType.I_WIN);
+            String name = "Qijun";
+            str = str.replace("*", name);
+
             datagram.write_shout(str);
+            String readedStr = datagram.read_shout();
 
-            String readedStr = datagram.read_comeback();
-
-            //assertEquals(str, readedStr);
+            assertEquals(str, readedStr);
 
         } catch (IOException e) {
             e.printStackTrace();
