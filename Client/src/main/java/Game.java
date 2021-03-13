@@ -1,5 +1,9 @@
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Game {
@@ -76,7 +80,7 @@ public class Game {
                     System.exit(1);
                 }
 
-                this.opponentId = this.datagram.getIdOponent();
+                this.opponentId = this.datagram.getIdOpponent();
                 this.state = 1;
 
             } else if (state == 1) {         //Envio de HASH entre jugadores
@@ -120,7 +124,7 @@ public class Game {
 
             } else if (state == 3) {         //Comprobación de HASH correcto y elección de quien comienza el juego.
 
-                if (this.datagram.proofHash(this.opponentSecret, this.opponentHash)) {
+                if (this.proofHash(this.opponentSecret, this.opponentHash)) {
                     if (this.id != this.opponentId) {
                         if (this.datagram.isEven(this.secret, this.opponentSecret)) {
                             domain = this.id < this.opponentId; // True -> Cliente, False -> Server
@@ -346,6 +350,21 @@ public class Game {
         }
 
         return searchedIndexes;
+    }
+
+    public boolean proofHash(String secret, byte[] hash) {
+
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        byte[] encodedhash = digest.digest(
+                secret.getBytes(StandardCharsets.UTF_8));
+
+        return Arrays.equals(encodedhash, hash);
+
     }
 
 

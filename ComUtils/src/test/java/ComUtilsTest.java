@@ -14,11 +14,9 @@ import static org.junit.Assert.assertEquals;
 
 public class ComUtilsTest {
 
-    File file = new File("test");
-
     @Test
     public void byte_test() {
-
+        File file = new File("test");
         try {
             file.createNewFile();
             ComUtils com = new ComUtils(new FileInputStream(file), new FileOutputStream(file));
@@ -36,7 +34,7 @@ public class ComUtilsTest {
 
     @Test
     public void string_test() {
-
+        File file = new File("test");
         try {
             file.createNewFile();
             ComUtils com = new ComUtils(new FileInputStream(file), new FileOutputStream(file));
@@ -55,7 +53,7 @@ public class ComUtilsTest {
 
     @Test
     public void hash_test() {
-
+        File file = new File("test");
         try {
             file.createNewFile();
             ComUtils com = new ComUtils(new FileInputStream(file), new FileOutputStream(file));
@@ -84,7 +82,7 @@ public class ComUtilsTest {
 
     @Test
     public void int32_test() {
-
+        File file = new File("test");
         try {
             file.createNewFile();
             ComUtils com = new ComUtils(new FileInputStream(file), new FileOutputStream(file));

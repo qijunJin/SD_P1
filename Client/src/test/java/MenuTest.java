@@ -4,13 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 
-public class MenusTest {
+public class MenuTest {
 
     @Test
     public void selectInsult_test() {

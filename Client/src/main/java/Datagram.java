@@ -30,13 +30,12 @@ public class Datagram extends ComUtils {
         return ((n1 + n2) % 2 == 0);
     }
 
-    public int getIdOponent() {
+    public int getIdOpponent() {
         return this.id;
     }
 
     public boolean proofHash(String secret, byte[] hash) {
 
-        // FOR TEST
         MessageDigest digest = null;
         try {
             digest = MessageDigest.getInstance("SHA-256");

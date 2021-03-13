@@ -5,6 +5,7 @@ public class Database {
     private HashMap<Integer, String> insults;
     private HashMap<Integer, String> comebacks;
     private HashMap<String, String> source;
+    private HashMap<ErrorType, String> errors;
 
     private ArrayList<String> insultLearned = new ArrayList<>();
     private ArrayList<String> comebackLearned = new ArrayList<>();
@@ -13,59 +14,57 @@ public class Database {
         this.insults = new HashMap<>();
         this.comebacks = new HashMap<>();
         this.source = new HashMap<>();
+        this.errors = new HashMap<>();
 
-        this.initDatabase();
+        this.initInsultsIndexed();
+        this.initComebacksIndexed();
+        this.initInsultsComebacks();
+        this.initErrorsIndexed();
     }
 
-    private void initDatabase() {
+    private void initInsultsIndexed() {
 
         this.insults.put(1, "¿Has dejado ya de usar pañales?");
-        this.comebacks.put(1, "¿Por qué? ¿Acaso querías pedir uno prestado?");
-
         this.insults.put(2, "¡No hay palabras para describir lo asqueroso que eres!");
-        this.comebacks.put(2, "Sí que las hay, sólo que nunca las has aprendido.");
-
         this.insults.put(3, "¡He hablado con simios más educados que tu!");
-        this.comebacks.put(3, "Me alegra que asistieras a tu reunión familiar diaria.");
-
         this.insults.put(4, "¡Llevarás mi espada como si fueras un pincho moruno!");
-        this.comebacks.put(4, "Primero deberías dejar de usarla como un plumero.");
-
         this.insults.put(5, "¡Luchas como un ganadero!");
-        this.comebacks.put(5, "Qué apropiado, tú peleas como una vaca.");
-
         this.insults.put(6, "¡No pienso aguantar tu insolencia aquí sentado!");
-        this.comebacks.put(6, "Ya te están fastidiando otra vez las almorranas, ¿Eh?");
-
         this.insults.put(7, "¡Mi pañuelo limpiará tu sangre!");
-        this.comebacks.put(7, "Ah, ¿Ya has obtenido ese trabajo de barrendero?");
-
         this.insults.put(8, "¡Ha llegado tu HORA, palurdo de ocho patas!");
-        this.comebacks.put(8, "Y yo tengo un SALUDO para ti, ¿Te enteras?");
-
         this.insults.put(9, "¡Una vez tuve un perro más listo que tu!");
-        this.comebacks.put(9, "Te habrá enseñado todo lo que sabes.");
-
         this.insults.put(10, "¡Nadie me ha sacado sangre jamás, y nadie lo hará!");
-        this.comebacks.put(10, "¿TAN rápido corres?");
-
         this.insults.put(11, "¡Me das ganas de vomitar!");
-        this.comebacks.put(11, "Me haces pensar que alguien ya lo ha hecho.");
-
         this.insults.put(12, "¡Tienes los modales de un mendigo!");
-        this.comebacks.put(12, "Quería asegurarme de que estuvieras a gusto conmigo.");
-
         this.insults.put(13, "¡He oído que eres un soplón despreciable!");
-        this.comebacks.put(13, "Qué pena me da que nadie haya oído hablar de ti");
-
         this.insults.put(14, "¡La gente cae a mis pies al verme llegar!");
-        this.comebacks.put(14, "¿Incluso antes de que huelan tu aliento?");
-
         this.insults.put(15, "¡Demasiado bobo para mi nivel de inteligencia!");
-        this.comebacks.put(15, "Estaría acabado si la usases alguna vez.");
-
         this.insults.put(16, "Obtuve esta cicatriz en una batalla a muerte!");
+
+    }
+
+    private void initComebacksIndexed() {
+
+        this.comebacks.put(1, "¿Por qué? ¿Acaso querías pedir uno prestado?");
+        this.comebacks.put(2, "Sí que las hay, sólo que nunca las has aprendido.");
+        this.comebacks.put(3, "Me alegra que asistieras a tu reunión familiar diaria.");
+        this.comebacks.put(4, "Primero deberías dejar de usarla como un plumero.");
+        this.comebacks.put(5, "Qué apropiado, tú peleas como una vaca.");
+        this.comebacks.put(6, "Ya te están fastidiando otra vez las almorranas, ¿Eh?");
+        this.comebacks.put(7, "Ah, ¿Ya has obtenido ese trabajo de barrendero?");
+        this.comebacks.put(8, "Y yo tengo un SALUDO para ti, ¿Te enteras?");
+        this.comebacks.put(9, "Te habrá enseñado todo lo que sabes.");
+        this.comebacks.put(10, "¿TAN rápido corres?");
+        this.comebacks.put(11, "Me haces pensar que alguien ya lo ha hecho.");
+        this.comebacks.put(12, "Quería asegurarme de que estuvieras a gusto conmigo.");
+        this.comebacks.put(13, "Qué pena me da que nadie haya oído hablar de ti");
+        this.comebacks.put(14, "¿Incluso antes de que huelan tu aliento?");
+        this.comebacks.put(15, "Estaría acabado si la usases alguna vez.");
         this.comebacks.put(16, "Espero que ya hayas aprendido a no tocarte la nariz.");
+
+    }
+
+    private void initInsultsComebacks() {
 
         this.source.put("¿Has dejado ya de usar pañales?", "¿Por qué? ¿Acaso querías pedir uno prestado?");
         this.source.put("¡No hay palabras para describir lo asqueroso que eres!", "Sí que las hay, sólo que nunca las has aprendido.");
@@ -83,6 +82,14 @@ public class Database {
         this.source.put("¡La gente cae a mis pies al verme llegar!", "¿Incluso antes de que huelan tu aliento?");
         this.source.put("¡Demasiado bobo para mi nivel de inteligencia!", "Estaría acabado si la usases alguna vez.");
         this.source.put("Obtuve esta cicatriz en una batalla a muerte!", "Espero que ya hayas aprendido a no tocarte la nariz.");
+
+    }
+
+    private void initErrorsIndexed() {
+
+        this.errors.put(ErrorType.WRONG_OPCODE, "¡Código de operación inválido, marinero de agua dulce! ¡Hasta la vista!");
+        this.errors.put(ErrorType.INCOMPLETE_MESSAGE, "¡Mensaje incompleto, grumete! ¡Hasta la vista!");
+        this.errors.put(ErrorType.TIMEOUT, "¡Me he candado de esperar tus mensajes, mequetrefe! ¡Hasta la vista!");
 
     }
 
@@ -132,11 +139,11 @@ public class Database {
         return comebacks;
     }
 
-    public String getInsultByIndex(int index) { // Mainly for test
+    public String getInsultByIndex(int index) {
         return this.insults.get(index);
     }
 
-    public String getComebackByIndex(int index) { // Mainly for test
+    public String getComebackByIndex(int index) {
         return this.comebacks.get(index);
     }
 
@@ -172,5 +179,13 @@ public class Database {
     public ArrayList<String> getComebacks() {
         Collection<String> keySet = this.source.values();
         return new ArrayList<>(keySet);
+    }
+
+    public String getErrorByEnum(ErrorType e) {
+        return this.errors.get(e);
+    }
+
+    public HashMap<ErrorType, String> getErrors() { // For test
+        return this.errors;
     }
 }

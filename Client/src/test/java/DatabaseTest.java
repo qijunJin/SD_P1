@@ -1,6 +1,7 @@
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.junit.Assert.assertTrue;
 
@@ -54,4 +55,21 @@ public class DatabaseTest {
 
     }
 
+    @Test
+    public void error_test() {
+        Database database = new Database();
+
+        HashMap<ErrorType, String> errors = database.getErrors(); // Get all errors
+        ErrorType[] errorTypes = ErrorType.values(); // Get all types
+
+        Boolean b = true;
+
+        for (ErrorType er : errorTypes) {
+            String e1 = errors.get(er);
+            String e2 = database.getErrorByEnum(er); // Test this method
+            if (!e1.equals(e2)) b = false;
+        }
+
+        assertTrue(b);
+    }
 }
