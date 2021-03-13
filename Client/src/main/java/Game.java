@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
@@ -43,14 +42,23 @@ public class Game {
 
     }
 
+
     private void run() throws IOException {
         while (gameBool) {
             if (state == 0) {             //Recopilación de datos del jugador y mensaje HELLO
 
+                //HashMap<String, String> learned = data.getRandomInsultComeback2();
+                ArrayList<Integer> indexes = this.getRandomIndexes();
+                ArrayList<String> insultsLearned = this.data.getInsultsByIndexes(indexes);
+                ArrayList<String> comebacksLearned = this.data.getComebacksByIndexes(indexes);
+                this.insultsLearned.addAll(insultsLearned);
+                this.comebacksLearned.addAll(comebacksLearned);
 
+                /*
                 data.getRandomInsultComeback();
                 this.insultsLearned.addAll(data.getRandomInsults());
                 this.comebacksLearned.addAll(data.getRandomComebacks());
+                 */
 
                 Random rand = new Random();
                 this.name = this.menu.getName();
@@ -332,6 +340,23 @@ public class Game {
 
             }
         }
+    }
+
+    private ArrayList<Integer> getRandomIndexes() {
+        Random rand = new Random(); // Insultos y Comebacks aprendidos aleatoriamente
+
+        ArrayList<Integer> indexes = new ArrayList<>();
+        ArrayList<Integer> searchedIndexes = new ArrayList<>();
+
+        for (int i = 0; i < 16; i++) indexes.add(i);
+
+        for (int j = 0; j < 2; j++) {
+            int pos = rand.nextInt(15 - j); // 0 - 15
+            searchedIndexes.add(indexes.get(pos));
+            indexes.remove(pos);
+        }
+
+        return searchedIndexes;
     }
 
 
