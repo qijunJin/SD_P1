@@ -30,7 +30,7 @@ public class DatabaseTest {
         ArrayList<String> comebacksLearned = database.getComebacksByIndexes(indexes);
         Boolean b = true;
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < indexes.size(); i++) {
             String insult = insultsLearned.get(i);
             String comeback = comebacksLearned.get(i);
             if (!database.isRightComeback(insult, comeback)) b = false;

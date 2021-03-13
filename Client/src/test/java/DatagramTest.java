@@ -44,8 +44,8 @@ public class DatagramTest {
 
             String s = "21394735986548847365534907392897867"; // Secret
 
-            datagram.writeHash(s); // WRITE
-            byte[] readedBytes = datagram.readHash(); // READ
+            datagram.write_hash(s); // WRITE
+            byte[] readedBytes = datagram.read_hash(); // READ
 
             // FOR TEST
             MessageDigest digest = null;

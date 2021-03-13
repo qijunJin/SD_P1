@@ -8,7 +8,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class ComUtils {
-    private final int STRSIZE = 40;
 
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
@@ -23,63 +22,19 @@ public class ComUtils {
         dataOutputStream = new DataOutputStream(socket.getOutputStream());
     }
 
-    public void writeByte(int i) throws IOException { // ERROR FOR OPCODE
-        byte bStr[] = new byte[1];
-        bStr[0] = (byte) i;
-        dataOutputStream.write(bStr, 0, 1);
+    /* BYTE */
+    public byte readByte() throws IOException {
+        return this.readBytes(1)[0];
+        // return dataInputStream.readByte();
     }
 
-    public void writeString(String str) throws IOException {
-        int lenStr = str.length();
-        int numBytes = lenStr;
-
-        byte bStr[] = new byte[numBytes];
-
-        for (int i = 0; i < lenStr; i++)
-            bStr[i] = (byte) str.charAt(i);
-
-        dataOutputStream.write(bStr, 0, numBytes);
+    public void writeByte(int i) throws IOException {
+        byte bytes[] = new byte[1];
+        bytes[0] = (byte) i;
+        dataOutputStream.write(bytes, 0, 1);
     }
 
-    public byte[] read_hash() throws IOException {
-        byte hashBytes[] = new byte[32];
-
-        hashBytes = read_bytes(32);
-
-        return hashBytes;
-    }
-
-    public void write_hash(String originalString) throws IOException {
-        byte hashBytes[] = new byte[32];
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        byte[] encodedhash = digest.digest(
-                originalString.getBytes(StandardCharsets.UTF_8));
-        for (int i = 0; i < 32; i++)
-            hashBytes[i] = encodedhash[i];
-
-        dataOutputStream.write(hashBytes, 0, 32);
-    }
-
-    public void write_hash(byte[] bytes) throws IOException {
-        byte hashBytes[] = new byte[32];
-
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] encodedhash = digest.digest(bytes);
-            for (int i = 0; i < 32; i++)
-                hashBytes[i] = encodedhash[i];
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        dataOutputStream.write(hashBytes, 0, 32);
-    }
-
+    /* STRING */
     public String readString() throws IOException {
         char cStr[] = new char[1];
         int pos = 0;
@@ -95,8 +50,57 @@ public class ComUtils {
         return String.valueOf(cStr).trim();
     }
 
-    /* Functions */
-    protected byte[] read_bytes(int numBytes) throws IOException {
+    public void writeString(String str) throws IOException {
+        int lenStr = str.length();
+        int numBytes = lenStr;
+
+        byte bStr[] = new byte[numBytes];
+
+        for (int i = 0; i < lenStr; i++)
+            bStr[i] = (byte) str.charAt(i);
+
+        dataOutputStream.write(bStr, 0, numBytes);
+    }
+
+    /* HASH */
+    public byte[] readHash() throws IOException {
+        return readBytes(32);
+    }
+
+    public void writeHash(String str) throws IOException {
+        byte hashBytes[] = new byte[32];
+        MessageDigest digest = null;
+
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        byte[] encodedhash = digest.digest(
+                str.getBytes(StandardCharsets.UTF_8));
+
+        for (int i = 0; i < 32; i++)
+            hashBytes[i] = encodedhash[i];
+
+        dataOutputStream.write(hashBytes, 0, 32);
+    }
+
+    /* INT32 */
+    public int readInt32() throws IOException {
+        byte bytes[] = readBytes(4);
+
+        return bytesToInt32(bytes, Endianness.BIG_ENNDIAN);
+    }
+
+    public void writeInt32(int number) throws IOException {
+        byte bytes[] = int32ToBytes(number, Endianness.BIG_ENNDIAN);
+
+        dataOutputStream.write(bytes, 0, 4);
+    }
+
+    /* Private Functions */
+    private byte[] readBytes(int numBytes) throws IOException {
         int len = 0;
         byte bStr[] = new byte[numBytes];
         int bytesread = 0;
@@ -109,23 +113,7 @@ public class ComUtils {
         return bStr;
     }
 
-    protected byte readByte() throws IOException {
-        return dataInputStream.readByte();
-    }
-
-    public int read_int32() throws IOException {
-        byte bytes[] = read_bytes(4);
-
-        return bytesToInt32(bytes, Endianness.BIG_ENNDIAN);
-    }
-
-    public void write_int32(int number) throws IOException {
-        byte bytes[] = int32ToBytes(number, Endianness.BIG_ENNDIAN);
-
-        dataOutputStream.write(bytes, 0, 4);
-    }
-
-    protected byte[] int32ToBytes(int number, Endianness endianness) {
+    private byte[] int32ToBytes(int number, Endianness endianness) {
         byte[] bytes = new byte[4];
 
         if (Endianness.BIG_ENNDIAN == endianness) {

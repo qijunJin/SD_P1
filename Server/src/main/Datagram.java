@@ -20,7 +20,7 @@ public class Datagram extends ComUtils {
 
     public void write_hello(int id, String str) throws IOException {
         writeByte(1); // OPCODE
-        write_int32(id); // ID
+        writeInt32(id); // ID
         writeString(str); //STRING
         writeByte(0); // END
     }
@@ -30,7 +30,7 @@ public class Datagram extends ComUtils {
         String str = "";
 
         if (opcode == 1) {
-            id = read_int32();
+            id = readInt32();
             str = readString();
         }
         return str;
