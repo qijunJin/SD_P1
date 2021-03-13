@@ -79,15 +79,15 @@ Notes sobre el Disseny
 ======================
 
 -   Recordeu que s'han de dissenyar dues aplicacions, Client i Servidor.
-    Poden tenir classes en comú, per exemple ComUtils.
+    Poden tenir classes en comú, per exemple utils.
 
--   La classe ComUtils l'heu d'extendre amb els vostres mètodes per a
+-   La classe utils l'heu d'extendre amb els vostres mètodes per a
     seguir fil per randa el protocol. Si hi ha mètodes que no els
     necessiteu, els podeu esborrar.
 
 -   No podeu usar classes de Java per a serialitzar els vostres
     objectes, ja que no seguiran el protocol demanat. Useu les
-    primitives del ComUtils sempre.
+    primitives del utils sempre.
 
 -   Feu servir JUnit per comprovar el protocol, per exemple, si s'ha
     enviat una comanda, espero rebre'n unes de determinades. Penseu que
