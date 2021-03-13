@@ -35,7 +35,8 @@ public class Client {
             socket.setSoTimeout(500);
 
             Datagram datagram = new Datagram(socket);
-            Game game = new Game(datagram, new Menu(), mode);
+            Menu menu = new Menu();
+            Game game = new Game(datagram, menu, mode);
 
         } catch (IOException e) {
             System.out.println("IOException: " + e.getMessage());

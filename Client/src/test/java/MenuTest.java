@@ -34,7 +34,7 @@ public class MenuTest {
 
             assertEquals("Pendejo", readedStr);
 
-        } catch (IOException e) {
+        } catch (IOException | DatagramException e) {
             e.printStackTrace();
         }
 

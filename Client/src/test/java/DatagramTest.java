@@ -1,8 +1,6 @@
+import enumType.ErrorType;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -15,10 +13,7 @@ public class DatagramTest {
 
     @Test
     public void hello_test() {
-        File file = new File("test");
         try {
-            file.createNewFile();
-
             Socket socket = new SocketMock();
             Datagram datagram = new Datagram(socket);
 
@@ -31,18 +26,37 @@ public class DatagramTest {
             assertEquals(str, readedStr);
             assertEquals(id, datagram.getIdOpponent());
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | DatagramException e) {
+            System.out.println(e.getMessage());
         }
     }
 
 
     @Test
-    public void hash_test() {
-        File file = new File("test");
+    public void hello_exception_test() {
+        String e1 = "Written opcode: 1. Expected opcode: 4";
+        String e2 = "";
         try {
-            file.createNewFile();
+            Socket socket = new SocketMock();
+            Datagram datagram = new Datagram(socket);
 
+            int id = 40;
+            String str = "joe";
+
+            datagram.write_hello(id, str);
+            String readedStr = datagram.read_insult();
+
+        } catch (IOException | DatagramException e) {
+            e2 = e.getMessage();
+        }
+
+        assertEquals(e1, e2);
+    }
+
+
+    @Test
+    public void hash_test() {
+        try {
             Socket socket = new SocketMock();
             Datagram datagram = new Datagram(socket);
 
@@ -62,16 +76,14 @@ public class DatagramTest {
 
             assertArrayEquals(encodedhash, readedBytes);
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | DatagramException e) {
+            System.out.println(e.getMessage());
         }
     }
 
     @Test
     public void secret_test() {
-        File file = new File("test");
         try {
-            file.createNewFile();
 
             Socket socket = new SocketMock();
             Datagram datagram = new Datagram(socket);
@@ -83,16 +95,14 @@ public class DatagramTest {
 
             assertEquals(str, readedStr);
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | DatagramException e) {
+            System.out.println(e.getMessage());
         }
     }
 
     @Test
     public void insult_test() {
-        File file = new File("test");
         try {
-            file.createNewFile();
 
             Socket socket = new SocketMock();
             Datagram datagram = new Datagram(socket);
@@ -105,17 +115,14 @@ public class DatagramTest {
 
             assertEquals(str, readedStr);
 
-        } catch (IOException e) {
+        } catch (IOException | DatagramException e) {
             e.printStackTrace();
         }
     }
 
     @Test
     public void comeback_test() {
-        File file = new File("test");
         try {
-            file.createNewFile();
-
             Socket socket = new SocketMock();
             Datagram datagram = new Datagram(socket);
             Database database = new Database();
@@ -134,10 +141,7 @@ public class DatagramTest {
 
     @Test
     public void shout_test() {
-        File file = new File("test");
         try {
-            file.createNewFile();
-
             Socket socket = new SocketMock();
             Datagram datagram = new Datagram(socket);
             Database database = new Database();
@@ -147,7 +151,7 @@ public class DatagramTest {
 
             String readedStr = datagram.read_comeback();
 
-            assertEquals(str, readedStr);
+            //assertEquals(str, readedStr);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -156,15 +160,13 @@ public class DatagramTest {
 
     @Test
     public void error_test() {
-        File file = new File("test");
         try {
-            file.createNewFile();
 
             Socket socket = new SocketMock();
             Datagram datagram = new Datagram(socket);
             Database database = new Database();
 
-            String str = database.getComebackByIndex(2);
+            String str = database.getErrorByEnum(ErrorType.WRONG_OPCODE);
             datagram.write_error(str);
 
             String readedStr = datagram.read_error();
@@ -178,10 +180,9 @@ public class DatagramTest {
 
     @Test
     public void proof_test() {
-        File file = new File("test");
         try {
-            file.createNewFile();
-            Datagram datagram = new Datagram(new FileInputStream(file), new FileOutputStream(file));
+            Socket socket = new SocketMock();
+            Datagram datagram = new Datagram(socket);
 
             String s = "21394735986548847365534907392897867"; // Secret
 

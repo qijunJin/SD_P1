@@ -75,8 +75,12 @@ public class Game {
 
                 try {
                     this.opponentName = this.datagram.read_hello();
-                } catch (IOException e) {
-                    System.out.println("ERROR HELLO");
+                } catch (Exception e) {
+                    if (e instanceof IOException) {
+                        System.out.println(e.getMessage());
+                    } else if (e instanceof DatagramException) {
+                        System.out.println(e.getMessage());
+                    }
                     System.exit(1);
                 }
 
@@ -97,8 +101,8 @@ public class Game {
 
                 try {
                     this.opponentHash = this.datagram.read_hash();
-                } catch (IOException e) {
-                    System.out.println("ERROR HASH");
+                } catch (IOException | DatagramException e) {
+                    System.out.println(e.getMessage());
                     System.exit(1);
                 }
 
@@ -115,8 +119,8 @@ public class Game {
 
                 try {
                     this.opponentSecret = this.datagram.read_secret();
-                } catch (IOException e) {
-                    System.out.println("ERROR SECRET");
+                } catch (IOException | DatagramException e) {
+                    System.out.println(e.getMessage());
                     System.exit(1);
                 }
 
@@ -302,7 +306,7 @@ public class Game {
 
                     try {
                         this.opponentInsult = this.datagram.read_insult();
-                    } catch (IOException e) {
+                    } catch (IOException | DatagramException e) {
                         System.out.println("ERROR");
                         System.exit(1);
                     }

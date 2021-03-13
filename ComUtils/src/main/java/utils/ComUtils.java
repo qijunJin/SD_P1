@@ -107,12 +107,12 @@ public class ComUtils {
     private byte[] readBytes(int numBytes) throws IOException {
         int len = 0;
         byte bStr[] = new byte[numBytes];
-        int bytesread = 0;
+        int bytesRead;
         do {
-            bytesread = dataInputStream.read(bStr, len, numBytes - len);
-            if (bytesread == -1)
+            bytesRead = dataInputStream.read(bStr, len, numBytes - len);
+            if (bytesRead == -1)
                 throw new IOException("Broken Pipe");
-            len += bytesread;
+            len += bytesRead;
         } while (len < numBytes);
         return bStr;
     }
