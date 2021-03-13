@@ -34,9 +34,12 @@ public class DatagramTest {
 
 
     @Test
-    public void hello_exception_test() {
-        String e1 = "Written opcode: 1. Expected opcode: 4";
+    public void exception_test() {
+        DatagramException ex = new DatagramException(1, 4);
+
+        String e1 = ex.getMessage();
         String e2 = "";
+
         try {
             Socket socket = new SocketMock();
             Datagram datagram = new Datagram(socket);
@@ -52,6 +55,9 @@ public class DatagramTest {
         }
 
         assertEquals(e1, e2);
+
+        // System.out.println(e1);
+        // System.out.println(e2);
     }
 
 
@@ -117,7 +123,7 @@ public class DatagramTest {
             assertEquals(str, readedStr);
 
         } catch (IOException | DatagramException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
@@ -135,8 +141,8 @@ public class DatagramTest {
 
             assertEquals(str, readedStr);
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | DatagramException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -147,17 +153,17 @@ public class DatagramTest {
             Datagram datagram = new Datagram(socket);
             Database database = new Database();
 
-            String str = database.getShoutByEnum(ShoutType.I_WIN);
+            ShoutType s = ShoutType.I_WIN;
             String name = "Qijun";
-            str = str.replace("*", name);
+            String str = database.getShoutByEnumAddName(s, name);
 
             datagram.write_shout(str);
             String readedStr = datagram.read_shout();
 
             assertEquals(str, readedStr);
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | DatagramException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -176,8 +182,8 @@ public class DatagramTest {
 
             assertEquals(str, readedStr);
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | DatagramException e) {
+            System.out.println(e.getMessage());
         }
     }
 

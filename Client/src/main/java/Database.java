@@ -134,8 +134,10 @@ public class Database {
         return this.comebacks.get(index);
     }
 
-    public String getShoutByEnum(ShoutType s) {
-        return this.shouts.get(s);
+    public String getShoutByEnumAddName(ShoutType s, String name) {
+        String str = this.shouts.get(s);
+        str = str.replace("*", name);
+        return str;
     }
 
     public String getErrorByEnum(ErrorType e) {

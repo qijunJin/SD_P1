@@ -1,17 +1,6 @@
-import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
-import static org.junit.Assert.assertTrue;
-
 public class GameTest {
 
-    @Test
+    /*@Test
     public void proof_test() {
         File file = new File("test");
         try {
@@ -42,5 +31,5 @@ public class GameTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }
