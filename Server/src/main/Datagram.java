@@ -1,9 +1,15 @@
+
+
 import utils.ComUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 public class Datagram extends ComUtils {
 
@@ -18,6 +24,46 @@ public class Datagram extends ComUtils {
         super(socket);
     }
 
+    public boolean isEven(String s1, String s2) {
+        int n1 = Integer.parseInt(s1);
+        int n2 = Integer.parseInt(s2);
+        return ((n1 + n2) % 2 == 0);
+    }
+
+    public int getIdOpponent() {
+        return this.id;
+    }
+
+    public boolean proofHash(String secret, byte[] hash) {
+
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        byte[] encodedhash = digest.digest(
+                secret.getBytes(StandardCharsets.UTF_8));
+
+        return Arrays.equals(encodedhash, hash);
+
+    }
+
+
+    /* OPCODE 1: HELLO */
+    public String read_hello() throws IOException, DatagramException {
+        int opcode = readByte();
+        String str = "";
+
+        if (opcode == 1) {
+            id = readInt32();
+            str = readString();
+        } else {
+            throw new DatagramException(opcode, 1);
+        }
+        return str;
+    }
+
     public void write_hello(int id, String str) throws IOException {
         writeByte(1); // OPCODE
         writeInt32(id); // ID
@@ -25,14 +71,124 @@ public class Datagram extends ComUtils {
         writeByte(0); // END
     }
 
-    public String read_hello() throws IOException {
+    /* OPCODE 2: HASH */
+    public byte[] read_hash() throws IOException, DatagramException {
+        int opcode = readByte();
+        byte hashBytes[] = new byte[32];
+
+        if (opcode == 2) {
+            hashBytes = readHash();
+        } else {
+            throw new DatagramException(opcode, 2);
+        }
+
+        return hashBytes;
+    }
+
+    public void write_hash(String str) throws IOException {
+        writeByte(2); // OPCODE
+        writeHash(str); // HASH
+    }
+
+
+    /* OPCODE 3: SECRET */
+    public String read_secret() throws IOException, DatagramException {
         int opcode = readByte();
         String str = "";
 
-        if (opcode == 1) {
-            id = readInt32();
+        if (opcode == 3) {
             str = readString();
+        } else {
+            throw new DatagramException(opcode, 3);
         }
+
         return str;
     }
+
+    public void write_secret(String str) throws IOException {
+        writeByte(3);
+        writeString(str);
+        writeByte(0);
+    }
+
+
+    /* OPCODE 4: INSULT */
+    public String read_insult() throws IOException, DatagramException {
+        int writtenOpcode = readByte();
+        String str = "";
+
+        int requiredOpcode = 4;
+
+        if (writtenOpcode == requiredOpcode) {
+            str = readString();
+        } else {
+            throw new DatagramException(writtenOpcode, requiredOpcode);
+        }
+
+        return str;
+    }
+
+    public void write_insult(String str) throws IOException {
+        writeByte(4);
+        writeString(str);
+        writeByte(0);
+    }
+
+    /* OPCODE 5: COMEBACK */
+    public String read_comeback() throws IOException {
+        int opcode = readByte();
+        String str = "";
+
+        if (opcode == 5) {
+            str = readString();
+        }
+
+        return str;
+    }
+
+    public void write_comeback(String str) throws IOException {
+        writeByte(5);
+        writeString(str);
+        writeByte(0);
+    }
+
+    /* OPCODE 6: SHOUT */
+    public String read_shout() throws IOException {
+        int opcode = readByte();
+        String str = "";
+
+        if (opcode == 6) {
+            str = readString();
+        }
+
+        return str;
+    }
+
+    public void write_shout(String str) throws IOException {
+        writeByte(6);
+        writeString(str);
+        writeByte(0);
+    }
+
+    /* OPCODE 7: ERROR */
+    public String read_error() throws IOException {
+        int opcode = readByte();
+        String str = "";
+
+        if (opcode == 7) {
+            str = readString();
+        }
+
+        return str;
+    }
+
+    public void write_error(String str) throws IOException {
+        writeByte(7);
+        writeString(str);
+        writeByte(0);
+    }
+
+
 }
+
+
