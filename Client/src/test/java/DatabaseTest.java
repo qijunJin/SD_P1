@@ -41,21 +41,6 @@ public class DatabaseTest {
         assertTrue(b);
     }
 
-
-    @Test
-    public void random_insult_test() {
-        Database data = new Database();
-        data.getRandomInsultComeback();
-        ArrayList<String> insults = data.getRandomInsults();
-        ArrayList<String> comebacks = data.getRandomComebacks();
-
-        for (int i = 0; i < 2; i++) {
-            System.out.println(insults.get(i));
-            System.out.println(comebacks.get(i));
-        }
-
-    }
-
     @Test
     public void error_test() {
         Database database = new Database();

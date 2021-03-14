@@ -24,10 +24,20 @@ public class Datagram extends ComUtils {
         super(socket);
     }
 
-    public boolean isEven(String s1, String s2) {
-        int n1 = Integer.parseInt(s1);
-        int n2 = Integer.parseInt(s2);
-        return ((n1 + n2) % 2 == 0);
+    /* OPCODE 1: HELLO */
+    public String read_hello() throws IOException, DatagramException {
+        int writtenOpcode = readByte();
+        String str = "";
+
+        int requiredOpcode = 1;
+
+        if (writtenOpcode == requiredOpcode) {
+            id = readInt32();
+            str = readString();
+        } else {
+            throw new DatagramException(writtenOpcode, requiredOpcode);
+        }
+        return str;
     }
 
     public int getIdOpponent() {
@@ -49,20 +59,12 @@ public class Datagram extends ComUtils {
 
     }
 
-
-    /* OPCODE 1: HELLO */
-    public String read_hello() throws IOException, DatagramException {
-        int opcode = readByte();
-        String str = "";
-
-        if (opcode == 1) {
-            id = readInt32();
-            str = readString();
-        } else {
-            throw new DatagramException(opcode, 1);
-        }
-        return str;
+    public boolean isEven(String s1, String s2) {
+        int n1 = Integer.parseInt(s1);
+        int n2 = Integer.parseInt(s2);
+        return ((n1 + n2) % 2 == 0);
     }
+
 
     public void write_hello(int id, String str) throws IOException {
         writeByte(1); // OPCODE
@@ -73,13 +75,15 @@ public class Datagram extends ComUtils {
 
     /* OPCODE 2: HASH */
     public byte[] read_hash() throws IOException, DatagramException {
-        int opcode = readByte();
-        byte hashBytes[] = new byte[32];
+        int writtenOpcode = readByte();
+        byte hashBytes[];
 
-        if (opcode == 2) {
+        int requiredOpcode = 2;
+
+        if (writtenOpcode == requiredOpcode) {
             hashBytes = readHash();
         } else {
-            throw new DatagramException(opcode, 2);
+            throw new DatagramException(writtenOpcode, requiredOpcode);
         }
 
         return hashBytes;
@@ -93,13 +97,15 @@ public class Datagram extends ComUtils {
 
     /* OPCODE 3: SECRET */
     public String read_secret() throws IOException, DatagramException {
-        int opcode = readByte();
+        int writtenOpcode = readByte();
         String str = "";
 
-        if (opcode == 3) {
+        int requiredOpcode = 3;
+
+        if (writtenOpcode == requiredOpcode) {
             str = readString();
         } else {
-            throw new DatagramException(opcode, 3);
+            throw new DatagramException(writtenOpcode, requiredOpcode);
         }
 
         return str;
@@ -135,12 +141,16 @@ public class Datagram extends ComUtils {
     }
 
     /* OPCODE 5: COMEBACK */
-    public String read_comeback() throws IOException {
-        int opcode = readByte();
+    public String read_comeback() throws IOException, DatagramException {
+        int writtenOpcode = readByte();
         String str = "";
 
-        if (opcode == 5) {
+        int requiredOpcode = 5;
+
+        if (writtenOpcode == requiredOpcode) {
             str = readString();
+        } else {
+            throw new DatagramException(writtenOpcode, requiredOpcode);
         }
 
         return str;
@@ -153,12 +163,16 @@ public class Datagram extends ComUtils {
     }
 
     /* OPCODE 6: SHOUT */
-    public String read_shout() throws IOException {
-        int opcode = readByte();
+    public String read_shout() throws IOException, DatagramException {
+        int writtenOpcode = readByte();
         String str = "";
 
-        if (opcode == 6) {
+        int requiredOpcode = 6;
+
+        if (writtenOpcode == requiredOpcode) {
             str = readString();
+        } else {
+            throw new DatagramException(writtenOpcode, requiredOpcode);
         }
 
         return str;
@@ -171,12 +185,16 @@ public class Datagram extends ComUtils {
     }
 
     /* OPCODE 7: ERROR */
-    public String read_error() throws IOException {
-        int opcode = readByte();
+    public String read_error() throws IOException, DatagramException {
+        int writtenOpcode = readByte();
         String str = "";
 
-        if (opcode == 7) {
+        int requiredOpcode = 7;
+
+        if (writtenOpcode == requiredOpcode) {
             str = readString();
+        } else {
+            throw new DatagramException(writtenOpcode, requiredOpcode);
         }
 
         return str;

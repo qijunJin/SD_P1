@@ -1,3 +1,5 @@
+import enumType.ShoutType;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -13,7 +15,8 @@ public class Game {
     private int mode;
     private int state;
     private boolean gameBool = true; // Bucle infinito para el game
-    private boolean domain = false; // true->Client   false->Server
+    private boolean domain = false; // true->Client   false->
+    private Random rand = new Random();
 
     private String name, opponentName;
     private int id, opponentId;
@@ -49,22 +52,14 @@ public class Game {
         while (gameBool) {
             if (state == 0) {             //Recopilación de datos del jugador y mensaje HELLO
 
-                //HashMap<String, String> learned = data.getRandomInsultComeback2();
                 ArrayList<Integer> indexes = this.getRandomIndexes();
                 ArrayList<String> insultsLearned = this.database.getInsultsByIndexes(indexes);
                 ArrayList<String> comebacksLearned = this.database.getComebacksByIndexes(indexes);
                 this.insultsLearned.addAll(insultsLearned);
                 this.comebacksLearned.addAll(comebacksLearned);
 
-                /*
-                data.getRandomInsultComeback();
-                this.insultsLearned.addAll(data.getRandomInsults());
-                this.comebacksLearned.addAll(data.getRandomComebacks());
-                 */
-
-                Random rand = new Random();
                 this.name = this.menu.getName();
-                this.id = rand.nextInt((int) Math.pow((double) 2, 31));  //Id aleatorio
+                this.id = rand.nextInt(Integer.MAX_VALUE);  //Id aleatorio positive
 
                 try {
                     this.datagram.write_hello(this.id, this.name);
@@ -75,12 +70,8 @@ public class Game {
 
                 try {
                     this.opponentName = this.datagram.read_hello();
-                } catch (Exception e) {
-                    if (e instanceof IOException) {
-                        System.out.println(e.getMessage());
-                    } else if (e instanceof DatagramException) {
-                        System.out.println(e.getMessage());
-                    }
+                } catch (IOException | DatagramException e) {
+                    System.out.println(e.getMessage());
                     System.exit(1);
                 }
 
@@ -164,7 +155,8 @@ public class Game {
                         if (this.duelWins == 3) {        //Ganamos la partida
 
                             try {
-                                this.datagram.write_shout("¡He ganado, " + this.opponentName + " !");
+                                String str = this.database.getShoutByEnumAddName(ShoutType.I_WIN, this.opponentName);
+                                this.datagram.write_shout(str);
                             } catch (IOException e) {
                                 System.out.println("ERROR SHOUT");
                                 System.exit(1);
@@ -172,7 +164,7 @@ public class Game {
 
                             try {
                                 System.out.println(this.datagram.read_shout());
-                            } catch (IOException e) {
+                            } catch (IOException | DatagramException e) {
                                 System.out.println("ERROR SHOUT");
                                 System.exit(1);
                             }
@@ -180,7 +172,8 @@ public class Game {
                         } else {            //Perdemos la partida
 
                             try {
-                                this.datagram.write_shout("¡Has ganado, " + this.opponentName + " !");
+                                String str = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN, this.name);
+                                this.datagram.write_shout(str);
                             } catch (IOException e) {
                                 System.out.println("ERROR SHOUT");
                                 System.exit(1);
@@ -188,7 +181,7 @@ public class Game {
 
                             try {
                                 System.out.println(this.datagram.read_shout());
-                            } catch (IOException e) {
+                            } catch (IOException | DatagramException e) {
                                 System.out.println("ERROR");
                                 System.exit(1);
                             }
@@ -220,7 +213,8 @@ public class Game {
                         if (this.roundWins == 2) {         //Ganamos el duelo
 
                             try {
-                                this.datagram.write_shout("¡He ganado, " + this.opponentName + " !");
+                                String str = this.database.getShoutByEnumAddName(ShoutType.I_WIN, this.opponentName);
+                                this.datagram.write_shout(str);
                             } catch (IOException e) {
                                 System.out.println("ERROR");
                                 System.exit(1);
@@ -228,7 +222,7 @@ public class Game {
 
                             try {
                                 System.out.println(this.datagram.read_shout());
-                            } catch (IOException e) {
+                            } catch (IOException | DatagramException e) {
                                 System.out.println("ERROR");
                                 System.exit(1);
                             }
@@ -238,7 +232,8 @@ public class Game {
                         } else {          //Perdemos el duelo
 
                             try {
-                                this.datagram.write_shout("¡Has ganado, " + this.opponentName + " !");
+                                String str = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN, this.opponentName);
+                                this.datagram.write_shout(str);
                             } catch (IOException e) {
                                 System.out.println("ERROR");
                                 System.exit(1);
@@ -246,7 +241,7 @@ public class Game {
 
                             try {
                                 System.out.println(this.datagram.read_shout());
-                            } catch (IOException e) {
+                            } catch (IOException | DatagramException e) {
                                 System.out.println("ERROR");
                                 System.exit(1);
                             }
@@ -285,7 +280,7 @@ public class Game {
 
                     try {
                         this.opponentComeback = this.datagram.read_comeback();
-                    } catch (IOException e) {
+                    } catch (IOException | DatagramException e) {
                         System.out.println("ERROR");
                         System.exit(1);
                     }
