@@ -24,10 +24,20 @@ public class Datagram extends ComUtils {
         super(socket);
     }
 
-    public boolean isEven(String s1, String s2) {
-        int n1 = Integer.parseInt(s1);
-        int n2 = Integer.parseInt(s2);
-        return ((n1 + n2) % 2 == 0);
+    /* OPCODE 1: HELLO */
+    public String read_hello() throws IOException, DatagramException {
+        int writtenOpcode = readByte();
+        String str = "";
+
+        int requiredOpcode = 1;
+
+        if (writtenOpcode == requiredOpcode) {
+            id = readInt32();
+            str = readString();
+        } else {
+            throw new DatagramException(writtenOpcode, requiredOpcode);
+        }
+        return str;
     }
 
     public int getIdOpponent() {
@@ -49,22 +59,12 @@ public class Datagram extends ComUtils {
 
     }
 
-
-    /* OPCODE 1: HELLO */
-    public String read_hello() throws IOException, DatagramException {
-        int writtenOpcode = readByte();
-        String str = "";
-
-        int requiredOpcode = 1;
-
-        if (writtenOpcode == requiredOpcode) {
-            id = readInt32();
-            str = readString();
-        } else {
-            throw new DatagramException(writtenOpcode, requiredOpcode);
-        }
-        return str;
+    public boolean isEven(String s1, String s2) {
+        int n1 = Integer.parseInt(s1);
+        int n2 = Integer.parseInt(s2);
+        return ((n1 + n2) % 2 == 0);
     }
+
 
     public void write_hello(int id, String str) throws IOException {
         writeByte(1); // OPCODE
