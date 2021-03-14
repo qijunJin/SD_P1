@@ -14,7 +14,7 @@ public class DatabaseTest {
 
         int index = 4;
         String insult = database.getInsultByIndex(index);
-        String comeback = database.getComebackByIndex(4);
+        String comeback = database.getComebackByIndex(index);
 
         Boolean b = database.isRightComeback(insult, comeback);
         assertTrue(b);

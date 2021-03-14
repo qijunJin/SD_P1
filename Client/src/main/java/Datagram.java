@@ -39,30 +39,6 @@ public class Datagram extends ComUtils {
         return str;
     }
 
-    public int getIdOpponent() {
-        return this.id;
-    }
-
-    public boolean proofHash(String secret, byte[] hash) {
-
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        byte[] encodedhash = digest.digest(
-                secret.getBytes(StandardCharsets.UTF_8));
-
-        return Arrays.equals(encodedhash, hash);
-
-    }
-
-    public boolean isEven(String s1, String s2) {
-        int n1 = Integer.parseInt(s1);
-        int n2 = Integer.parseInt(s2);
-        return ((n1 + n2) % 2 == 0);
-    }
 
 
     public void write_hello(int id, String str) throws IOException {
@@ -203,6 +179,32 @@ public class Datagram extends ComUtils {
         writeByte(7);
         writeString(str);
         writeByte(0);
+    }
+
+
+    public int getIdOpponent() {
+        return this.id;
+    }
+
+    public boolean proofHash(String secret, byte[] hash) {
+
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        byte[] encodedhash = digest.digest(
+                secret.getBytes(StandardCharsets.UTF_8));
+
+        return Arrays.equals(encodedhash, hash);
+
+    }
+
+    public boolean isEven(String s1, String s2) {
+        int n1 = Integer.parseInt(s1);
+        int n2 = Integer.parseInt(s2);
+        return ((n1 + n2) % 2 == 0);
     }
 
 

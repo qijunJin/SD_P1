@@ -8,7 +8,7 @@ public class Database {
 
     private HashMap<Integer, String> insults;
     private HashMap<Integer, String> comebacks;
-    private HashMap<String, String> source;
+    public HashMap<String, String> source;
     private HashMap<ShoutType, String> shouts;
     private HashMap<ErrorType, String> errors;
 
@@ -102,7 +102,7 @@ public class Database {
 
         this.shouts.put(ShoutType.I_WIN, "¡He ganado, *!");
         this.shouts.put(ShoutType.YOU_WIN, "¡Has ganado, *!");
-        this.shouts.put(ShoutType.YOU_WIN_FINAL, "¡Has ganado, Name1. Eres tan bueno que podrias luchar contra la Sword Master de la isla Mêlée!");
+        this.shouts.put(ShoutType.YOU_WIN_FINAL, "¡Has ganado, *. Eres tan bueno que podrias luchar contra la Sword Master de la isla Mêlée!");
 
     }
 

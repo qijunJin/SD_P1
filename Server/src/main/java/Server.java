@@ -48,7 +48,7 @@ public class Server {
         }
 
     }
-    
+
     private static void singlePlayer(ServerSocket serverSocket) {
         while (true) {
             System.out.println("Waiting for player");

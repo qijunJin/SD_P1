@@ -39,9 +39,9 @@ public class Game {
     private String insult, comeback;
     private String opponentInsult, opponentComeback;
 
-    public Game(Datagram datagram, Menu menu, int mode) throws IOException {
+    public Game(Datagram datagram, int mode) throws IOException {
         this.datagram = datagram;
-        this.menu = menu;
+        this.menu = new Menu();
         this.mode = mode;
         state = 0;
         this.run();
@@ -52,7 +52,7 @@ public class Game {
         while (gameBool) {
             if (state == 0) {             //Recopilación de datos del jugador y mensaje HELLO
 
-                ArrayList<Integer> indexes = this.getRandomIndexes();
+                ArrayList<Integer> indexes = this.getRandomIndexes(); //
                 ArrayList<String> insultsLearned = this.database.getInsultsByIndexes(indexes);
                 ArrayList<String> comebacksLearned = this.database.getComebacksByIndexes(indexes);
                 this.insultsLearned.addAll(insultsLearned);
