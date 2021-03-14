@@ -1,5 +1,11 @@
 Datagram.class
+enumType/ShoutType.class
+enumType/ErrorType.class
+SocketMock.class
+SocketMock$2.class
 Client.class
+DatagramException.class
 Database.class
 Game.class
 Menu.class
+SocketMock$1.class

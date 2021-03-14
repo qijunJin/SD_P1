@@ -14,18 +14,20 @@ import java.util.Random;
 
 public class Game {
 
-    Datagram datagram;
+    Datagram datagram1;
+    Datagram datagram2;
+    Random rand = new Random();
     private BufferedWriter log;
     private Database database = new Database();
     private boolean gameBool = true;
-    Random rand = new Random();
     private int state = 0;
 
 
-    public Game(Socket socket) throws IOException {
-        this.datagram = new Datagram(socket);
+    public Game(Socket s1, Socket s2) throws IOException {
+        this.datagram1 = new Datagram(s1);
+        this.datagram2 = new Datagram(s2);
 
-        String lg = "Server"+Thread.currentThread().getName()+".log";
+        String lg = "Server" + Thread.currentThread().getName() + ".log";
         (new File("logs")).mkdir();
         File f = new File("logs/" + lg);
         this.log = new BufferedWriter(new FileWriter(f));
@@ -76,17 +78,22 @@ public class Game {
                     id = rand.nextInt((int) Math.pow((double) 2, 31));  //Id aleatorio
 
                     try {
-                        opponentName = this.datagram.read_hello();
+                        opponentName = this.datagram1.read_hello();
                     } catch (DatagramException | IOException e) {
                         this.log.write(e.getMessage());
                         this.log.flush();
                         System.exit(1);
                     }
 
-                    opponentId = this.datagram.getIdOpponent();
+                    opponentId = this.datagram1.getIdOpponent();
+
 
                     try {
-                        this.datagram.write_hello(id, name);
+
+                        // id = this.datagram2.getIdOpponent();
+                        // name = this.datagram2.read_hello();
+                        this.datagram1.write_hello(id, name);
+
                     } catch (IOException e) {
                         this.log.write(e.getMessage());
                         this.log.flush();
@@ -103,7 +110,7 @@ public class Game {
                     /*Añadir insultos y combeacks aleatorios despues de cada partida*/
 
                     try {
-                        opponentHash = this.datagram.read_hash();
+                        opponentHash = this.datagram1.read_hash();
                     } catch (IOException | DatagramException e) {
                         this.log.write(e.getMessage());
                         this.log.flush();
@@ -113,7 +120,7 @@ public class Game {
                     secret = Integer.toString(rand.nextInt());
 
                     try {
-                        this.datagram.write_hash(secret);
+                        this.datagram1.write_hash(secret);
                     } catch (IOException e) {
                         this.log.write(e.getMessage());
                         this.log.flush();
@@ -129,7 +136,7 @@ public class Game {
                 case 2:             //Envio de SECRET entre jugadores
 
                     try {
-                        opponentSecret = this.datagram.read_secret();
+                        opponentSecret = this.datagram1.read_secret();
                     } catch (IOException | DatagramException e) {
                         System.out.println(e.getMessage());
                         this.log.write(e.getMessage());
@@ -138,7 +145,7 @@ public class Game {
                     }
 
                     try {
-                        this.datagram.write_secret(secret);
+                        this.datagram1.write_secret(secret);
                     } catch (IOException e) {
                         this.log.write(e.getMessage());
                         this.log.flush();
@@ -154,7 +161,7 @@ public class Game {
 
                     if (this.proofHash(opponentSecret, opponentHash)) {
                         if (id != opponentId) {
-                            if (datagram.isEven(secret, opponentSecret)) {
+                            if (datagram1.isEven(secret, opponentSecret)) {
                                 domain = id > opponentId; // True -> Servidor, False -> Client
                             } else {
                                 domain = id < opponentId;
@@ -162,7 +169,7 @@ public class Game {
                             this.state = 4;
                         } else {
                             try {
-                                this.datagram.write_error("ERROR ID");
+                                this.datagram1.write_error("ERROR ID");
                             } catch (IOException e) {
                                 this.log.write(e.getMessage());
                                 this.log.flush();
@@ -172,7 +179,7 @@ public class Game {
                         }
                     } else {
                         try {
-                            this.datagram.write_error("ERROR HASH");
+                            this.datagram1.write_error("ERROR HASH");
                         } catch (IOException e) {
                             this.log.write(e.getMessage());
                             this.log.flush();
@@ -193,7 +200,7 @@ public class Game {
                             if (duelWins == 3) {        //Ganamos la partida
 
                                 try {
-                                    System.out.println(this.datagram.read_shout());
+                                    System.out.println(this.datagram1.read_shout());
                                 } catch (IOException e) {
                                     this.log.write(e.getMessage());
                                     this.log.flush();
@@ -201,7 +208,7 @@ public class Game {
                                 }
 
                                 try {
-                                    this.datagram.write_shout("¡He ganado, " + opponentName + " !");
+                                    this.datagram1.write_shout("¡He ganado, " + opponentName + " !");
                                 } catch (IOException e) {
                                     this.log.write(e.getMessage());
                                     this.log.flush();
@@ -214,7 +221,7 @@ public class Game {
                             } else {            //Perdemos la partida
 
                                 try {
-                                    System.out.println(this.datagram.read_shout());
+                                    System.out.println(this.datagram1.read_shout());
                                 } catch (IOException e) {
                                     this.log.write(e.getMessage());
                                     this.log.flush();
@@ -222,7 +229,7 @@ public class Game {
                                 }
 
                                 try {
-                                    this.datagram.write_shout("¡Has ganado, " + opponentName + " !");
+                                    this.datagram1.write_shout("¡Has ganado, " + opponentName + " !");
                                 } catch (IOException e) {
                                     this.log.write(e.getMessage());
                                     this.log.flush();
@@ -260,7 +267,7 @@ public class Game {
                             if (roundWins == 2) {         //Ganamos el duelo
 
                                 try {
-                                    System.out.println(this.datagram.read_shout());
+                                    System.out.println(this.datagram1.read_shout());
                                 } catch (IOException e) {
                                     this.log.write(e.getMessage());
                                     this.log.flush();
@@ -268,7 +275,7 @@ public class Game {
                                 }
 
                                 try {
-                                    this.datagram.write_shout("¡He ganado, " + opponentName + " !");
+                                    this.datagram1.write_shout("¡He ganado, " + opponentName + " !");
                                 } catch (IOException e) {
                                     this.log.write(e.getMessage());
                                     this.log.flush();
@@ -282,7 +289,7 @@ public class Game {
                             } else {          //Perdemos el duelo
 
                                 try {
-                                    System.out.println(this.datagram.read_shout());
+                                    System.out.println(this.datagram1.read_shout());
                                 } catch (IOException e) {
                                     this.log.write(e.getMessage());
                                     this.log.flush();
@@ -290,7 +297,7 @@ public class Game {
                                 }
 
                                 try {
-                                    this.datagram.write_shout("¡Has ganado, " + opponentName + " !");
+                                    this.datagram1.write_shout("¡Has ganado, " + opponentName + " !");
                                 } catch (IOException e) {
                                     this.log.write(e.getMessage());
                                     this.log.flush();
@@ -322,10 +329,10 @@ public class Game {
                     if (domain) {  //Empieza el servidor insultando
 
                         int n = rand.nextInt(insultsLearned.size());
-                        insult =insultsLearned.get(n);
+                        insult = insultsLearned.get(n);
 
                         try {
-                            this.datagram.write_insult(insult);
+                            this.datagram1.write_insult(insult);
                         } catch (IOException e) {
                             this.log.write(e.getMessage());
                             this.log.flush();
@@ -333,7 +340,7 @@ public class Game {
                         }
 
                         try {
-                            opponentComeback = this.datagram.read_comeback();
+                            opponentComeback = this.datagram1.read_comeback();
                         } catch (IOException e) {
                             this.log.write(e.getMessage());
                             this.log.flush();
@@ -356,7 +363,7 @@ public class Game {
                     } else {                   //Empieza el cliente insultando
 
                         try {
-                            opponentInsult = this.datagram.read_insult();
+                            opponentInsult = this.datagram1.read_insult();
                         } catch (IOException | DatagramException e) {
                             this.log.write(e.getMessage());
                             this.log.flush();
@@ -368,7 +375,7 @@ public class Game {
                         comeback = comebacksLearned.get(n);
 
                         try {
-                            this.datagram.write_comeback(comeback);
+                            this.datagram1.write_comeback(comeback);
                         } catch (IOException e) {
                             this.log.write(e.getMessage());
                             this.log.flush();
@@ -427,7 +434,7 @@ public class Game {
 
     }
 
-    public byte[] getHash(String str){
+    public byte[] getHash(String str) {
         byte hashBytes[] = new byte[32];
         MessageDigest digest = null;
 
