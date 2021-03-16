@@ -1,6 +1,6 @@
 
-
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.HashMap;
 
@@ -31,13 +31,16 @@ public class Client {
             throw new Exception("Parameters introduced are wrong!");
         }
 
-        System.out.println(hostname);
-        System.out.println(port);
         /* Socket & Create game */
         try {
-            Socket socket = new Socket(hostname, port);
-            socket.setSoTimeout(500);
+            InetAddress host = InetAddress.getByName(hostname);
 
+            System.out.println(hostname);
+            System.out.println(host);
+            System.out.println(port);
+            Socket socket = new Socket(host, port);
+            socket.setSoTimeout(5000);
+            //Socket socket = new SocketMock();
             Datagram datagram = new Datagram(socket);
             Game game = new Game(datagram, mode);
 

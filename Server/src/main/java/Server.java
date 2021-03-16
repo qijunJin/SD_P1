@@ -2,7 +2,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
-
 public class Server {
 
     public static void main(String[] args) throws Exception {
@@ -25,12 +24,11 @@ public class Server {
                 throw new Exception("Parameters introduced are wrong!");
             }
 
-            /* Server */
-            ServerSocket serverSocket = null;
+
 
             try {
-                serverSocket = new ServerSocket(numPort);
-                System.out.println("Connexion has been accepted" + numPort);
+                ServerSocket serverSocket = new ServerSocket(numPort);
+                System.out.println("Connexion has been accepted with port: " + numPort);
 
                 if (mode == 1) {
                     singlePlayer(serverSocket);
@@ -56,14 +54,14 @@ public class Server {
 
             try {
                 socket = serverSocket.accept();
-                socket.setSoTimeout(500);
+                socket.setSoTimeout(5000);
                 System.out.println("Player connected");
             } catch (IOException e) {
                 System.out.println("IOException: " + e.getMessage());
             }
 
             try {
-                Thread t = (new Thread(new ServerThread(socket, null)));
+                Thread t = new Thread(new ServerThread(socket, null));
                 t.start();
             } catch (IOException e) {
                 e.printStackTrace();

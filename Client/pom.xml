@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
+    <groupId>groupId</groupId>
     <artifactId>client</artifactId>
     <version>1.0</version>
 
@@ -19,7 +19,6 @@
             <groupId>groupId</groupId>
             <artifactId>comutils</artifactId>
             <version>1.0</version>
-            <!--            <scope>compile</scope>-->
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
@@ -41,6 +40,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>Client</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

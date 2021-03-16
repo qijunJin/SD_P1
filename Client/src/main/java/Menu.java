@@ -7,12 +7,16 @@ public class Menu {
 
     public String getName() {
         System.out.println("Insert your name:");
-        return scan.nextLine();
+        return scan.next();
     }
 
-    public String getSecret() {
-        System.out.println("Insert your secret number:");
-        return Integer.toString(scan.nextInt());
+    public int getId() {
+        System.out.println("Insert your id:");
+        while (!scan.hasNextInt()) {
+            System.out.println("Invalid id, insert your id in number format: ");
+            scan.next();
+        }
+        return scan.nextInt();
     }
 
     public void showInsults(ArrayList<String> insults) {
@@ -20,7 +24,6 @@ public class Menu {
         for (int i = 0; i <= insults.size() - 1; i++) {
             System.out.println(i + 1 + ". " + insults.get(i));
         }
-
     }
 
     public void showComebacks(ArrayList<String> comebacks) {
@@ -28,10 +31,15 @@ public class Menu {
         for (int i = 0; i <= comebacks.size() - 1; i++) {
             System.out.println(i + 1 + ". " + comebacks.get(i));
         }
-
     }
 
     public int getOption() {
         return scan.nextInt() - 1;
     }
+
+    public void showSecret(String str) {
+        System.out.println("Your secret number is:");
+        System.out.println(str);
+    }
+
 }

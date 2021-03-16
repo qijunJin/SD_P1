@@ -1,3 +1,4 @@
+import exception.OpcodeException;
 import org.junit.Test;
 
 import java.io.File;
@@ -34,7 +35,7 @@ public class MenuTest {
 
             assertEquals("Pendejo", readedStr);
 
-        } catch (IOException | DatagramException e) {
+        } catch (IOException | OpcodeException e) {
             e.printStackTrace();
         }
 
