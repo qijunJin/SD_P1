@@ -1,3 +1,4 @@
+import exception.OpcodeException;
 import org.junit.Test;
 
 import java.io.File;
@@ -26,7 +27,7 @@ public class DatagramTest {
 
             assertEquals("joe", readedStr);
 
-        } catch (IOException | DatagramException e) {
+        } catch (IOException | OpcodeException e) {
             e.printStackTrace();
         }
     }
