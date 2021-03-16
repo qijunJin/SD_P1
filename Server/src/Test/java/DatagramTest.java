@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 
 import static org.junit.Assert.assertEquals;
 
@@ -27,7 +26,7 @@ public class DatagramTest {
 
             assertEquals("joe", readedStr);
 
-        } catch (IOException e) {
+        } catch (IOException | DatagramException e) {
             e.printStackTrace();
         }
     }

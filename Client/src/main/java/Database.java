@@ -6,28 +6,27 @@ import java.util.HashMap;
 
 public class Database {
 
-    private HashMap<Integer, String> insults;
-    private HashMap<Integer, String> comebacks;
+    //private HashMap<Integer, String> insults;
+    // private HashMap<Integer, String> comebacks;
     private HashMap<String, String> source;
     private HashMap<ShoutType, String> shouts;
     private HashMap<ErrorType, String> errors;
 
     public Database() {
-        this.insults = new HashMap<>();
-        this.comebacks = new HashMap<>();
+
+        //this.insults = new HashMap<>();
+        // this.comebacks = new HashMap<>();
         this.source = new HashMap<>();
         this.shouts = new HashMap<>();
         this.errors = new HashMap<>();
 
-        this.initInsultsIndexed();
-        this.initComebacksIndexed();
+        // this.initInsultsIndexed();
+        //  this.initComebacksIndexed();
         this.initInsultsComebacks();
         this.initErrorsTyped();
         this.initShoutsTyped();
     }
-
-    private void initInsultsIndexed() {
-
+   /* private void initInsultsIndexed() {
         this.insults.put(1, "¿Has dejado ya de usar pañales?");
         this.insults.put(2, "¡No hay palabras para describir lo asqueroso que eres!");
         this.insults.put(3, "¡He hablado con simios más educados que tu!");
@@ -44,11 +43,8 @@ public class Database {
         this.insults.put(14, "¡La gente cae a mis pies al verme llegar!");
         this.insults.put(15, "¡Demasiado bobo para mi nivel de inteligencia!");
         this.insults.put(16, "Obtuve esta cicatriz en una batalla a muerte!");
-
     }
-
     private void initComebacksIndexed() {
-
         this.comebacks.put(1, "¿Por qué? ¿Acaso querías pedir uno prestado?");
         this.comebacks.put(2, "Sí que las hay, sólo que nunca las has aprendido.");
         this.comebacks.put(3, "Me alegra que asistieras a tu reunión familiar diaria.");
@@ -65,8 +61,7 @@ public class Database {
         this.comebacks.put(14, "¿Incluso antes de que huelan tu aliento?");
         this.comebacks.put(15, "Estaría acabado si la usases alguna vez.");
         this.comebacks.put(16, "Espero que ya hayas aprendido a no tocarte la nariz.");
-
-    }
+    }*/
 
     private void initInsultsComebacks() {
 
@@ -102,7 +97,7 @@ public class Database {
 
         this.shouts.put(ShoutType.I_WIN, "¡He ganado, *!");
         this.shouts.put(ShoutType.YOU_WIN, "¡Has ganado, *!");
-        this.shouts.put(ShoutType.YOU_WIN_FINAL, "¡Has ganado, Name1. Eres tan bueno que podrias luchar contra la Sword Master de la isla Mêlée!");
+        this.shouts.put(ShoutType.YOU_WIN_FINAL, "¡Has ganado, *. Eres tan bueno que podrias luchar contra la Sword Master de la isla Mêlée!");
 
     }
 
@@ -110,30 +105,24 @@ public class Database {
         return this.source.get(insult).equals(comeback);
     }
 
-    public ArrayList<String> getInsultsByIndexes(ArrayList<Integer> indexes) {
-        ArrayList<String> insults = new ArrayList<>();
-        for (int i : indexes) {
-            insults.add(this.getInsultByIndex(i));
-        }
-        return insults;
+    public String getComebackByInsult(String insult) {
+        return this.source.get(insult);
     }
 
-    public ArrayList<String> getComebacksByIndexes(ArrayList<Integer> indexes) {
-        ArrayList<String> comebacks = new ArrayList<>();
-        for (int i : indexes) {
-            comebacks.add(this.getComebackByIndex(i));
-        }
-        return comebacks;
+    public ArrayList<String> getInsults() {
+        return new ArrayList(this.source.keySet());
     }
 
-    public String getInsultByIndex(int index) {
-        return this.insults.get(index);
+    public ArrayList<String> getComebacks() {
+        return new ArrayList(this.source.values());
     }
 
-    public String getComebackByIndex(int index) {
-        return this.comebacks.get(index);
-    }
-
+    /* public String getInsultByIndex(int index) {
+         return this.insults.get(index);
+     }
+     public String getComebackByIndex(int index) {
+         return this.comebacks.get(index);
+     }*/
     public String getShoutByEnumAddName(ShoutType s, String name) {
         String str = this.shouts.get(s);
         str = str.replace("*", name);

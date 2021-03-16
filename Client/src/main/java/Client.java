@@ -1,4 +1,6 @@
+
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.HashMap;
 
@@ -11,7 +13,7 @@ public class Client {
         */
 
         /* Control of parameters */
-        HashMap<String, String> options = new HashMap();
+        HashMap<String, String> options = new HashMap<>();
         for (int i = 0; i < args.length; i = i + 2)
             options.put(args[i], args[i + 1]);
 
@@ -31,12 +33,16 @@ public class Client {
 
         /* Socket & Create game */
         try {
-            Socket socket = new Socket(hostname, port);
-            socket.setSoTimeout(500);
+            InetAddress host = InetAddress.getByName(hostname);
 
+            System.out.println(hostname);
+            System.out.println(host);
+            System.out.println(port);
+            Socket socket = new Socket(host, port);
+            socket.setSoTimeout(5000);
+            //Socket socket = new SocketMock();
             Datagram datagram = new Datagram(socket);
-            Menu menu = new Menu();
-            Game game = new Game(datagram, menu, mode);
+            Game game = new Game(datagram, mode);
 
         } catch (IOException e) {
             System.out.println("IOException: " + e.getMessage());

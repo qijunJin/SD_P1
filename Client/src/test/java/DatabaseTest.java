@@ -10,17 +10,18 @@ public class DatabaseTest {
 
     @Test
     public void isRightComeback_test() {
-        Database database = new Database();
+        DatabaseProvider database = new DatabaseProvider();
 
-        int index = 4;
-        String insult = database.getInsultByIndex(index);
-        String comeback = database.getComebackByIndex(4);
+        ArrayList<String> str = database.getRandomInsultComeback();
+
+        String insult = str.get(0);
+        String comeback = str.get(1);
 
         Boolean b = database.isRightComeback(insult, comeback);
         assertTrue(b);
     }
 
-    @Test
+/*    @Test
     public void getRandomInsultComeback_test() {
         Database database = new Database();
 
@@ -39,7 +40,7 @@ public class DatabaseTest {
         }
 
         assertTrue(b);
-    }
+    }*/
 
     @Test
     public void error_test() {

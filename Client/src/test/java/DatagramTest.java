@@ -1,5 +1,7 @@
 import enumType.ErrorType;
 import enumType.ShoutType;
+import exception.EmptyHashException;
+import exception.OpcodeException;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -7,6 +9,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
@@ -27,7 +30,7 @@ public class DatagramTest {
             assertEquals(str, readedStr);
             assertEquals(id, datagram.getIdOpponent());
 
-        } catch (IOException | DatagramException e) {
+        } catch (IOException | OpcodeException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -35,7 +38,7 @@ public class DatagramTest {
 
     @Test
     public void exception_test() {
-        DatagramException ex = new DatagramException(1, 4);
+        OpcodeException ex = new OpcodeException(1, 4);
 
         String e1 = ex.getMessage();
         String e2 = "";
@@ -50,7 +53,7 @@ public class DatagramTest {
             datagram.write_hello(id, str);
             String readedStr = datagram.read_insult();
 
-        } catch (IOException | DatagramException e) {
+        } catch (IOException | OpcodeException e) {
             e2 = e.getMessage();
         }
 
@@ -83,7 +86,7 @@ public class DatagramTest {
 
             assertArrayEquals(encodedhash, readedBytes);
 
-        } catch (IOException | DatagramException e) {
+        } catch (IOException | OpcodeException | EmptyHashException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -102,7 +105,7 @@ public class DatagramTest {
 
             assertEquals(str, readedStr);
 
-        } catch (IOException | DatagramException e) {
+        } catch (IOException | OpcodeException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -113,16 +116,17 @@ public class DatagramTest {
 
             Socket socket = new SocketMock();
             Datagram datagram = new Datagram(socket);
-            Database database = new Database();
+            DatabaseProvider database = new DatabaseProvider();
 
-            String str = database.getInsultByIndex(2);
-            datagram.write_insult(str);
+
+            ArrayList<String> str = database.getRandomInsultComeback();
+            datagram.write_insult(str.get(0));
 
             String readedStr = datagram.read_insult();
 
-            assertEquals(str, readedStr);
+            assertEquals(str.get(0), readedStr);
 
-        } catch (IOException | DatagramException e) {
+        } catch (IOException | OpcodeException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -132,16 +136,16 @@ public class DatagramTest {
         try {
             Socket socket = new SocketMock();
             Datagram datagram = new Datagram(socket);
-            Database database = new Database();
+            DatabaseProvider database = new DatabaseProvider();
 
-            String str = database.getComebackByIndex(2);
-            datagram.write_comeback(str);
+            ArrayList<String> str = database.getRandomInsultComeback();
+            datagram.write_comeback(str.get(1));
 
             String readedStr = datagram.read_comeback();
 
-            assertEquals(str, readedStr);
+            assertEquals(str.get(1), readedStr);
 
-        } catch (IOException | DatagramException e) {
+        } catch (IOException | OpcodeException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -162,7 +166,7 @@ public class DatagramTest {
 
             assertEquals(str, readedStr);
 
-        } catch (IOException | DatagramException e) {
+        } catch (IOException | OpcodeException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -182,7 +186,7 @@ public class DatagramTest {
 
             assertEquals(str, readedStr);
 
-        } catch (IOException | DatagramException e) {
+        } catch (IOException | OpcodeException e) {
             System.out.println(e.getMessage());
         }
     }
