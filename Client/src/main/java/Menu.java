@@ -7,14 +7,14 @@ public class Menu {
 
     public String getName() {
         System.out.println("Insert your name:");
-        return scan.next();
+        return scan.nextLine();
     }
 
     public int getId() {
         System.out.println("Insert your id:");
         while (!scan.hasNextInt()) {
             System.out.println("Invalid id, insert your id in number format: ");
-            scan.next();
+            scan.nextLine();
         }
         return scan.nextInt();
     }
