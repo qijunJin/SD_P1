@@ -1,4 +1,3 @@
-import enumType.ErrorType;
 import enumType.ShoutType;
 import enumType.StateType;
 import exception.EmptyHashException;
@@ -12,9 +11,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 
 public class Game {
 
@@ -202,7 +199,7 @@ public class Game {
 
                         this.state = StateType.SHOUT;                                                  //Change state to SHOUT
 
-                    }else {
+                    } else {
 
                         if (this.player1.getRound() == 2 || this.player2.getRound() == 2) {            //Check if someone win duel
 
@@ -253,7 +250,7 @@ public class Game {
 
                         this.state = StateType.SHOUT;                                                  //Change state to SHOUT
 
-                    }else {
+                    } else {
 
                         if (this.player1.getRound() == 2 || this.player2.getRound() == 2) {            //Check if someone win duel
 
@@ -330,6 +327,7 @@ public class Game {
                                 System.exit(1);
                             }
 
+
                             this.player1.resetDuelRound();                                                                  //Reset duels
                             this.player2.resetDuelRound();
                             System.out.println("New Game");
@@ -343,6 +341,9 @@ public class Game {
                                 System.out.println("ERROR SHOUT");
                                 System.exit(1);
                             }
+
+                        } else {
+
 
                             try {
                                 str2 = this.dp.getShoutByEnumAddName(ShoutType.I_WIN, this.player2.getName());               //Select SHOUT type message
@@ -391,6 +392,7 @@ public class Game {
                                 System.exit(1);
                             }
 
+
                             try {
                                 str2 = this.dp.getShoutByEnumAddName(ShoutType.YOU_WIN, this.player2.getName());               //Select SHOUT type message
                                 this.datagram1.write_shout(str2);                                                            //Write SHOUT message
@@ -398,6 +400,9 @@ public class Game {
                                 System.out.println("ERROR SHOUT");
                                 System.exit(1);
                             }
+
+                        } else {
+
 
                             this.player1.resetRound();                                                                  //Reset rounds
                             this.player2.resetRound();
