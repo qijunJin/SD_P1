@@ -11,7 +11,6 @@ public class Player {
     private int duel = 0;
     private int round = 0;
 
-
     private byte[] hash;
     private String secret;
 
@@ -27,13 +26,30 @@ public class Player {
     }
 
     public void addComeback(String comeback) {
-        comebacks.add(comeback);
+        this.comebacks.add(comeback);
     }
 
 
     public void addInsultComeback(ArrayList<String> list) {
-        this.insults.add(list.get(0));
-        this.comebacks.add(list.get(1));
+        if (!list.isEmpty()) {
+            this.insults.add(list.get(0));
+            this.comebacks.add(list.get(1));
+        }
+    }
+
+    public boolean containsInsultAndComeback (ArrayList<String> list){
+        boolean b = false;
+        if (!list.isEmpty()) {
+            if (this.insults.contains(list.get(0)) && this.comebacks.contains(list.get(1))){
+                b = true;
+            }
+        }
+        return b;
+    }
+
+    public void removeInsultsComebacks(){
+        this.insults.clear();
+        this.comebacks.clear();
     }
 
     public int getId() {

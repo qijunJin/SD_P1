@@ -19,7 +19,7 @@ public class DatabaseProvider {
 
     public ArrayList<String> getRandomInsultComeback() {
         ArrayList<String> list = new ArrayList<>();
-        if (this.insults.size() != 0) {
+        if (!this.insults.isEmpty()) {
             int index = random.nextInt(this.insults.size());
             String insult = this.insults.remove(index);
             String comeback = this.comebacks.remove(index);
@@ -29,9 +29,6 @@ public class DatabaseProvider {
         return list;
     }
 
-    public boolean isEmptyInsults() {
-        return this.insults.isEmpty();
-    }
 
     public boolean isRightComeback(String insult, String comeback) {
         return this.database.isRightComeback(insult, comeback);
