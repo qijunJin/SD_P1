@@ -1,30 +1,37 @@
 import enumType.ErrorType;
+import enumType.ShoutType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Set;
 
 public class Database {
 
-    private HashMap<Integer, String> insults;
-    private HashMap<Integer, String> comebacks;
+    //private HashMap<Integer, String> insults;
+    //private HashMap<Integer, String> comebacks;
     private HashMap<String, String> source;
+    private HashMap<ShoutType, String> shouts;
     private HashMap<ErrorType, String> errors;
 
-    private ArrayList<String> insultLearned = new ArrayList<>();
-    private ArrayList<String> comebackLearned = new ArrayList<>();
+    //private ArrayList<String> insultLearned = new ArrayList<>();
+    //private ArrayList<String> comebackLearned = new ArrayList<>();
 
     public Database() {
-        this.insults = new HashMap<>();
-        this.comebacks = new HashMap<>();
+        //this.insults = new HashMap<>();
+        //this.comebacks = new HashMap<>();
         this.source = new HashMap<>();
+        this.shouts = new HashMap<>();
         this.errors = new HashMap<>();
 
-        this.initInsultsIndexed();
-        this.initComebacksIndexed();
+        //this.initInsultsIndexed();
+        //this.initComebacksIndexed();
         this.initInsultsComebacks();
-        this.initErrorsIndexed();
+        this.initErrorsTyped();
+        this.initShoutsTyped();
     }
 
-    private void initInsultsIndexed() {
+/*    private void initInsultsIndexed() {
 
         this.insults.put(1, "¿Has dejado ya de usar pañales?");
         this.insults.put(2, "¡No hay palabras para describir lo asqueroso que eres!");
@@ -64,7 +71,7 @@ public class Database {
         this.comebacks.put(15, "Estaría acabado si la usases alguna vez.");
         this.comebacks.put(16, "Espero que ya hayas aprendido a no tocarte la nariz.");
 
-    }
+    }*/
 
     private void initInsultsComebacks() {
 
@@ -87,7 +94,15 @@ public class Database {
 
     }
 
-    private void initErrorsIndexed() {
+    private void initShoutsTyped() {
+
+        this.shouts.put(ShoutType.I_WIN, "¡He ganado, *!");
+        this.shouts.put(ShoutType.YOU_WIN, "¡Has ganado, *!");
+        this.shouts.put(ShoutType.YOU_WIN_FINAL, "¡Has ganado, *. Eres tan bueno que podrias luchar contra la Sword Master de la isla Mêlée!");
+
+    }
+
+    private void initErrorsTyped() {
 
         this.errors.put(ErrorType.WRONG_OPCODE, "¡Código de operación inválido, marinero de agua dulce! ¡Hasta la vista!");
         this.errors.put(ErrorType.INCOMPLETE_MESSAGE, "¡Mensaje incompleto, grumete! ¡Hasta la vista!");
@@ -116,15 +131,20 @@ public class Database {
         return searchedIndexes;
     }*/
 
-/*    public HashMap<String, String> getRandomInsultComeback2() {
-        ArrayList<Integer> indexes = getRandomIndexes();
-        HashMap<String, String> learned = new HashMap<>();
-        for (int i : indexes) {
-            learned.put(this.insults.get(i), this.comebacks.get(i));
-        }
-        return learned;
-    }*/
-
+    /*    public HashMap<String, String> getRandomInsultComeback2() {
+            ArrayList<Integer> indexes = getRandomIndexes();
+            HashMap<String, String> learned = new HashMap<>();
+            for (int i : indexes) {
+                learned.put(this.insults.get(i), this.comebacks.get(i));
+            }
+            return learned;
+        }*/
+    public String getShoutByEnumAddName(ShoutType s, String name) {
+        String str = this.shouts.get(s);
+        str = str.replace("*", name);
+        return str;
+    }
+/*
     public ArrayList<String> getInsultsByIndexes(ArrayList<Integer> indexes) {
         ArrayList<String> insults = new ArrayList<>();
         for (int i : indexes) {
@@ -139,9 +159,9 @@ public class Database {
             comebacks.add(this.getComebackByIndex(i));
         }
         return comebacks;
-    }
+    }*/
 
-    public String getInsultByIndex(int index) {
+    /*public String getInsultByIndex(int index) {
         return this.insults.get(index);
     }
 
@@ -171,7 +191,7 @@ public class Database {
 
     public ArrayList<String> getRandomComebacks() {
         return this.comebackLearned;
-    }
+    }*/
 
     public ArrayList<String> getInsults() {
         Set<String> keySet = this.source.keySet();
