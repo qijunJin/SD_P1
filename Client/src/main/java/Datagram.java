@@ -68,10 +68,10 @@ public class Datagram extends ComUtils {
             }
 
 
-            System.out.println("Hash len: " + hashBytes.length);
+            /*System.out.println("Hash len: " + hashBytes.length);
             for (int i = 0; i < hashBytes.length; i++) {
                 System.out.println(hashBytes[i]);
-            }
+            }*/
         }
 
         return hashBytes;
@@ -213,6 +213,25 @@ public class Datagram extends ComUtils {
 
         return Arrays.equals(encodedhash, hash);
 
+    }
+
+    public byte[] getHash(String str){
+        byte hashBytes[] = new byte[32];
+        MessageDigest digest = null;
+
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        byte[] encodedhash = digest.digest(
+                str.getBytes(StandardCharsets.UTF_8));
+
+        for (int i = 0; i < 32; i++)
+            hashBytes[i] = encodedhash[i];
+
+        return hashBytes;
     }
 
 }

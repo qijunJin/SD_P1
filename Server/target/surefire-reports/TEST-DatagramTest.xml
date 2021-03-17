@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="2" failures="0" name="DatabaseTest" time="0" errors="0" skipped="0">
+<testsuite tests="1" failures="0" name="DatagramTest" time="0" errors="0" skipped="0">
   <properties>
     <property name="idea.version" value="2020.3.3"/>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="java.vm.version" value="13.0.2+8"/>
     <property name="sun.boot.library.path" value="C:\Users\oscar\.jdks\adopt-openjdk-13.0.2\bin"/>
-    <property name="maven.multiModuleProjectDirectory" value="C:\Users\oscar\IdeaProjects\practica-1-c10\Client"/>
+    <property name="maven.multiModuleProjectDirectory" value="C:\Users\oscar\IdeaProjects\practica-1-c10\Server"/>
     <property name="java.vm.vendor" value="AdoptOpenJDK"/>
     <property name="java.vendor.url" value="https://adoptopenjdk.net/"/>
     <property name="guice.disable.misplaced.annotation.check" value="true"/>
@@ -16,7 +16,7 @@
     <property name="user.country" value="ES"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
-    <property name="user.dir" value="C:\Users\oscar\IdeaProjects\practica-1-c10\Client"/>
+    <property name="user.dir" value="C:\Users\oscar\IdeaProjects\practica-1-c10\Server"/>
     <property name="java.vm.compressedOopsMode" value="Zero based"/>
     <property name="java.runtime.version" value="13.0.2+8"/>
     <property name="os.arch" value="amd64"/>
@@ -60,6 +60,5 @@
     <property name="java.vendor.version" value="AdoptOpenJDK"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="DatabaseTest" name="isRightComeback_test" time="0"/>
-  <testcase classname="DatabaseTest" name="error_test" time="0"/>
+  <testcase classname="DatagramTest" name="hello_test" time="0"/>
 </testsuite>
