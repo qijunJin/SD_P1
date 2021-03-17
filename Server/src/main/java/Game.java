@@ -1,4 +1,3 @@
-import enumType.ErrorType;
 import enumType.ShoutType;
 import enumType.StateType;
 import exception.EmptyHashException;
@@ -12,9 +11,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 
 public class Game {
 
@@ -217,7 +214,7 @@ public class Game {
 
                         this.state = StateType.SHOUT;                                                  //Change state to SHOUT
 
-                    }else {
+                    } else {
 
                         if (this.player1.getRound() == 2 || this.player2.getRound() == 2) {            //Check if someone win duel
 
@@ -270,7 +267,7 @@ public class Game {
 
                         this.state = StateType.SHOUT;                                                  //Change state to SHOUT
 
-                    }else {
+                    } else {
 
                         if (this.player1.getRound() == 2 || this.player2.getRound() == 2) {            //Check if someone win duel
 
@@ -360,7 +357,7 @@ public class Game {
                                 System.out.println("ERROR SHOUT");
                                 System.exit(1);
                             }
-                        }else {
+                        } else {
 
                             try {
                                 str = this.dp.getShoutByEnumAddName(ShoutType.YOU_WIN, this.player2.getName());               //Select SHOUT type message
@@ -386,7 +383,7 @@ public class Game {
                             this.player2.resetRound();
                             state = StateType.INSULT;                                                                   //Change state to INSULT
 
-                        }else {
+                        } else {
 
                             this.player2.addDuel();                                                                     //Opponent win duel
                             this.player1.resetRound();                                                                  //Reset rounds
