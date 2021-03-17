@@ -48,13 +48,15 @@ public class Server {
     }
 
     private static void singlePlayer(ServerSocket serverSocket) {
+
+        System.out.println("Waiting for player");
+
         while (true) {
-            System.out.println("Waiting for player");
             Socket socket = null;
 
             try {
                 socket = serverSocket.accept();
-                socket.setSoTimeout(5000);
+                socket.setSoTimeout(30000);
                 System.out.println("Player connected");
             } catch (IOException e) {
                 System.out.println("IOException: " + e.getMessage());

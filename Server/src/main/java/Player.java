@@ -65,6 +65,12 @@ public class Player {
         return String.valueOf(s);
     }
 
+    public int generateRandomID() {
+        this.id = random.nextInt(Integer.MAX_VALUE);
+        return this.id;
+    }
+
+
     public byte[] getHash() {
         return hash;
     }
@@ -104,6 +110,18 @@ public class Player {
 
     public ArrayList<String> getComebacks() {
         return new ArrayList(comebacks);
+    }
+
+    public String getRandomInsult(){
+        ArrayList<String> list = new ArrayList(insults);
+        int i = random.nextInt(this.insults.size());
+        return list.get(i);
+    }
+
+    public String getRandomComeback(){
+        ArrayList<String> list = new ArrayList(comebacks);
+        int i = random.nextInt(this.comebacks.size());
+        return list.get(i);
     }
 
     public void resetDuelRound() {

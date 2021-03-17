@@ -1,4 +1,8 @@
 import enumType.ErrorType;
+import enumType.ShoutType;
+import enumType.StateType;
+import exception.EmptyHashException;
+import exception.OpcodeException;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,17 +18,23 @@ import java.util.Random;
 
 public class Game {
 
+    private DatabaseProvider dp;
+    private BufferedWriter log;
     Datagram datagram1;
     Datagram datagram2;
-    Random rand = new Random();
-    private BufferedWriter log;
-    private Database database = new Database();
+
+    private Player player1 = new Player();         //Data Server
+    private Player player2 = new Player();         //Data Opponent
+
     private boolean gameBool = true;
-    private int state = 0;
+    private StateType state;
 
 
     public Game(Socket s1, Socket s2) throws IOException {
+
+        this.dp = new DatabaseProvider();
         this.datagram1 = new Datagram(s1);
+
         if (s2 != null) {
             this.datagram2 = new Datagram(s2);
         }
@@ -33,6 +43,9 @@ public class Game {
         (new File("../../logs")).mkdir(); // Directory
         File f = new File("../../logs/" + lg); // File
         this.log = new BufferedWriter(new FileWriter(f));
+
+        this.state = StateType.HELLO;
+
     }
 
     public void run() throws IOException {
@@ -42,27 +55,6 @@ public class Game {
 
     public void singlePlayer() throws IOException {
 
-        ArrayList<String> insultsLearned = new ArrayList<>();      //Aqui guardamos los insultos que aprendemos
-        ArrayList<String> comebacksLearned = new ArrayList<>();    //Aqui guardamos los comebacks que aprendemos
-
-        String name = "";
-        String opponentName = "";
-        int id = 0;
-        int opponentId = 0;
-
-        String secret = "";
-        String opponentSecret = "";
-        byte[] opponentHash = new byte[0];
-
-        boolean domain = true;   // True -> Servidor, False -> Client
-
-        int duel = 0;
-        int round = 0;
-        int duelWins = 0;
-        int roundWins = 0;
-        int opponentDuelWins = 0;
-        int opponentRoundWins = 0;
-
         String insult = "";
         String comeback = "";
         String opponentInsult = "";
@@ -70,366 +62,355 @@ public class Game {
 
         while (gameBool) {
 
-            switch (state) {
-                case 0:              //Recopilación de datos del jugador y mensaje HELLO
+            switch (this.state) {
 
-                    ArrayList<Integer> indexes = this.getRandomIndexes();
-                    insultsLearned.addAll(this.database.getInsultsByIndexes(indexes));
-                    comebacksLearned.addAll(this.database.getComebacksByIndexes(indexes));
+                /*case START:
 
-                    name = "Barba Negra";
-                    id = rand.nextInt((int) Math.pow((double) 2, 31));  //Id aleatorio
-                    this.log.write("Servidor" + "\n");
-                    System.out.println("Servidor");
+                    this.dp = new DatabaseProvider();
+                    this.player1.addInsultComeback(this.dp.getRandomInsultComeback());
+                    this.player1.addInsultComeback(this.dp.getRandomInsultComeback());
+                    this.state = StateType.HELLO;*/
+
+                case HELLO:              //HELLO message
+
+                    System.out.println("hello");
+
+                    this.player1.setName("Barba Negra");                                                                //Obtain server data
+                    int id = this.player1.generateRandomID();
+
                     try {
-                        opponentName = this.datagram1.read_hello();
-                    } catch (DatagramException | IOException e) {
-                        this.log.write(e.getMessage() + "\n");
+                        this.player2.setName(this.datagram1.read_hello());                                              //Read HELLO message
+                        this.player2.setId(this.datagram1.getIdOpponent());                                             //Obtain opponent data
+                    } catch (IOException | OpcodeException e) {
+                        this.log.write("Hello Error Read " + e.getMessage());
                         this.log.flush();
                         System.exit(1);
                     }
 
-                    opponentId = this.datagram1.getIdOpponent();
-
-
                     try {
-
-                        // id = this.datagram2.getIdOpponent();
-                        // name = this.datagram2.read_hello();
-                        this.datagram1.write_hello(id, name);
-
+                        this.datagram1.write_hello(this.player1.getId(), this.player1.getName());                       //Write HELLO message
                     } catch (IOException e) {
-                        this.log.write(e.getMessage() + "\n");
+                        this.log.write("Hello Error Read " + e.getMessage());
                         this.log.flush();
                         System.exit(1);
                     }
 
-                    this.log.write("HELLO: " + "id: " + opponentId + "name: " + opponentName + "\n");
-                    this.log.write("HELLO: " + "id: " + id + "name: " + name + "\n");
-                    this.state = 1;
+                    this.log.write("HELLO: " + this.player2.getId() + " " + this.player2.getName() + "\n");
+                    this.log.write("HELLO: " + this.player1.getId() + " " + this.player1.getName() + "\n");
 
-                    break;
-                case 1:          //Envio de HASH entre jugadores
-
-                    /*Añadir insultos y combeacks aleatorios despues de cada partida*/
-
-                    try {
-                        opponentHash = this.datagram1.read_hash();
-                    } catch (IOException | DatagramException e) {
-                        this.log.write(e.getMessage() + "\n");
-                        this.log.flush();
-                        System.exit(1);
-                    }
-
-                    secret = Integer.toString(rand.nextInt(Integer.MAX_VALUE));
-
-                    try {
-                        this.datagram1.write_hash(secret);
-                    } catch (IOException e) {
-                        this.log.write(e.getMessage() + "\n");
-                        this.log.flush();
-                        System.exit(1);
-                    }
-
-                    this.log.write("HASH: " + Arrays.toString(opponentHash) + "\n");
-                    this.log.write("HASH: " + Arrays.toString(getHash(secret)) + "\n");
-                    this.state = 2;
+                    this.state = StateType.HASH;                                                                        //Change state to HASH
 
                     break;
 
-                case 2:             //Envio de SECRET entre jugadores
+                case HASH:               //HASH message
+
+                    System.out.println("hash");
+
+                    //For each game, two new INSULTS and COMEBACKS
+                    this.player1.addInsultComeback(this.dp.getRandomInsultComeback());
+                    this.player1.addInsultComeback(this.dp.getRandomInsultComeback());
 
                     try {
-                        opponentSecret = this.datagram1.read_secret();
-                    } catch (IOException | DatagramException e) {
-                        System.out.println(e.getMessage());
-                        this.log.write(e.getMessage() + "\n");
+                        this.player2.setHash(this.datagram1.read_hash());                                               //Read HASH message
+                    } catch (IOException | OpcodeException | EmptyHashException e) {
+                        this.log.write(e.getMessage());
                         this.log.flush();
                         System.exit(1);
                     }
 
                     try {
-                        this.datagram1.write_secret(secret);
+                        this.datagram1.write_hash(this.player1.generateSecret());                                       //Write HASH message
+                        this.player1.setHash(this.datagram1.getHash(this.player1.getSecret()));                         //Save player1's HASH
                     } catch (IOException e) {
-                        this.log.write(e.getMessage() + "\n");
+                        this.log.write(e.getMessage());
                         this.log.flush();
                         System.exit(1);
                     }
 
-                    this.log.write("SECRET ME: " + opponentSecret + "\n");
-                    this.log.write("SECRET OPPO: " + secret + "\n");
-                    this.state = 3;
+                    this.log.write("HASH: " + Arrays.toString(this.player2.getHash()) + "\n");
+                    this.log.write("HASH: " + Arrays.toString(this.player1.getHash()) + "\n");
+
+                    this.state = StateType.SECRET;                                                                      //Change state to SECRET
 
                     break;
-                case 3:          //Comprobación de HASH correcto y elección de quien comienza el juego.
-                    this.log.write("3 \n");
-                    this.log.flush();
-                    if (this.proofHash(opponentSecret, opponentHash)) {
-                        if (id != opponentId) {
-                            if (datagram1.isEven(secret, opponentSecret)) {
-                                domain = id < opponentId; // True -> Servidor, False -> Client
+
+                case SECRET:            //SECRET message
+
+                    System.out.println("secret");
+
+                    try {
+                        this.player2.setSecret(this.datagram1.read_secret());                                           //Read SECRET message
+                    } catch (IOException | OpcodeException e) {
+                        this.log.write(e.getMessage());
+                        this.log.flush();
+                        System.exit(1);
+                    }
+
+                    try {
+                        this.datagram1.write_secret(this.player1.getSecret());                                          //Write SECRET message
+                    } catch (IOException e) {
+                        this.log.write("ERROR SECRET");
+                        this.log.flush();
+                        System.exit(1);
+                    }
+
+                    if (this.proofHash(this.player2.getSecret(), this.player2.getHash())) {                             //Check correct HASH
+
+                        if (this.player1.getId() != this.player2.getId()) {                                             //Check not same ID
+
+                            if (this.isEven(this.player1.getSecret(), this.player2.getSecret())) {                      //Check EVEN or ODD
+
+                                if (this.player1.getId() < this.player2.getId()) {
+                                    this.state = StateType.INSULT;                                                      //Change state to INSULT
+                                } else {
+                                    this.state = StateType.COMEBACK;                                                    //Change state to COMEBACK
+                                }
+
                             } else {
-                                domain = id > opponentId; // 1001<12
+
+                                if (this.player1.getId() > this.player2.getId()) {
+                                    this.state = StateType.INSULT;                                                      //Change state to INSULT
+                                } else {
+                                    this.state = StateType.COMEBACK;                                                    //Change state to COMEBACK
+                                }
+
                             }
-                            this.state = 4;
-                        } else {
-                            try {
-                                this.datagram1.write_error("ERROR ID");
+
+                            this.log.write("SECRET: " + this.player1.getSecret() + "\n");
+                            this.log.write("SECRET: " + this.player2.getSecret() + "\n");
+
+                        } else {                                                     //Same ID, ERROR
+
+                            System.out.println("ERROR ID");
+
+                            /*try {
+                                this.datagram1.write_error("ERROR ID");               //CODIGO INCOMPLETO
                             } catch (IOException e) {
-                                this.log.write(e.getMessage() + "\n");
+                                this.log.write("ERROR");
+                                this.log.flush();
+                                System.exit(1);
+                            }*/
+
+                        }
+
+                    } else {                                                         //Wrong HASH, ERROR
+
+                        System.out.println("ERROR HASH");
+
+                        /*try {
+                            this.datagram1.write_error("ERROR HASH");                 //CODIGO INCOMPLETO
+                        } catch (IOException e) {
+                            this.log.write("ERROR");
+                            this.log.flush();
+                            System.exit(1);
+                        }*/
+
+                    }
+
+                    break;
+
+                case INSULT:            //INSULT message
+
+                    System.out.println("insult");
+
+                    if (this.player1.getDuel() == 3 || this.player2.getDuel() == 3) {                  //Check if there's a winner
+
+                        this.state = StateType.SHOUT;                                                  //Change state to SHOUT
+
+                    }else {
+
+                        if (this.player1.getRound() == 2 || this.player2.getRound() == 2) {            //Check if someone win duel
+
+                            this.state = StateType.SHOUT;                                              //Change state to SHOUT
+
+                        } else {
+
+                            insult = this.player1.getRandomInsult();                                  //Random INSULT
+
+                            try {
+                                this.datagram1.write_insult(insult);                                  //Write INSULT message
+                            } catch (IOException e) {
+                                this.log.write("ERROR");
                                 this.log.flush();
                                 System.exit(1);
                             }
-                            this.log.write(this.database.getErrorByEnum(ErrorType.WRONG_OPCODE));  //CAMBIAR
-                        }
-                    } else {
-                        try {
-                            this.datagram1.write_error("ERROR HASH");
-                        } catch (IOException e) {
-                            this.log.write(e.getMessage() + "\n");
-                            this.log.flush();
-                            System.exit(1);
-                        }
-                        this.log.write(this.database.getErrorByEnum(ErrorType.WRONG_OPCODE));  //CAMBIAR
-                    }
 
-                    break;
-                case 4:                    //Comprobación de los duelos
-                    this.log.write("4 \n");
-                    this.log.flush();
-
-                    if (duel < 3) {
-                        this.state = 5;                   //Seguimos jugando
-
-                    } else {
-
-                        if (duelWins == 3 || opponentDuelWins == 3) {        //Se acaba la parida pq hay un ganador
-                            if (duelWins == 3) {        //Ganamos la partida
-
-                                try {
-                                    System.out.println(this.datagram1.read_shout());
-                                } catch (IOException e) {
-                                    this.log.write(e.getMessage() + "\n");
-                                    this.log.flush();
-                                    System.exit(1);
-                                }
-
-                                try {
-                                    this.datagram1.write_shout("¡He ganado, " + opponentName + " !");
-                                } catch (IOException e) {
-                                    this.log.write(e.getMessage() + "\n");
-                                    this.log.flush();
-                                    System.exit(1);
-                                }
-
-                                this.log.write("SHOUT: ¡Has ganado, " + name + " !");
-                                this.log.write("SHOUT: ¡He ganado, " + opponentName + " !");
-
-                            } else {            //Perdemos la partida
-
-                                try {
-                                    System.out.println(this.datagram1.read_shout());
-                                } catch (IOException e) {
-                                    this.log.write(e.getMessage() + "\n");
-                                    this.log.flush();
-                                    System.exit(1);
-                                }
-
-                                try {
-                                    this.datagram1.write_shout("¡Has ganado, " + opponentName + " !");
-                                } catch (IOException e) {
-                                    this.log.write(e.getMessage() + "\n");
-                                    this.log.flush();
-                                    System.exit(1);
-                                }
-
-                                this.log.write("SHOUT: ¡He ganado, " + name + " !");
-                                this.log.write("SHOUT: ¡Has ganado, " + opponentName + " !");
-
+                            try {
+                                opponentComeback = this.datagram1.read_comeback();                    //Read COMEBACK message and get COMEBACK
+                            } catch (IOException | OpcodeException e) {
+                                this.log.write("ERROR");
+                                this.log.flush();
+                                System.exit(1);
                             }
 
-                            //Reseteamos marcadores pq se acaba la partida
-                            duel = 0;
-                            round = 0;
-                            duelWins = 0;
-                            roundWins = 0;
-                            opponentDuelWins = 0;
-                            opponentRoundWins = 0;
-                            state = 1;             //Al acabar una partida volvemos a enviar Hash
+                            this.player1.addComeback(opponentComeback);                              //Get opponent comeback as learned
+                            this.log.write("INSULT: " + insult + "\n");
+                            this.log.write("COMEBACK: " + opponentComeback + "\n");
 
-                        } else {
-                            this.state = 5;                   //Seguimos jugando
-                        }
-                    }
+                            if (this.dp.isRightComeback(insult, opponentComeback)) {                 //Check who win the round
 
-                    break;
-                case 5:             //Comporbacion de las rondas
+                                this.player2.addRound();
+                                this.state = StateType.COMEBACK;
 
-                    this.log.write("5 \n");
-                    this.log.flush();
-                    if (round < 2) {
-                        this.state = 6;                 //Seguimos jugando
+                            } else {
 
-                    } else {
-
-                        if (roundWins == 2 || opponentRoundWins == 2) {     //Se acaba el duelo pq alguien ha ganado
-                            if (roundWins == 2) {         //Ganamos el duelo
-
-                                try {
-                                    System.out.println(this.datagram1.read_shout());
-                                } catch (IOException e) {
-                                    this.log.write(e.getMessage() + "\n");
-                                    this.log.flush();
-                                    System.exit(1);
-                                }
-
-                                try {
-                                    this.datagram1.write_shout("¡He ganado, " + opponentName + " !");
-                                } catch (IOException e) {
-                                    this.log.write(e.getMessage() + "\n");
-                                    this.log.flush();
-                                    System.exit(1);
-                                }
-
-                                this.log.write("SHOUT: ¡Has ganado, " + name + " !");
-                                this.log.write("SHOUT: ¡He ganado, " + opponentName + " !");
-                                duelWins++;
-
-                            } else {          //Perdemos el duelo
-
-                                try {
-                                    System.out.println(this.datagram1.read_shout());
-                                } catch (IOException e) {
-                                    this.log.write(e.getMessage() + "\n");
-                                    this.log.flush();
-                                    System.exit(1);
-                                }
-
-                                try {
-                                    this.datagram1.write_shout("¡Has ganado, " + opponentName + " !");
-                                } catch (IOException e) {
-                                    this.log.write(e.getMessage() + "\n");
-                                    this.log.flush();
-                                    System.exit(1);
-                                }
-
-                                this.log.write("SHOUT: ¡He ganado, " + name + " !");
-                                this.log.write("SHOUT: ¡Has ganado, " + opponentName + " !");
-                                opponentDuelWins++;
+                                this.player1.addRound();
 
                             }
-
-                            //resetamos rondas pq pasamos a otro duelo
-                            round = 0;
-                            roundWins = 0;
-                            opponentRoundWins = 0;
-                            duel++;
-                            this.state = 4;
-
-                        } else {
-                            this.state = 6;                 //Seguimos jugando
                         }
-
                     }
 
                     break;
-                case 6:        //Envio de INSULTS y COMEBACKS
-                    this.log.write("6 \n");
-                    this.log.flush();
-                    if (domain) {  //Empieza el servidor insultando
 
-                        int n = rand.nextInt(insultsLearned.size());
-                        insult = insultsLearned.get(n);
-                        this.log.write(insult);
-                        this.log.write("domain true \n");
-                        this.log.flush();
-                        try {
-                            this.datagram1.write_insult(insult);
-                        } catch (IOException e) {
-                            this.log.write(e.getMessage() + "\n");
-                            this.log.flush();
-                            System.exit(1);
-                        }
+                case COMEBACK:
 
-                        try {
-                            opponentComeback = this.datagram1.read_comeback();
-                        } catch (IOException e) {
-                            this.log.write(e.getMessage() + "\n");
-                            this.log.flush();
-                            System.exit(1);
-                        }
+                    System.out.println("comeback");
 
-                        comebacksLearned.add(opponentComeback);
-                        this.log.write("INSULT: " + insult);
-                        this.log.write("COMEBACK: " + opponentComeback);
+                    if (this.player1.getDuel() == 3 || this.player2.getDuel() == 3) {                  //Check if there's a winner
 
-                        if (this.database.isRightComeback(insult, opponentComeback)) {  //Comporbamos quien gana la ronda
-                            opponentRoundWins++;
-                            round++;
-                            domain = false;
+                        this.state = StateType.SHOUT;                                                  //Change state to SHOUT
+
+                    }else {
+
+                        if (this.player1.getRound() == 2 || this.player2.getRound() == 2) {            //Check if someone win duel
+
+                            this.state = StateType.SHOUT;                                              //Change state to SHOUT
+
                         } else {
-                            roundWins++;
-                            round++;
+
+                            try {
+                                opponentInsult = this.datagram1.read_insult();                                 //Read COMEBACK message and get COMEBACK
+                            } catch (IOException | OpcodeException e) {
+                                System.out.println("ERROR");
+                                System.exit(1);
+                            }
+
+                            this.player1.addInsult(opponentInsult);                                            //Get opponent comeback as learned
+
+                            comeback = this.player1.getRandomComeback();                                       //Get random COMEBACK
+
+                            try {
+                                this.datagram1.write_comeback(comeback);                                       //Write COMEBACK message
+                            } catch (IOException e) {
+                                System.out.println("ERROR");
+                            }
+
+                            this.log.write("INSULT: " + opponentInsult + "\n");
+                            this.log.write("COMEBACK: " + comeback + "\n");
+
+                            if (this.dp.isRightComeback(opponentInsult, comeback)) {                          //Check who win the round
+
+                                this.player1.addRound();                                                      //Client win round
+                                this.state = StateType.INSULT;                                                //Change state to INSULT
+
+                            } else {
+
+                                this.player2.addRound();                                                      //Server win round
+
+                            }
                         }
-
-                    } else {                   //Empieza el cliente insultando
-                        this.log.write("domain false \n");
-                        this.log.flush();
-                        try {
-                            opponentInsult = this.datagram1.read_insult();
-                        } catch (IOException | DatagramException e) {
-                            this.log.write(e.getMessage());
-                            this.log.flush();
-                            System.exit(1);
-                        }
-
-                        insultsLearned.add(opponentInsult);
-                        int n = rand.nextInt(insultsLearned.size());
-                        comeback = comebacksLearned.get(n);
-
-                        try {
-                            this.datagram1.write_comeback(comeback);
-                        } catch (IOException e) {
-                            this.log.write(e.getMessage() + "\n");
-                            this.log.flush();
-                            System.exit(1);
-                        }
-
-                        this.log.write("INSULT: " + opponentInsult);
-                        this.log.write("COMEBACK: " + comeback);
-
-                        if (this.database.isRightComeback(opponentInsult, comeback)) {  //Comporbamos quien gana la ronda
-                            roundWins++;
-                            round++;
-                            domain = true;
-                        } else {
-                            opponentRoundWins++;
-                            round++;
-                        }
-
                     }
-                    this.state = 4;
 
                     break;
+
+                case SHOUT:
+
+                    System.out.println("shout");
+
+                    if (this.player1.getDuel() == 3 | this.player1.getRound() == 2) {                                   //Check if Server win something
+
+                        String str = "";
+                        String str2 = "";
+
+                        try {
+                            str2 = this.datagram1.read_shout();                                                         //Read SHOUT message and get message
+                        } catch (IOException | OpcodeException e) {
+                            System.out.println("ERROR SHOUT");
+                            System.exit(1);
+                        }
+
+                        try {
+                            str = this.dp.getShoutByEnumAddName(ShoutType.I_WIN, this.player2.getName());               //Select SHOUT type message
+                            this.datagram1.write_shout(str);                                                            //Write SHOUT message
+                        } catch (IOException e) {
+                            System.out.println("ERROR SHOUT");
+                            System.exit(1);
+                        }
+
+                        this.log.write("SHOUT: " + str2 + "\n");
+                        this.log.write("SHOUT: " + str + "\n");
+
+                    } else if (this.player2.getDuel() == 3 | this.player2.getRound() == 2) {                            //Check if opponent win something
+
+                        String str = "";
+                        String str2 = "";
+
+                        try {
+                            str2 = this.datagram1.read_shout();                                                         //Read SHOUT message and get message
+                        } catch (IOException | OpcodeException e) {
+                            System.out.println("ERROR");
+                            System.exit(1);
+                        }
+
+                        if (this.player2.getDuel() == 3) {
+                            try {
+                                str = this.dp.getShoutByEnumAddName(ShoutType.YOU_WIN_FINAL, this.player2.getName());       //Select SHOUT type message
+                                this.datagram1.write_shout(str);                                                            //Write SHOUT message
+                            } catch (IOException e) {
+                                System.out.println("ERROR SHOUT");
+                                System.exit(1);
+                            }
+                        }else {
+
+                            try {
+                                str = this.dp.getShoutByEnumAddName(ShoutType.YOU_WIN, this.player2.getName());               //Select SHOUT type message
+                                this.datagram1.write_shout(str);                                                            //Write SHOUT message
+                            } catch (IOException e) {
+                                System.out.println("ERROR SHOUT");
+                                System.exit(1);
+                            }
+
+                        }
+
+                        this.log.write("SHOUT: " + str2 + "\n");
+                        this.log.write("SHOUT: " + str + "\n");
+
+                    }
+
+                    if (this.player1.getRound() == 2 | this.player2.getRound() == 2) {                                  //Check round points
+
+                        if (this.player1.getRound() == 2) {                                                             //Check client's round point
+
+                            this.player1.addDuel();                                                                     //Client win duel
+                            this.player1.resetRound();                                                                  //Reset rounds
+                            this.player2.resetRound();
+                            state = StateType.INSULT;                                                                   //Change state to INSULT
+
+                        }else {
+
+                            this.player2.addDuel();                                                                     //Opponent win duel
+                            this.player1.resetRound();                                                                  //Reset rounds
+                            this.player2.resetRound();
+                            state = StateType.COMEBACK;                                                                 //Change state to INSULT
+
+                        }
+                    }
+
+                    if (this.player1.getDuel() == 3 | this.player2.getDuel() == 3) {                                    //Check duel points
+
+                        this.player1.resetDuelRound();                                                                  //Reset duels
+                        this.player2.resetDuelRound();
+                        System.out.println("New Game");
+                        this.state = StateType.HASH;                                                                    //Change state to HASH
+
+                    }
+
+                case ERROR:
+
+
             }
+
         }
-    }
-
-    private ArrayList<Integer> getRandomIndexes() {
-        Random rand = new Random(); // Insultos y Comebacks aprendidos aleatoriamente
-
-        ArrayList<Integer> indexes = new ArrayList<>();
-        ArrayList<Integer> searchedIndexes = new ArrayList<>();
-
-        for (int i = 0; i < 16; i++) indexes.add(i);
-
-        for (int j = 0; j < 2; j++) {
-            int pos = rand.nextInt(15 - j); // 0 - 15
-            searchedIndexes.add(indexes.get(pos));
-            indexes.remove(pos);
-        }
-
-        return searchedIndexes;
     }
 
     public boolean proofHash(String secret, byte[] hash) {
@@ -447,22 +428,9 @@ public class Game {
 
     }
 
-    public byte[] getHash(String str) {
-        byte hashBytes[] = new byte[32];
-        MessageDigest digest = null;
-
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-
-        byte[] encodedhash = digest.digest(
-                str.getBytes(StandardCharsets.UTF_8));
-
-        for (int i = 0; i < 32; i++)
-            hashBytes[i] = encodedhash[i];
-
-        return hashBytes;
+    public boolean isEven(String s1, String s2) {
+        int n1 = Integer.parseInt(s1);
+        int n2 = Integer.parseInt(s2);
+        return ((n1 + n2) % 2 == 0);
     }
 }
