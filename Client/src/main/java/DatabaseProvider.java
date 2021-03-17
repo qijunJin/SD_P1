@@ -18,15 +18,20 @@ public class DatabaseProvider {
     }
 
     public ArrayList<String> getRandomInsultComeback() {
-        int index = random.nextInt(this.insults.size());
-        String insult = this.insults.remove(index);
-        String comeback = this.comebacks.remove(index);
         ArrayList<String> list = new ArrayList<>();
-        list.add(insult);
-        list.add(comeback);
+        if (this.insults.size() != 0) {
+            int index = random.nextInt(this.insults.size());
+            String insult = this.insults.remove(index);
+            String comeback = this.comebacks.remove(index);
+            list.add(insult);
+            list.add(comeback);
+        }
         return list;
     }
 
+    public boolean isEmptyInsults() {
+        return this.insults.isEmpty();
+    }
 
     public boolean isRightComeback(String insult, String comeback) {
         return this.database.isRightComeback(insult, comeback);

@@ -35,12 +35,9 @@ public class Client {
         try {
             InetAddress host = InetAddress.getByName(hostname);
 
-            System.out.println(hostname);
-            System.out.println(host);
-            System.out.println(port);
             Socket socket = new Socket(host, port);
-            socket.setSoTimeout(5000);
-            //Socket socket = new SocketMock();
+            socket.setSoTimeout(30 * 1000);
+
             Datagram datagram = new Datagram(socket);
             Game game = new Game(datagram, mode);
 

@@ -28,7 +28,7 @@ public class Database {
     }
    /* private void initInsultsIndexed() {
         this.insults.put(1, "¿Has dejado ya de usar pañales?");
-        this.insults.put(2, "¡No hay palabras para describir lo asqueroso que eres!");
+       this.insults.put(2, "¡No hay palabras para describir lo asqueroso que eres!");
         this.insults.put(3, "¡He hablado con simios más educados que tu!");
         this.insults.put(4, "¡Llevarás mi espada como si fueras un pincho moruno!");
         this.insults.put(5, "¡Luchas como un ganadero!");

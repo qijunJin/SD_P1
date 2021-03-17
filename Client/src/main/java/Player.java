@@ -11,6 +11,7 @@ public class Player {
     private int duel = 0;
     private int round = 0;
 
+
     private byte[] hash;
     private String secret;
 
@@ -22,11 +23,11 @@ public class Player {
 
 
     public void addInsult(String insult) {
-        if (!insults.contains(insult)) insults.add(insult);
+        insults.add(insult);
     }
 
     public void addComeback(String comeback) {
-        if (!comebacks.contains(comeback)) comebacks.add(comeback);
+        comebacks.add(comeback);
     }
 
 

@@ -1,7 +1,6 @@
 package enumType;
 
 public enum StateType {
-    START,
     HELLO,
     HASH,
     SECRET,
