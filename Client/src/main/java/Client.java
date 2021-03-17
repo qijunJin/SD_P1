@@ -34,10 +34,6 @@ public class Client {
         /* Socket & Create game */
         try {
             InetAddress host = InetAddress.getByName(hostname);
-
-            System.out.println(hostname);
-            System.out.println(host);
-            System.out.println(port);
             Socket socket = new Socket(host, port);
             socket.setSoTimeout(5000);
             //Socket socket = new SocketMock();

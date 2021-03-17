@@ -22,17 +22,19 @@ public class Player {
 
 
     public void addInsult(String insult) {
-        if (!insults.contains(insult)) insults.add(insult);
+        insults.add(insult);
     }
 
     public void addComeback(String comeback) {
-        if (!comebacks.contains(comeback)) comebacks.add(comeback);
+        comebacks.add(comeback);
     }
 
 
     public void addInsultComeback(ArrayList<String> list) {
-        this.insults.add(list.get(0));
-        this.comebacks.add(list.get(1));
+        if (!list.isEmpty()) {
+            this.insults.add(list.get(0));
+            this.comebacks.add(list.get(1));
+        }
     }
 
     public int getId() {
@@ -68,6 +70,11 @@ public class Player {
     public int generateRandomID() {
         this.id = random.nextInt(Integer.MAX_VALUE);
         return this.id;
+    }
+
+    public void removeInsultsComebacks(){
+        this.insults.clear();
+        this.comebacks.clear();
     }
 
 

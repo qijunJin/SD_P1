@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="9" failures="0" name="DatagramTest" time="0.016" errors="0" skipped="0">
+<testsuite tests="9" failures="0" name="DatagramTest" time="0.008" errors="0" skipped="0">
   <properties>
     <property name="idea.version" value="2020.3.3"/>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
@@ -60,13 +60,13 @@
     <property name="java.vendor.version" value="AdoptOpenJDK"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="DatagramTest" name="secret_test" time="0"/>
-  <testcase classname="DatagramTest" name="proof_test" time="0.016"/>
-  <testcase classname="DatagramTest" name="hello_test" time="0"/>
+  <testcase classname="DatagramTest" name="secret_test" time="0.001"/>
+  <testcase classname="DatagramTest" name="proof_test" time="0.004"/>
+  <testcase classname="DatagramTest" name="hello_test" time="0.001"/>
   <testcase classname="DatagramTest" name="comeback_test" time="0"/>
   <testcase classname="DatagramTest" name="shout_test" time="0"/>
   <testcase classname="DatagramTest" name="exception_test" time="0"/>
-  <testcase classname="DatagramTest" name="hash_test" time="0"/>
-  <testcase classname="DatagramTest" name="insult_test" time="0"/>
+  <testcase classname="DatagramTest" name="hash_test" time="0.001"/>
+  <testcase classname="DatagramTest" name="insult_test" time="0.001"/>
   <testcase classname="DatagramTest" name="error_test" time="0"/>
 </testsuite>
