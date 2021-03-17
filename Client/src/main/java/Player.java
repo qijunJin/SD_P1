@@ -37,17 +37,19 @@ public class Player {
         }
     }
 
-    public boolean containsInsultAndComeback (ArrayList<String> list){
+    public boolean containsWithAddInsultComeback(ArrayList<String> list) {
         boolean b = false;
         if (!list.isEmpty()) {
-            if (this.insults.contains(list.get(0)) && this.comebacks.contains(list.get(1))){
+            this.insults.add(list.get(0));
+            this.comebacks.add(list.get(1));
+            if (this.insults.contains(list.get(0)) && this.comebacks.contains(list.get(1))) {
                 b = true;
             }
         }
         return b;
     }
 
-    public void removeInsultsComebacks(){
+    public void removeInsultsComebacks() {
         this.insults.clear();
         this.comebacks.clear();
     }
@@ -62,6 +64,22 @@ public class Player {
 
     public String getName() {
         return name;
+    }
+
+    public boolean hasSameName(String str) {
+        return this.name.equals(str);
+    }
+
+    public boolean hasSameId(int id) {
+        return this.id == id;
+    }
+
+    public boolean hasName() {
+        return !this.name.isEmpty();
+    }
+
+    public boolean hasId() {
+        return this.id != -1;
     }
 
     public void setName(String name) {

@@ -2,7 +2,6 @@ import enumType.ErrorType;
 import enumType.ShoutType;
 
 import java.util.ArrayList;
-
 import java.util.HashMap;
 
 
@@ -68,74 +67,6 @@ public class Database {
         return this.source.get(insult).equals(comeback);
     }
 
-/*    private ArrayList<Integer> getRandomIndexes() {
-        Random rand = new Random(); // Insultos y Comebacks aprendidos aleatoriamente
-
-        ArrayList<Integer> indexes = new ArrayList<>();
-        ArrayList<Integer> searchedIndexes = new ArrayList<>();
-
-        for (int i = 0; i < 16; i++) indexes.add(i);
-
-        for (int j = 0; j < 2; j++) {
-            int pos = rand.nextInt(15 - j); // 0 - 15
-            searchedIndexes.add(indexes.get(pos));
-            indexes.remove(pos);
-        }
-
-        return searchedIndexes;
-    }*/
-
-    /*    public HashMap<String, String> getRandomInsultComeback2() {
-            ArrayList<Integer> indexes = getRandomIndexes();
-            HashMap<String, String> learned = new HashMap<>();
-            for (int i : indexes) {
-                learned.put(this.insults.get(i), this.comebacks.get(i));
-            }
-            return learned;
-        }*/
-    public String getShoutByEnumAddName(ShoutType s, String name) {
-        String str = this.shouts.get(s);
-        str = str.replace("*", name);
-        return str;
-    }
-/*
-    public ArrayList<String> getInsultsByIndexes(ArrayList<Integer> indexes) {
-        ArrayList<String> insults = new ArrayList<>();
-        for (int i : indexes) {
-            insults.add(this.getInsultByIndex(i));
-        }
-        return insults;
-    }
-
-    public ArrayList<String> getComebacksByIndexes(ArrayList<Integer> indexes) {
-        ArrayList<String> comebacks = new ArrayList<>();
-        for (int i : indexes) {
-            comebacks.add(this.getComebackByIndex(i));
-        }
-        return comebacks;
-    }*/
-
-    /*public String getInsultByIndex(int index) {
-        return this.insults.get(index);
-    }
-
-
-        this.shouts.put(ShoutType.I_WIN, "¡He ganado, *!");
-        this.shouts.put(ShoutType.YOU_WIN, "¡Has ganado, *!");
-        this.shouts.put(ShoutType.YOU_WIN_FINAL, "¡Has ganado, *. Eres tan bueno que podrias luchar contra la Sword Master de la isla Mêlée!");
-
-    }
-
-    public boolean isRightComeback(String insult, String comeback) {
-        return this.source.get(insult).equals(comeback);
-    }
-
-
-    public String getComebackByInsult(String insult) {
-        return this.source.get(insult);
-    }
-
-
     public ArrayList<String> getInsults() {
         return new ArrayList(this.source.keySet());
     }
@@ -144,12 +75,6 @@ public class Database {
         return new ArrayList(this.source.values());
     }
 
-    /* public String getInsultByIndex(int index) {
-         return this.insults.get(index);
-     }
-     public String getComebackByIndex(int index) {
-         return this.comebacks.get(index);
-     }*/
     public String getShoutByEnumAddName(ShoutType s, String name) {
         String str = this.shouts.get(s);
         str = str.replace("*", name);

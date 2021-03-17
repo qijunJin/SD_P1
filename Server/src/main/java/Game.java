@@ -342,8 +342,6 @@ public class Game {
                                 System.exit(1);
                             }
 
-                        } else {
-
 
                             try {
                                 str2 = this.dp.getShoutByEnumAddName(ShoutType.I_WIN, this.player2.getName());               //Select SHOUT type message
@@ -400,8 +398,6 @@ public class Game {
                                 System.out.println("ERROR SHOUT");
                                 System.exit(1);
                             }
-
-                        } else {
 
 
                             this.player1.resetRound();                                                                  //Reset rounds
