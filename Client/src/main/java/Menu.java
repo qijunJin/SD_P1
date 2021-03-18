@@ -2,19 +2,26 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Menu {
-
+    private static final String ALPHABETS = "^[a-zA-Z]*$";
     Scanner scan = new Scanner(System.in);
 
     public String getName() {
         System.out.println("Insert your name:");
-        return scan.nextLine();
+        String name = "";
+        while (!scan.hasNext(ALPHABETS)) {
+            name = scan.next();
+            if (name.matches(ALPHABETS)) break;
+            System.out.println("Invalid name, insert your name with alphabets:");
+        }
+        return name;
     }
 
     public int getId() {
         System.out.println("Insert your id:");
+
         while (!scan.hasNextInt()) {
-            System.out.println("Invalid id, insert your id in number format: ");
-            scan.nextLine();
+            scan.next();
+            System.out.println("Invalid id, insert your id with digits: ");
         }
         return scan.nextInt();
     }
@@ -35,11 +42,6 @@ public class Menu {
 
     public int getOption() {
         return scan.nextInt() - 1;
-    }
-
-    public void showSecret(String str) {
-        System.out.println("Your secret number is:");
-        System.out.println(str);
     }
 
 }

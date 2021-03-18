@@ -1,9 +1,7 @@
 exception/EmptyHashException.class
 enumType/ErrorType.class
-utils/Endianness.class
 Player.class
 Database.class
-utils/ComUtils.class
 Datagram.class
 enumType/ShoutType.class
 DatagramException.class

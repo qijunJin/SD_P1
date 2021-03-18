@@ -58,5 +58,5 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
   </properties>
-  <testcase classname="MenuTest" name="selectInsult_test" time="0"/>
+  <testcase classname="MenuTest" name="getName_test" time="0"/>
 </testsuite>
