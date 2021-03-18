@@ -1,6 +1,5 @@
 import enumType.ShoutType;
 import enumType.StateType;
-import exception.EmptyHashException;
 import exception.OpcodeException;
 
 import java.io.BufferedWriter;
@@ -98,7 +97,7 @@ public class Game {
 
                     try {
                         this.player2.setHash(this.datagram1.read_hash());                                               //Read HASH message
-                    } catch (IOException | OpcodeException | EmptyHashException e) {
+                    } catch (IOException | OpcodeException e) {
                         this.log.write(e.getMessage());
                         this.log.flush();
                         System.exit(1);

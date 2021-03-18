@@ -61,7 +61,7 @@ public class Game {
 
                             this.client.setName(name);
                             this.client.setId(id);
-                            this.client.removeInsultsComebacks(); // Remove all insults and comebacks
+                            this.client.resetInsultsComebacks(); // Remove all insults and comebacks
                             this.dp = new DatabaseProvider(); // Restart databaseProvider
                         }
 
