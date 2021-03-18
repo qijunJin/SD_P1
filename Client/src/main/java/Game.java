@@ -39,8 +39,9 @@ public class Game {
 
     }
 
-    private void run() {
+    private void run() throws IOException {
         while (gameBool) {
+            // int opcode = this.datagram.readByte();
 
             switch (this.state) {
 
@@ -86,7 +87,8 @@ public class Game {
                         this.server.setId(this.datagram.getIdOpponent());
                     } catch (IOException | OpcodeException e) {
                         System.out.println("Hello Error Read " + e.getMessage());
-                        System.exit(1);
+                        this.errorType = ErrorType.WRONG_OPCODE;
+                        this.state = StateType.ERROR;
                     }
 
                     /* SYSTEM OUTPUT */
@@ -200,8 +202,9 @@ public class Game {
                             try {
                                 this.opponentComeback = this.datagram.read_comeback();
                             } catch (IOException | OpcodeException e) {
+                                this.errorType = ErrorType.INCOMPLETE_MESSAGE;
+                                this.state = StateType.ERROR;
                                 System.out.println("ERROR");
-                                System.exit(1);
                             }
 
                             this.client.addComeback(this.opponentComeback); // Add comeback as learned
@@ -359,10 +362,19 @@ public class Game {
                 case ERROR:
 
                     String errorMessage = this.dp.getErrorByEnum(this.errorType);
+
                     try {
                         this.datagram.write_error(errorMessage);
                     } catch (IOException e) {
-                        System.out.println("ERROR");
+                        System.out.println("C- ERROR");
+                        System.exit(1);
+                    }
+
+                    try {
+                        String error = this.datagram.read_error();
+                        System.out.println(error);
+                    } catch (IOException | OpcodeException e) {
+                        System.out.println("S- ERROR");
                         System.exit(1);
                     }
 
@@ -394,189 +406,3 @@ public class Game {
     }
 
 }
-
-                /*
-                if (this.duel < 3) {
-                    this.state = 5;                   //Seguimos jugando
-
-                } else {
-
-                    if (this.duelWins == 3 || this.opponentDuelWins == 3) {        //Se acaba la parida pq hay un ganador
-                        if (this.duelWins == 3) {        //Ganamos la partida
-
-                            try {
-                                String str = this.database.getShoutByEnumAddName(ShoutType.I_WIN, this.opponentName);
-                                this.datagram.write_shout(str);
-                            } catch (IOException e) {
-                                System.out.println("ERROR SHOUT");
-                                System.exit(1);
-                            }
-
-                            try {
-                                System.out.println(this.datagram.read_shout());
-                            } catch (IOException | exception.DatagramException e) {
-                                System.out.println("ERROR SHOUT");
-                                System.exit(1);
-                            }
-
-                        } else {            //Perdemos la partida
-
-                            try {
-                                String str = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN, this.name);
-                                this.datagram.write_shout(str);
-                            } catch (IOException e) {
-                                System.out.println("ERROR SHOUT");
-                                System.exit(1);
-                            }
-
-                            try {
-                                System.out.println(this.datagram.read_shout());
-                            } catch (IOException | exception.DatagramException e) {
-                                System.out.println("ERROR");
-                                System.exit(1);
-                            }
-
-                        }
-
-                        //Reseteamos marcadores pq se acaba la partida
-                        this.duel = 0;
-                        this.round = 0;
-                        this.duelWins = 0;
-                        this.roundWins = 0;
-                        this.opponentDuelWins = 0;
-                        this.opponentRoundWins = 0;
-                        this.state = 1;             //Al acabar una partida volvemos a enviar Hash
-
-                    } else {
-                        this.state = 5;                   //Seguimos jugando
-                    }
-                }
-
-            } else if (this.state == 5) {            //Comporbacion de las rondas
-
-                if (this.round < 2) {
-                    this.state = 6;                 //Seguimos jugando
-
-                } else {
-
-                    if (this.roundWins == 2 || this.opponentRoundWins == 2) {     //Se acaba el duelo pq alguien ha ganado
-                        if (this.roundWins == 2) {         //Ganamos el duelo
-
-                            try {
-                                String str = this.database.getShoutByEnumAddName(ShoutType.I_WIN, this.opponentName);
-                                this.datagram.write_shout(str);
-                            } catch (IOException e) {
-                                System.out.println("ERROR");
-                                System.exit(1);
-                            }
-
-                            try {
-                                System.out.println(this.datagram.read_shout());
-                            } catch (IOException | exception.DatagramException e) {
-                                System.out.println("ERROR");
-                                System.exit(1);
-                            }
-
-                            this.duelWins++;
-
-                        } else {          //Perdemos el duelo
-
-                            try {
-                                String str = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN, this.opponentName);
-                                this.datagram.write_shout(str);
-                            } catch (IOException e) {
-                                System.out.println("ERROR");
-                                System.exit(1);
-                            }
-
-                            try {
-                                System.out.println(this.datagram.read_shout());
-                            } catch (IOException | exception.DatagramException e) {
-                                System.out.println("ERROR");
-                                System.exit(1);
-                            }
-
-                            this.opponentDuelWins++;
-
-                        }
-
-                        //resetamos rondas pq pasamos a otro duelo
-                        this.round = 0;
-                        this.roundWins = 0;
-                        this.opponentRoundWins = 0;
-                        this.duel++;
-                        this.state = 4;
-
-                    } else {
-                        this.state = 6;                 //Seguimos jugando
-                    }
-
-                }
-
-            } else if (this.state == 6) {       //Envio de INSULTS y COMEBACKS
-
-                if (this.domain) {  //Empieza el cliente insultando
-
-                    this.menu.showInsults(insultsLearned);          //Mostramos insultos aprendidos
-                    this.insult = this.insultsLearned.get(this.menu.getOption());
-                    System.out.println(this.insult);
-
-                    try {
-                        this.datagram.write_insult(this.insult);
-                    } catch (IOException e) {
-                        System.out.println("ERROR");
-                        System.exit(1);
-                    }
-
-                    try {
-                        this.opponentComeback = this.datagram.read_comeback();
-                    } catch (IOException | exception.DatagramException e) {
-                        System.out.println("ERROR");
-                        System.exit(1);
-                    }
-
-                    this.comebacksLearned.add(this.opponentComeback);
-                    System.out.println(this.opponentComeback);
-
-                    if (this.database.isRightComeback(this.insult, this.opponentComeback)) {  //Comporbamos quien gana la ronda
-                        this.opponentRoundWins++;
-                        this.round++;
-                        this.domain = false;
-                    } else {
-                        this.roundWins++;
-                        this.round++;
-                    }
-
-                } else {                   //Empieza el server insultando
-
-                    try {
-                        this.opponentInsult = this.datagram.read_insult();
-                    } catch (IOException | exception.DatagramException e) {
-                        System.out.println("ERROR");
-                        System.exit(1);
-                    }
-
-                    this.insultsLearned.add(this.opponentInsult);
-                    System.out.println(this.opponentInsult);
-                    this.menu.showComebacks(comebacksLearned);          //Mostramos insultos aprendidos
-                    this.comeback = this.comebacksLearned.get(this.menu.getOption());
-                    System.out.println(this.comeback);
-
-                    try {
-                        this.datagram.write_comeback(this.comeback);
-                    } catch (IOException e) {
-                        System.out.println("ERROR");
-                    }
-
-                    if (this.database.isRightComeback(this.opponentInsult, this.comeback)) {  //Comporbamos quien gana la ronda
-                        this.roundWins++;
-                        this.round++;
-                        this.domain = true;
-                    } else {
-                        this.opponentRoundWins++;
-                        this.round++;
-                    }
-
-                }
-                this.state = 4;
-*/

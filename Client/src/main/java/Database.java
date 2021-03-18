@@ -11,8 +11,6 @@ public class Database {
     private HashMap<ErrorType, String> errors;
 
     public Database() {
-
-
         this.source = new HashMap<>();
         this.shouts = new HashMap<>();
         this.errors = new HashMap<>();
@@ -51,7 +49,6 @@ public class Database {
 
     }
 
-
     private void initShoutsTyped() {
 
         this.shouts.put(ShoutType.I_WIN, "¡He ganado, *!");
@@ -64,10 +61,6 @@ public class Database {
         return this.source.get(insult).equals(comeback);
     }
 
-    public String getComebackByInsult(String insult) {
-        return this.source.get(insult);
-    }
-
     public ArrayList<String> getInsults() {
         return new ArrayList(this.source.keySet());
     }
@@ -76,12 +69,6 @@ public class Database {
         return new ArrayList(this.source.values());
     }
 
-    /* public String getInsultByIndex(int index) {
-         return this.insults.get(index);
-     }
-     public String getComebackByIndex(int index) {
-         return this.comebacks.get(index);
-     }*/
     public String getShoutByEnumAddName(ShoutType s, String name) {
         String str = this.shouts.get(s);
         str = str.replace("*", name);

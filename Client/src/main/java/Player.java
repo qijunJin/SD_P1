@@ -5,15 +5,14 @@ import java.util.Random;
 public class Player {
     private HashSet<String> insults;
     private HashSet<String> comebacks;
+    private Random random = new Random();
+
     private String name;
     private int id;
-    private Random random = new Random();
-    private int duel = 0;
-    private int round = 0;
-
     private byte[] hash;
     private String secret;
-
+    private int duel = 0;
+    private int round = 0;
 
     public Player() {
         this.insults = new HashSet<>();
@@ -22,21 +21,12 @@ public class Player {
         this.id = -1;
     }
 
-
     public void addInsult(String insult) {
         insults.add(insult);
     }
 
     public void addComeback(String comeback) {
         this.comebacks.add(comeback);
-    }
-
-
-    public void addInsultComeback(ArrayList<String> list) {
-        if (!list.isEmpty()) {
-            this.insults.add(list.get(0));
-            this.comebacks.add(list.get(1));
-        }
     }
 
     public boolean containsWithAddInsultComeback(ArrayList<String> list) {
@@ -112,21 +102,12 @@ public class Player {
         return duel;
     }
 
-    public void setDuel(int duel) {
-        this.duel = duel;
-    }
-
     public void addDuel() {
         this.duel++;
     }
 
-
     public int getRound() {
         return round;
-    }
-
-    public void setRound(int round) {
-        this.round = round;
     }
 
     public void addRound() {

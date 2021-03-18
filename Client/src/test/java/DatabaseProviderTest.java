@@ -1,18 +1,21 @@
 import enumType.ErrorType;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertTrue;
 
-public class DatabaseTest {
+public class DatabaseProviderTest {
 
     @Test
     public void isRightComeback_test() {
-        Database database = new Database();
+        DatabaseProvider database = new DatabaseProvider();
 
-        String insult = database.getInsults().get(0);
-        String comeback = database.getComebacks().get(0);
+        ArrayList<String> str = database.getRandomInsultComeback();
+
+        String insult = str.get(0);
+        String comeback = str.get(1);
 
         Boolean b = database.isRightComeback(insult, comeback);
         assertTrue(b);
@@ -56,4 +59,5 @@ public class DatabaseTest {
 
         assertTrue(b);
     }
+
 }

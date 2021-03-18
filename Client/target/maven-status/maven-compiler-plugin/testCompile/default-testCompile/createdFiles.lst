@@ -1,4 +1,5 @@
 DatagramTest.class
+DatabaseProviderTest.class
 MenuTest.class
 GameTest.class
 DatabaseTest.class
