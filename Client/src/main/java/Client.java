@@ -12,36 +12,41 @@ public class Client {
         (ha de seguir aquest format en aquest ordre i detectar errors)
         */
 
-        /* Control of parameters */
-        HashMap<String, String> options = new HashMap<>();
-        for (int i = 0; i < args.length; i = i + 2)
-            options.put(args[i], args[i + 1]);
+        if (args.length == 1) {
+            System.out.println("Help");
+        } else {
 
-        String hostname;
-        int port;
-        int mode = 0; // By default
+            /* Control of parameters */
+            HashMap<String, String> options = new HashMap<>();
+            for (int i = 0; i < args.length; i = i + 2)
+                options.put(args[i], args[i + 1]);
 
-        try {
-            hostname = options.get("-s");
-            port = Integer.parseInt(options.get("-p"));
-            if (options.containsKey("-i")) {
-                mode = Integer.parseInt(options.get("-i"));
+            String hostname;
+            int port;
+            int mode = 0; // By default
+
+            try {
+                hostname = options.get("-s");
+                port = Integer.parseInt(options.get("-p"));
+                if (options.containsKey("-i")) {
+                    mode = Integer.parseInt(options.get("-i"));
+                }
+            } catch (Exception e) {
+                throw new Exception("Parameters introduced are wrong!");
             }
-        } catch (Exception e) {
-            throw new Exception("Parameters introduced are wrong!");
-        }
 
-        /* Socket & Create game */
-        try {
-            InetAddress host = InetAddress.getByName(hostname);
-            Socket socket = new Socket(host, port);
-            socket.setSoTimeout(5000);
-            //Socket socket = new SocketMock();
-            Datagram datagram = new Datagram(socket);
-            Game game = new Game(datagram, mode);
+            /* Socket & Create game */
+            try {
+                InetAddress host = InetAddress.getByName(hostname);
+                Socket socket = new Socket(host, port);
+                socket.setSoTimeout(5000);
+                //Socket socket = new SocketMock();
+                Datagram datagram = new Datagram(socket);
+                Game game = new Game(datagram, mode);
 
-        } catch (IOException e) {
-            System.out.println("IOException: " + e.getMessage());
+            } catch (IOException e) {
+                System.out.println("IOException: " + e.getMessage());
+            }
         }
     }
 }
