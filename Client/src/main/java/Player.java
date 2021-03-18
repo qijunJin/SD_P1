@@ -18,6 +18,8 @@ public class Player {
     public Player() {
         this.insults = new HashSet<>();
         this.comebacks = new HashSet<>();
+        this.name = "";
+        this.id = -1;
     }
 
 
@@ -40,11 +42,9 @@ public class Player {
     public boolean containsWithAddInsultComeback(ArrayList<String> list) {
         boolean b = false;
         if (!list.isEmpty()) {
+            b = this.insults.contains(list.get(0)) && this.comebacks.contains(list.get(1));
             this.insults.add(list.get(0));
             this.comebacks.add(list.get(1));
-            if (this.insults.contains(list.get(0)) && this.comebacks.contains(list.get(1))) {
-                b = true;
-            }
         }
         return b;
     }
@@ -75,7 +75,7 @@ public class Player {
     }
 
     public boolean hasName() {
-        return !this.name.isEmpty();
+        return !this.name.equals("");
     }
 
     public boolean hasId() {
