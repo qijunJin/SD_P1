@@ -57,6 +57,7 @@ public class Database {
 
     }
 
+    /* GETTER */
     public ArrayList<String> getInsults() {
         return new ArrayList(this.source.keySet());
     }

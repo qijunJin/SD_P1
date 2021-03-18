@@ -382,8 +382,8 @@ public class Game {
         }
     }
 
+    /* WILL BE TESTED IN DATAGRAM CLASS */
     public boolean proofHash(String secret, byte[] hash) {
-
         MessageDigest digest = null;
         try {
             digest = MessageDigest.getInstance("SHA-256");
@@ -394,9 +394,9 @@ public class Game {
                 secret.getBytes(StandardCharsets.UTF_8));
 
         return Arrays.equals(encodedhash, hash);
-
     }
 
+    /* WILL BE TESTED IN DATAGRAM CLASS */
     public byte[] getHash(String str) {
         byte hashBytes[] = new byte[32];
         MessageDigest digest = null;
@@ -410,17 +410,15 @@ public class Game {
         byte[] encodedhash = digest.digest(
                 str.getBytes(StandardCharsets.UTF_8));
 
-        for (int i = 0; i < 32; i++)
-            hashBytes[i] = encodedhash[i];
+        for (int i = 0; i < 32; i++) hashBytes[i] = encodedhash[i];
 
         return hashBytes;
     }
 
-
+    /* WILL BE TESTED IN DATAGRAM CLASS */
     public boolean isEven(String s1, String s2) {
         int n1 = Integer.parseInt(s1);
         int n2 = Integer.parseInt(s2);
         return ((n1 + n2) % 2 == 0);
     }
-
 }

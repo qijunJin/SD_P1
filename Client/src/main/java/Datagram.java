@@ -5,6 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 public class Datagram extends ComUtils {
 
@@ -178,6 +182,47 @@ public class Datagram extends ComUtils {
     /* TESTED */
     public int getIdOpponent() {
         return this.id;
+    }
+
+
+    /* TESTED */
+    public boolean proofHash(String secret, byte[] hash) {
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        byte[] encodedhash = digest.digest(
+                secret.getBytes(StandardCharsets.UTF_8));
+
+        return Arrays.equals(encodedhash, hash);
+    }
+
+    /* TESTED */
+    public byte[] getHash(String str) {
+        byte hashBytes[] = new byte[32];
+        MessageDigest digest = null;
+
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        byte[] encodedhash = digest.digest(
+                str.getBytes(StandardCharsets.UTF_8));
+
+        for (int i = 0; i < 32; i++) hashBytes[i] = encodedhash[i];
+
+        return hashBytes;
+    }
+
+    /* TESTED */
+    public boolean isEven(String s1, String s2) {
+        int n1 = Integer.parseInt(s1);
+        int n2 = Integer.parseInt(s2);
+        return ((n1 + n2) % 2 == 0);
     }
 }
 

@@ -9,9 +9,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Random;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class DatagramTest {
 
@@ -187,4 +187,80 @@ public class DatagramTest {
         assertEquals(e1, e2);
     }
 
+    @Test
+    public void isEven_test() {
+
+        try {
+            Socket socket = new SocketMock();
+            Datagram datagram = new Datagram(socket);
+            Random random = new Random();
+
+            int i1 = random.nextInt(Integer.MAX_VALUE);
+            int i2 = random.nextInt(Integer.MAX_VALUE);
+
+            String s1 = String.valueOf(i1);
+            String s2 = String.valueOf(i2);
+
+            if (i1 % 2 == 1 && i2 % 2 == 1) {
+                assertTrue(datagram.isEven(s1, s2));
+            } else if (i1 % 2 == 0 && i2 % 2 == 0) {
+                assertTrue(datagram.isEven(s1, s2));
+            } else {
+                assertFalse(datagram.isEven(s1, s2));
+            }
+
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Test
+    public void proofHash_test() {
+        try {
+            Socket socket = new SocketMock();
+            Datagram datagram = new Datagram(socket);
+            String secret = "21394735986548847365534907392897867";
+
+            /* FOR TEST */
+            MessageDigest digest = null;
+            try {
+                digest = MessageDigest.getInstance("SHA-256");
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+
+            byte[] encodedhash = digest.digest(
+                    secret.getBytes(StandardCharsets.UTF_8));
+
+            assertTrue(datagram.proofHash(secret, encodedhash));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void getHash_test() {
+        try {
+            Socket socket = new SocketMock();
+            Datagram datagram = new Datagram(socket);
+            String secret = "21394735986548847365534907392897867";
+
+            /* FOR TEST */
+            MessageDigest digest = null;
+            try {
+                digest = MessageDigest.getInstance("SHA-256");
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+
+            byte[] encodedhash = digest.digest(
+                    secret.getBytes(StandardCharsets.UTF_8));
+
+            assertArrayEquals(datagram.getHash(secret), encodedhash);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
