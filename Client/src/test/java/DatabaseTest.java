@@ -1,4 +1,5 @@
 import enumType.ErrorType;
+import enumType.ShoutType;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -11,36 +12,42 @@ public class DatabaseTest {
     public void isRightComeback_test() {
         Database database = new Database();
 
-        String insult = database.getInsults().get(0);
-        String comeback = database.getComebacks().get(0);
-
-        Boolean b = database.isRightComeback(insult, comeback);
-        assertTrue(b);
-    }
-
-/*    @Test
-    public void getRandomInsultComeback_test() {
-        Database database = new Database();
-
-        ArrayList<Integer> indexes = new ArrayList<>(); //Simulate random indexes
-        indexes.add(2);
-        indexes.add(13);
-
-        ArrayList<String> insultsLearned = database.getInsultsByIndexes(indexes);
-        ArrayList<String> comebacksLearned = database.getComebacksByIndexes(indexes);
         Boolean b = true;
+        int size = database.getInsults().size();
 
-        for (int i = 0; i < indexes.size(); i++) {
-            String insult = insultsLearned.get(i);
-            String comeback = comebacksLearned.get(i);
+        for (int i = 0; i < size; i++) {
+            String insult = database.getInsults().get(i);
+            String comeback = database.getComebacks().get(i);
             if (!database.isRightComeback(insult, comeback)) b = false;
         }
 
         assertTrue(b);
-    }*/
+    }
 
     @Test
-    public void error_test() {
+    public void getShoutByEnum_test() {
+        Database database = new Database();
+
+        HashMap<ShoutType, String> shouts = database.getShouts(); // Get all errors
+        ShoutType[] shoutType = ShoutType.values(); // Get all types
+
+        Boolean b = true;
+        String name = "AlphaGo";
+
+        for (ShoutType sh : shoutType) {
+            String s1 = shouts.get(sh);
+            s1 = s1.replace("*", name);
+
+            String s2 = database.getShoutByEnumAddName(sh, name); // Test this method
+            if (!s1.equals(s2)) b = false;
+        }
+
+        assertTrue(b);
+    }
+
+
+    @Test
+    public void getErrorByEnum_test() {
         Database database = new Database();
 
         HashMap<ErrorType, String> errors = database.getErrors(); // Get all errors

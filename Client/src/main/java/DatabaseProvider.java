@@ -13,10 +13,11 @@ public class DatabaseProvider {
 
     public DatabaseProvider() {
         this.database = new Database();
-        this.insults = this.database.getInsults();
-        this.comebacks = this.database.getComebacks();
+        this.insults = this.database.getInsults(); // Initiate with all insults
+        this.comebacks = this.database.getComebacks(); // Initiate with all comebacks
     }
 
+    /* TESTED */
     public ArrayList<String> getRandomInsultComeback() {
         ArrayList<String> list = new ArrayList<>();
         if (!this.insults.isEmpty()) {
@@ -29,51 +30,23 @@ public class DatabaseProvider {
         return list;
     }
 
-
+    /* TESTED IN DATABASE */
     public boolean isRightComeback(String insult, String comeback) {
         return this.database.isRightComeback(insult, comeback);
     }
 
+    /* TESTED IN DATABASE */
     public String getShoutByEnumAddName(ShoutType s, String name) {
         return this.database.getShoutByEnumAddName(s, name);
     }
 
+    /* TESTED IN DATABASE */
     public String getErrorByEnum(ErrorType e) {
         return this.database.getErrorByEnum(e);
     }
 
+    /* USED FOR TESTING */
+    public int getSize() {
+        return this.insults.size();
+    }
 }
-/*
-private Database database;
-    private Random random = new Random();
-    private int len = 16;
-    private ArrayList<Integer> indexes;
-
-    public DatabaseProvider() {
-        this.database = new Database();
-        this.indexes = new ArrayList<>();
-
-        this.init();
-    }
-
-    private void init() {
-        for (int i = 0; i < len; i++) indexes.add(i);
-    }
-
-    private int generateRandomIndex() {
-        return this.indexes.remove(random.nextInt(indexes.size()));
-    }
-
-    public boolean isRightComeback(String insult, String comeback) {
-        return this.database.isRightComeback(insult, comeback);
-    }
-
-    public ArrayList<String, String> getRandomInsultComeback() {
-        int index = this.generateRandomIndex();
-        Pair<String, String> h = new Pair<>("", "");
-        String insult = this.database.getInsultByIndex(index);
-        String comeback = this.database.getComebackByIndex(index);
-        h.put(insult, comeback);
-        return h;
-    }
-* */

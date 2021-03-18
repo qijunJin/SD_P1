@@ -1,52 +1,48 @@
-
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.HashMap;
 
 public class Client {
-    public static void main(String[] args) throws Exception {
-        /*
-        client> java –jar client.jar -h (ha de mostrar un help)
-        Us: java Client -s <maquina_servidora> -p <port> [-i 0|1]
-        (ha de seguir aquest format en aquest ordre i detectar errors)
-        */
+    public static void main(String[] args) {
 
-        if (args.length == 1) {
-            System.out.println("Help");
-        } else {
+        /* HELP */
+        if (args.length == 1 && args[0].equals("-h")) {
+            System.out.println("Use: java Client -s <hostname> -p <port> [-i 0|1]");
 
-            /* Control of parameters */
+        } else if (args.length == 4 | args.length == 6) {
+
+            /* CONTROL OF PARAMETERS */
             HashMap<String, String> options = new HashMap<>();
             for (int i = 0; i < args.length; i = i + 2)
                 options.put(args[i], args[i + 1]);
 
-            String hostname;
-            int port;
+            String hostname = "";
+            int port = 0;
             int mode = 0; // By default
 
             try {
                 hostname = options.get("-s");
                 port = Integer.parseInt(options.get("-p"));
-                if (options.containsKey("-i")) {
-                    mode = Integer.parseInt(options.get("-i"));
-                }
+                if (options.containsKey("-i")) mode = Integer.parseInt(options.get("-i"));
             } catch (Exception e) {
-                throw new Exception("Parameters introduced are wrong!");
+                System.out.println("Parameters introduced are wrong!");
             }
 
-            /* Socket & Create game */
+            /* CREATE SOCKET & GAME */
             try {
                 InetAddress host = InetAddress.getByName(hostname);
                 Socket socket = new Socket(host, port);
-                socket.setSoTimeout(5000);
-                //Socket socket = new SocketMock();
+                socket.setSoTimeout(60 * 1000);
+                System.out.println("Connexion established!");
+
                 Datagram datagram = new Datagram(socket);
                 Game game = new Game(datagram, mode);
-
-            } catch (IOException e) {
-                System.out.println("IOException: " + e.getMessage());
+            } catch (Exception e) {
+                System.out.println("Connexion failed!");
             }
+
+        } else {
+            System.out.println("Use: java Client -h");
         }
     }
 }

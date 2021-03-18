@@ -1,7 +1,6 @@
 import enumType.ErrorType;
 import enumType.ShoutType;
 import enumType.StateType;
-import exception.EmptyHashException;
 import exception.OpcodeException;
 
 import java.io.IOException;
@@ -108,7 +107,7 @@ public class Game {
                     /* WRITE HASH */
                     try {
                         this.datagram.write_hash(this.client.generateSecret());
-                        this.client.setHash(this.datagram.getHash(this.client.getSecret()));
+                        this.client.setHash(this.getHash(this.client.getSecret()));
                     } catch (IOException e) {
                         System.out.println(e.getMessage());
                         System.exit(1);
@@ -117,7 +116,7 @@ public class Game {
                     /* READ HASH */
                     try {
                         this.server.setHash(this.datagram.read_hash());
-                    } catch (IOException | OpcodeException | EmptyHashException e) {
+                    } catch (IOException | OpcodeException e) {
                         System.out.println(e.getMessage());
                         System.exit(1);
                     }
@@ -202,7 +201,7 @@ public class Game {
                             try {
                                 this.opponentComeback = this.datagram.read_comeback();
                             } catch (IOException | OpcodeException e) {
-                                this.errorType = ErrorType.INCOMPLETE_MESSAGE;
+                                this.errorType = ErrorType.WRONG_OPCODE;
                                 this.state = StateType.ERROR;
                                 System.out.println("ERROR");
                             }
@@ -396,6 +395,25 @@ public class Game {
 
         return Arrays.equals(encodedhash, hash);
 
+    }
+
+    public byte[] getHash(String str) {
+        byte hashBytes[] = new byte[32];
+        MessageDigest digest = null;
+
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        byte[] encodedhash = digest.digest(
+                str.getBytes(StandardCharsets.UTF_8));
+
+        for (int i = 0; i < 32; i++)
+            hashBytes[i] = encodedhash[i];
+
+        return hashBytes;
     }
 
 

@@ -1,6 +1,5 @@
 import enumType.ErrorType;
 import enumType.ShoutType;
-import exception.EmptyHashException;
 import exception.OpcodeException;
 import org.junit.Test;
 
@@ -11,7 +10,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class DatagramTest {
 
@@ -35,35 +35,6 @@ public class DatagramTest {
         }
     }
 
-
-    @Test
-    public void exception_test() {
-        OpcodeException ex = new OpcodeException(1, 4);
-
-        String e1 = ex.getMessage();
-        String e2 = "";
-
-        try {
-            Socket socket = new SocketMock();
-            Datagram datagram = new Datagram(socket);
-
-            int id = 40;
-            String str = "joe";
-
-            datagram.write_hello(id, str);
-            String readedStr = datagram.read_insult();
-
-        } catch (IOException | OpcodeException e) {
-            e2 = e.getMessage();
-        }
-
-        assertEquals(e1, e2);
-
-        // System.out.println(e1);
-        // System.out.println(e2);
-    }
-
-
     @Test
     public void hash_test() {
         try {
@@ -86,7 +57,7 @@ public class DatagramTest {
 
             assertArrayEquals(encodedhash, readedBytes);
 
-        } catch (IOException | OpcodeException | EmptyHashException e) {
+        } catch (IOException | OpcodeException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -116,10 +87,9 @@ public class DatagramTest {
 
             Socket socket = new SocketMock();
             Datagram datagram = new Datagram(socket);
-            DatabaseProvider database = new DatabaseProvider();
+            DatabaseProvider databaseProvider = new DatabaseProvider();
 
-
-            ArrayList<String> str = database.getRandomInsultComeback();
+            ArrayList<String> str = databaseProvider.getRandomInsultComeback();
             datagram.write_insult(str.get(0));
 
             String readedStr = datagram.read_insult();
@@ -136,9 +106,9 @@ public class DatagramTest {
         try {
             Socket socket = new SocketMock();
             Datagram datagram = new Datagram(socket);
-            DatabaseProvider database = new DatabaseProvider();
+            DatabaseProvider databaseProvider = new DatabaseProvider();
 
-            ArrayList<String> str = database.getRandomInsultComeback();
+            ArrayList<String> str = databaseProvider.getRandomInsultComeback();
             datagram.write_comeback(str.get(1));
 
             String readedStr = datagram.read_comeback();
@@ -153,12 +123,13 @@ public class DatagramTest {
     @Test
     public void shout_test() {
         try {
+
             Socket socket = new SocketMock();
             Datagram datagram = new Datagram(socket);
             Database database = new Database();
 
             ShoutType s = ShoutType.I_WIN;
-            String name = "Qijun";
+            String name = "AlphaGo";
             String str = database.getShoutByEnumAddName(s, name);
 
             datagram.write_shout(str);
@@ -191,30 +162,29 @@ public class DatagramTest {
         }
     }
 
+
     @Test
-    public void proof_test() {
+    public void opcodeException_test() {
+        OpcodeException ex = new OpcodeException(1, 4);
+
+        String e1 = ex.getMessage();
+        String e2 = "";
+
         try {
             Socket socket = new SocketMock();
             Datagram datagram = new Datagram(socket);
 
-            String s = "21394735986548847365534907392897867"; // Secret
+            int id = 40;
+            String str = "joe";
 
-            // FOR TEST
-            MessageDigest digest = null;
-            try {
-                digest = MessageDigest.getInstance("SHA-256");
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
-            byte[] encodedhash = digest.digest(
-                    s.getBytes(StandardCharsets.UTF_8));
+            datagram.write_hello(id, str);
+            String readedStr = datagram.read_insult();
 
-            Boolean bool = datagram.proofHash(s, encodedhash);
-
-            assertTrue(bool);
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | OpcodeException e) {
+            e2 = e.getMessage();
         }
+
+        assertEquals(e1, e2);
     }
+
 }

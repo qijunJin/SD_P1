@@ -1,7 +1,3 @@
-
-
-
-import exception.EmptyHashException;
 import exception.OpcodeException;
 import utils.ComUtils;
 
@@ -52,7 +48,7 @@ public class Datagram extends ComUtils {
     }
 
     /* OPCODE 2: HASH */
-    public byte[] read_hash() throws IOException, OpcodeException, EmptyHashException {
+    public byte[] read_hash() throws IOException, OpcodeException {
         int writtenOpcode = readByte();
         byte[] hashBytes;
 
@@ -61,17 +57,7 @@ public class Datagram extends ComUtils {
         if (writtenOpcode != requiredOpcode) {
             throw new OpcodeException(writtenOpcode, requiredOpcode);
         } else {
-            try {
-                hashBytes = readHash();
-            } catch (Exception e) {
-                throw new EmptyHashException();
-            }
-
-
-            /*System.out.println("Hash len: " + hashBytes.length);
-            for (int i = 0; i < hashBytes.length; i++) {
-                System.out.println(hashBytes[i]);
-            }*/
+            hashBytes = readHash();
         }
 
         return hashBytes;
