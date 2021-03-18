@@ -31,6 +31,16 @@ public class DatabaseProvider {
     }
 
     /* TESTED IN DATABASE */
+    public boolean isInsult(String insult) {
+        return this.database.isInsult(insult);
+    }
+
+    /* TESTED IN DATABASE */
+    public boolean isComeback(String comeback) {
+        return this.database.isComeback(comeback);
+    }
+
+    /* TESTED IN DATABASE */
     public boolean isRightComeback(String insult, String comeback) {
         return this.database.isRightComeback(insult, comeback);
     }

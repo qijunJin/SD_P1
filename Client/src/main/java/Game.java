@@ -32,8 +32,8 @@ public class Game {
         this.datagram = datagram;
         this.menu = new Menu();
         this.gameBool = true;
-        this.mode = mode;
         this.state = StateType.HELLO;
+        this.mode = mode;
         this.run();
 
     }
@@ -206,7 +206,13 @@ public class Game {
                                 System.out.println("ERROR");
                             }
 
-                            this.client.addComeback(this.opponentComeback); // Add comeback as learned
+                            /* ADD COMEBACK AS LEARNED */
+                            if (this.dp.isComeback(this.opponentComeback)) {
+                                this.client.addComeback(this.opponentComeback);
+                            } else {
+                                this.errorType = ErrorType.INCOMPLETE_MESSAGE;
+                                this.state = StateType.ERROR;
+                            }
 
                             System.out.println("INSULT: " + this.insult);
                             System.out.println("COMEBACK: " + this.opponentComeback);
@@ -246,7 +252,14 @@ public class Game {
                             /* SYSTEM OUTPUT */
                             System.out.println("------------------------------------------------------------------------------------");
                             System.out.println("INSULT: " + this.opponentInsult);
-                            this.client.addInsult(this.opponentInsult); // Add opponent comeback as learned
+
+                            /* ADD COMEBACK AS LEARNED */
+                            if (this.dp.isInsult(this.opponentInsult)) {
+                                this.client.addInsult(this.opponentInsult);
+                            } else {
+                                this.errorType = ErrorType.INCOMPLETE_MESSAGE;
+                                this.state = StateType.ERROR;
+                            }
 
                             /* SHOW & SELECT COMEBACK */
                             this.menu.showComebacks(this.client.getComebacks());

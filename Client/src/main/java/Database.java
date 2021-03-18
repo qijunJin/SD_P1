@@ -67,6 +67,16 @@ public class Database {
     }
 
     /* TESTED */
+    public boolean isInsult(String insult) {
+        return this.getInsults().contains(insult);
+    }
+
+    /* TESTED */
+    public boolean isComeback(String comeback) {
+        return this.getComebacks().contains(comeback);
+    }
+
+    /* TESTED */
     public boolean isRightComeback(String insult, String comeback) {
         return this.source.get(insult).equals(comeback);
     }

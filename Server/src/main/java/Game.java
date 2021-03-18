@@ -62,7 +62,7 @@ public class Game {
 
                 case HELLO:              //HELLO message
 
-                    this.player1.setName("Barba Negra");                                                                //Obtain server data
+                    this.player1.setName("AlphaGo");                                                                //Obtain server data
 
                     //For each game, two new INSULTS and COMEBACKS
                     this.player1.removeInsultsComebacks();
