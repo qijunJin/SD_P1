@@ -28,6 +28,15 @@ public class Menu {
         return scan.nextInt();
     }
 
+    public boolean getExit() {
+        System.out.println("To start new game press (N), other key will exit game");
+        if (scan.next().equals("N")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public void showInsults(ArrayList<String> insults) {
         System.out.println("Inserta el numero del insulto que quieras:");
         for (int i = 0; i <= insults.size() - 1; i++) {
