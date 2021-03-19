@@ -1,20 +1,15 @@
-import enumType.ErrorType;
-import enumType.ShoutType;
-
 import java.util.ArrayList;
 import java.util.Random;
 
 public class DatabaseProvider {
-    private Database database;
     private Random random = new Random();
 
     private ArrayList<String> insults;
     private ArrayList<String> comebacks;
 
-    public DatabaseProvider() {
-        this.database = new Database();
-        this.insults = this.database.getInsults(); // Initiate with all insults
-        this.comebacks = this.database.getComebacks(); // Initiate with all comebacks
+    public DatabaseProvider(ArrayList<String> insults, ArrayList<String> comebacks) {
+        this.insults = insults;
+        this.comebacks = comebacks;
     }
 
     /* TESTED */
@@ -28,31 +23,6 @@ public class DatabaseProvider {
             list.add(comeback);
         }
         return list;
-    }
-
-    /* TESTED IN DATABASE */
-    public boolean isInsult(String insult) {
-        return this.database.isInsult(insult);
-    }
-
-    /* TESTED IN DATABASE */
-    public boolean isComeback(String comeback) {
-        return this.database.isComeback(comeback);
-    }
-
-    /* TESTED IN DATABASE */
-    public boolean isRightComeback(String insult, String comeback) {
-        return this.database.isRightComeback(insult, comeback);
-    }
-
-    /* TESTED IN DATABASE */
-    public String getShoutByEnumAddName(ShoutType s, String name) {
-        return this.database.getShoutByEnumAddName(s, name);
-    }
-
-    /* TESTED IN DATABASE */
-    public String getErrorByEnum(ErrorType e) {
-        return this.database.getErrorByEnum(e);
     }
 
     /* USED FOR TESTING */

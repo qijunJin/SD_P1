@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class Game {
+    private Database database;
     private DatabaseProvider dp;
     private Datagram datagram;
     private Menu menu;
@@ -28,7 +29,8 @@ public class Game {
 
     public Game(Datagram datagram, int mode) throws IOException {
 
-        this.dp = new DatabaseProvider();
+        this.database = new Database();
+        this.dp = new DatabaseProvider(database.getInsults(), database.getComebacks());
         this.datagram = datagram;
         this.menu = new Menu();
         this.gameBool = true;
@@ -65,7 +67,7 @@ public class Game {
                                 this.client.setName(name);
                                 this.client.setId(id);
                                 this.client.resetInsultsComebacks(); // Remove all insults and comebacks
-                                this.dp = new DatabaseProvider(); // Restart databaseProvider
+                                this.dp = new DatabaseProvider(this.database.getInsults(), this.client.getComebacks()); // Restart databaseProvider
                             }
 
                         }
@@ -204,7 +206,7 @@ public class Game {
                                 }
 
                                 /* ADD COMEBACK AS LEARNED */
-                                if (this.dp.isComeback(this.opponentComeback)) {
+                                if (this.database.isComeback(this.opponentComeback)) {
                                     this.client.addComeback(this.opponentComeback);
                                 } else {
                                     this.errorType = ErrorType.INCOMPLETE_MESSAGE;
@@ -216,7 +218,7 @@ public class Game {
                                 System.out.println("------------------------------------------------------------------------------------");
 
                                 /* CHECK INSULT - COMEBACK WINNER */
-                                if (this.dp.isRightComeback(this.insult, this.opponentComeback)) {
+                                if (this.database.isRightComeback(this.insult, this.opponentComeback)) {
                                     this.server.addRound();
                                     this.state = StateType.COMEBACK;
                                 } else {
@@ -250,7 +252,7 @@ public class Game {
                                 System.out.println("INSULT: " + this.opponentInsult);
 
                                 /* ADD COMEBACK AS LEARNED */
-                                if (this.dp.isInsult(this.opponentInsult)) {
+                                if (this.database.isInsult(this.opponentInsult)) {
                                     this.client.addInsult(this.opponentInsult);
                                 } else {
                                     this.errorType = ErrorType.INCOMPLETE_MESSAGE;
@@ -272,7 +274,7 @@ public class Game {
                                 System.out.println("------------------------------------------------------------------------------------");
 
                                 /* CHECK INSULT - COMEBACK WINNER */
-                                if (this.dp.isRightComeback(this.opponentInsult, this.comeback)) {
+                                if (this.database.isRightComeback(this.opponentInsult, this.comeback)) {
                                     this.client.addRound();
                                     this.state = StateType.INSULT;
                                 } else {
@@ -297,7 +299,7 @@ public class Game {
 
                             /* WRITE SHOUT */
                             try {
-                                clientShout = this.dp.getShoutByEnumAddName(ShoutType.I_WIN, this.server.getName());
+                                clientShout = this.database.getShoutByEnumAddName(ShoutType.I_WIN, this.server.getName());
                                 this.datagram.write_shout(clientShout);
                             } catch (IOException e) {
                                 System.out.println("ERROR SHOUT");
@@ -314,9 +316,6 @@ public class Game {
                             if (this.client.getDuel() == 3) {
                                 this.client.resetDuelRound();
                                 this.server.resetDuelRound();
-
-                                if (this.menu.getExit()) this.gameBool = false;
-
                                 this.state = StateType.HELLO;
 
                                 /* WIN DUEL */
@@ -330,7 +329,7 @@ public class Game {
 
                             /* WRITE SHOUT */
                             try {
-                                clientShout = this.dp.getShoutByEnumAddName(ShoutType.YOU_WIN, this.server.getName());
+                                clientShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN, this.server.getName());
                                 this.datagram.write_shout(clientShout);
                             } catch (IOException e) {
                                 System.out.println("ERROR SHOUT");
@@ -347,9 +346,6 @@ public class Game {
                             if (this.server.getDuel() == 3) {
                                 this.client.resetDuelRound();
                                 this.server.resetDuelRound();
-
-                                if (this.menu.getExit()) this.gameBool = false;
-
                                 this.state = StateType.HELLO;
 
                                 /* WIN ROUND */
@@ -365,11 +361,13 @@ public class Game {
                         System.out.println("C- SHOUT: " + clientShout);
                         System.out.println("S- SHOUT: " + serverShout + "\n");
 
+                        if (this.menu.getExit()) this.gameBool = false;
+
                         break;
 
                     case ERROR:
 
-                        String errorMessage = this.dp.getErrorByEnum(this.errorType);
+                        String errorMessage = this.database.getErrorByEnum(this.errorType);
 
                         try {
                             this.datagram.write_error(errorMessage);

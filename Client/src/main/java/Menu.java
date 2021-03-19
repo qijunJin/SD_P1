@@ -31,9 +31,9 @@ public class Menu {
     public boolean getExit() {
         System.out.println("To start new game press (N), other key will exit game");
         if (scan.next().equals("N")) {
-            return true;
-        } else {
             return false;
+        } else {
+            return true;
         }
     }
 

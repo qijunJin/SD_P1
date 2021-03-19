@@ -17,7 +17,8 @@ public class PlayerTest {
     @Test
     public void containsWithAddInsultComeback_test() {
         Player player = new Player();
-        DatabaseProvider databaseProvider = new DatabaseProvider();
+        Database database = new Database();
+        DatabaseProvider databaseProvider = new DatabaseProvider(database.getInsults(), database.getComebacks());
 
         player.containsWithAddInsultComeback(databaseProvider.getRandomInsultComeback());
         player.containsWithAddInsultComeback(databaseProvider.getRandomInsultComeback());
@@ -30,7 +31,7 @@ public class PlayerTest {
 
         Boolean contained;
         int dismissed = 0;
-        DatabaseProvider databaseProvider2 = new DatabaseProvider();
+        DatabaseProvider databaseProvider2 = new DatabaseProvider(database.getInsults(), database.getComebacks());
 
         int i = 16;
         while (i > 0) {

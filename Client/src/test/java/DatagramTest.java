@@ -87,7 +87,8 @@ public class DatagramTest {
 
             Socket socket = new SocketMock();
             Datagram datagram = new Datagram(socket);
-            DatabaseProvider databaseProvider = new DatabaseProvider();
+            Database database = new Database();
+            DatabaseProvider databaseProvider = new DatabaseProvider(database.getInsults(), database.getComebacks());
 
             ArrayList<String> str = databaseProvider.getRandomInsultComeback();
             datagram.write_insult(str.get(0));
@@ -106,7 +107,8 @@ public class DatagramTest {
         try {
             Socket socket = new SocketMock();
             Datagram datagram = new Datagram(socket);
-            DatabaseProvider databaseProvider = new DatabaseProvider();
+            Database database = new Database();
+            DatabaseProvider databaseProvider = new DatabaseProvider(database.getInsults(), database.getComebacks());
 
             ArrayList<String> str = databaseProvider.getRandomInsultComeback();
             datagram.write_comeback(str.get(1));
