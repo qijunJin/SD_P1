@@ -31,8 +31,6 @@ public class Client {
                 System.out.println("Parameters introduced are wrong!");
             }
 
-
-
             /* CREATE SOCKET & GAME */
             try {
                 InetAddress host = InetAddress.getByName(hostname);

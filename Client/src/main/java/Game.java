@@ -49,7 +49,7 @@ public class Game {
         }
     }
 
-    public void manualMode(){
+    public void manualMode() {
         while (gameBool) {
 
             switch (this.state) {
@@ -188,8 +188,7 @@ public class Game {
                         } else {
 
                             /* SHOW & SELECT INSULT */
-                            this.menu.showInsults(this.client.getInsults());
-                            this.insult = this.client.getInsults().get(this.menu.getOption(this.client.getInsults()));
+                            this.insult = this.menu.getOption(this.client.getInsults(), "insult");
 
                             /* WRITE INSULT */
                             try {
@@ -264,8 +263,7 @@ public class Game {
                             System.out.println("INSULT: " + this.opponentInsult);
 
                             /* SHOW & SELECT COMEBACK */
-                            this.menu.showComebacks(this.client.getComebacks());
-                            this.comeback = this.client.getComebacks().get(this.menu.getOption(this.client.getComebacks()));
+                            this.comeback = this.menu.getOption(this.client.getComebacks(), "comeback");
 
                             /* WRITE COMEBACK */
                             try {
@@ -273,7 +271,6 @@ public class Game {
                             } catch (IOException e) {
                                 System.out.println("ERROR");
                             }
-
 
                             System.out.println("COMEBACK: " + this.comeback);
                             System.out.println("------------------------------------------------------------------------------------");
@@ -293,11 +290,8 @@ public class Game {
                 case SHOUT:
 
                     /* CONDITION OF ADD DUEL */
-                    if (this.client.getRound() == 2) {
-                        this.client.addDuel();
-                    } else if (this.server.getRound() == 2) {
-                        this.server.addDuel();
-                    }
+                    if (this.client.getRound() == 2) this.client.addDuel();
+                    if (this.server.getRound() == 2) this.server.addDuel();
 
                     /* CONDITION OF WIN GAME - WIN DUEL */
                     if (this.client.getDuel() == 3 | this.client.getRound() == 2) { // Check if client wins
@@ -359,7 +353,10 @@ public class Game {
                     System.out.println("C- SHOUT: " + clientShout);
                     System.out.println("S- SHOUT: " + serverShout + "\n");
 
-                    if (this.menu.getExit()) this.gameBool = false;
+                    if (this.menu.getExit()) {
+                        this.gameBool = false;
+                        break;
+                    }
 
                     break;
 
@@ -386,7 +383,7 @@ public class Game {
         }
     }
 
-    public void automaticMode(){
+    public void automaticMode() {
 
         while (gameBool) {
 
@@ -403,7 +400,7 @@ public class Game {
 
                     /* WRITE HELLO */
                     try {
-                        this.datagram.write_hello(this.client.generateRandomID(), this.client.getName());
+                        this.datagram.write_hello(this.client.generateId(), this.client.getName());
                     } catch (IOException e) {
                         System.out.println("Hello Error Write " + e.getMessage());
                     }
@@ -714,8 +711,7 @@ public class Game {
                     secret.getBytes(StandardCharsets.UTF_8));
 
             return Arrays.equals(encodedhash, hash);
-        }
-        else{
+        } else {
             return false;
         }
     }

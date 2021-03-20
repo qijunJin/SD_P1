@@ -2,10 +2,9 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class DatabaseProvider {
-    private Random random = new Random();
-
-    private ArrayList<String> insults;
-    private ArrayList<String> comebacks;
+    private final ArrayList<String> insults;
+    private final ArrayList<String> comebacks;
+    private final Random random = new Random();
 
     public DatabaseProvider(ArrayList<String> insults, ArrayList<String> comebacks) {
         this.insults = insults;
@@ -17,10 +16,8 @@ public class DatabaseProvider {
         ArrayList<String> list = new ArrayList<>();
         if (!this.insults.isEmpty()) {
             int index = random.nextInt(this.insults.size());
-            String insult = this.insults.remove(index);
-            String comeback = this.comebacks.remove(index);
-            list.add(insult);
-            list.add(comeback);
+            list.add(this.insults.remove(index));
+            list.add(this.comebacks.remove(index));
         }
         return list;
     }
