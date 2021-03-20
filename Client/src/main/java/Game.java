@@ -189,7 +189,7 @@ public class Game {
 
                             /* SHOW & SELECT INSULT */
                             this.menu.showInsults(this.client.getInsults());
-                            this.insult = this.client.getInsults().get(this.menu.getOptionInsult(this.client.getInsults()));
+                            this.insult = this.client.getInsults().get(this.menu.getOption(this.client.getInsults()));
 
                             /* WRITE INSULT */
                             try {
@@ -265,7 +265,7 @@ public class Game {
 
                             /* SHOW & SELECT COMEBACK */
                             this.menu.showComebacks(this.client.getComebacks());
-                            this.comeback = this.client.getComebacks().get(this.menu.getOptionComeback(this.client.getComebacks()));
+                            this.comeback = this.client.getComebacks().get(this.menu.getOption(this.client.getComebacks()));
 
                             /* WRITE COMEBACK */
                             try {
@@ -394,7 +394,7 @@ public class Game {
 
                 case HELLO:
 
-                    this.client.setName("Player");
+                    this.client.setName("IA Player");
 
                     /* ADD RANDOM INSULT-COMEBACK */
                     do { // Check if already contains and always add pair of insults/comebacks

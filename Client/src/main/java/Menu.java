@@ -65,27 +65,12 @@ public class Menu {
         }
     }
 
-    public int getOptionComeback(ArrayList<String> comebacks) {
+    public int getOption(ArrayList<String> list) {
         int option;
 
         do {
             option = scan.nextInt();
-            if (option >= 0 && option <= comebacks.size()){
-                break;
-            }else{
-                System.out.println("Invalid option, try again: ");
-            }
-        } while(true);
-
-        return option - 1;
-    }
-
-    public int getOptionInsult(ArrayList<String> insults) {
-        int option;
-
-        do {
-            option = scan.nextInt();
-            if (option >= 0 && option <= insults.size()){
+            if (option >= 0 && option <= list.size()){
                 break;
             }else{
                 System.out.println("Invalid option, try again: ");

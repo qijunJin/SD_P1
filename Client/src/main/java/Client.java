@@ -27,23 +27,24 @@ public class Client {
                     mode = Integer.parseInt(options.get("-i"));
                     if (mode != 0 && mode != 1) throw new Exception();
                 }
-
-                /* CREATE SOCKET & GAME */
-                try {
-                    InetAddress host = InetAddress.getByName(hostname);
-                    Socket socket = new Socket(host, port);
-                    socket.setSoTimeout(60 * 1000);
-                    System.out.println("Connexion established!");
-
-                    Datagram datagram = new Datagram(socket);
-
-                    Game game = new Game(datagram, mode);
-                } catch (Exception e) {
-                    System.out.println("Connexion failed!");
-                }
-
             } catch (Exception e) {
                 System.out.println("Parameters introduced are wrong!");
+            }
+
+
+
+            /* CREATE SOCKET & GAME */
+            try {
+                InetAddress host = InetAddress.getByName(hostname);
+                Socket socket = new Socket(host, port);
+                socket.setSoTimeout(60 * 1000);
+                System.out.println("Connexion established!");
+
+                Datagram datagram = new Datagram(socket);
+
+                Game game = new Game(datagram, mode);
+            } catch (Exception e) {
+                System.out.println("Connexion failed!");
             }
 
         } else {
