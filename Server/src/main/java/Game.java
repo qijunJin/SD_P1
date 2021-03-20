@@ -1,3 +1,4 @@
+import enumType.ErrorType;
 import enumType.ShoutType;
 import enumType.StateType;
 import exception.OpcodeException;
@@ -16,19 +17,26 @@ public class Game {
 
     private DatabaseProvider dp;
     private BufferedWriter log;
+    private Database database;
     Datagram datagram1;
     Datagram datagram2;
 
-    private Player player1 = new Player();         //Data Server
-    private Player player2 = new Player();         //Data Opponent
+    String clientShout, serverShout;
+    private Player server = new Player();         //Data Server
+    private Player client = new Player();         //Data Opponent
 
+    private String opponentInsult, opponentComeback;
     private boolean gameBool = true;
+    private String insult, comeback;
+    private ErrorType errorType;
+    private boolean contained;
     private StateType state;
 
 
     public Game(Socket s1, Socket s2) throws IOException {
 
-        this.dp = new DatabaseProvider();
+        this.database = new Database();
+        this.dp = new DatabaseProvider(this.database.getInsults(), this.database.getComebacks());
         this.datagram1 = new Datagram(s1);
 
         if (s2 != null) {
@@ -51,43 +59,41 @@ public class Game {
 
     public void singlePlayer() throws IOException {
 
-        String insult = "";
-        String comeback = "";
-        String opponentInsult = "";
-        String opponentComeback = "";
-
         while (gameBool) {
 
             switch (this.state) {
 
                 case HELLO:              //HELLO message
 
-                    this.player1.setName("AlphaGo");                                                                //Obtain server data
+                    this.server.setName("AlphaGo");                                                                //Obtain server data
 
-                    //For each game, two new INSULTS and COMEBACKS
-                    this.player1.removeInsultsComebacks();
-                    this.player1.addInsultComeback(this.dp.getRandomInsultComeback());
-                    this.player1.addInsultComeback(this.dp.getRandomInsultComeback());
+                    //For each game, renew INSULTS and COMEBACKS
+                    this.server.resetInsultsComebacks();
+
+                    /* ADD RANDOM INSULT-COMEBACK */
+                    do { // Check if already contains and always add pair of insults/comebacks
+                        contained = this.server.containsWithAddInsultComeback(this.dp.getRandomInsultComeback());
+                    } while (contained); // If already contains, get new pairs
 
                     try {
-                        this.player2.setName(this.datagram1.read_hello());                                              //Read HELLO message
-                        this.player2.setId(this.datagram1.getIdOpponent());                                             //Obtain opponent data
+                        this.client.setName(this.datagram1.read_hello());                                              //Read HELLO message
+                        this.client.setId(this.datagram1.getIdOpponent());                                             //Obtain opponent data
                     } catch (IOException | OpcodeException e) {
                         this.log.write("Hello Error Read " + e.getMessage());
+                        this.errorType = ErrorType.WRONG_OPCODE;
+                        this.state = StateType.ERROR;
                         this.log.flush();
-                        System.exit(1);
                     }
 
                     try {
-                        this.datagram1.write_hello(this.player1.generateRandomID(), this.player1.getName());                       //Write HELLO message
+                        this.datagram1.write_hello(this.server.generateRandomID(), this.server.getName());                       //Write HELLO message
                     } catch (IOException e) {
                         this.log.write("Hello Error Read " + e.getMessage());
                         this.log.flush();
-                        System.exit(1);
                     }
 
-                    this.log.write("HELLO: " + this.player2.getId() + " " + this.player2.getName() + "\n");
-                    this.log.write("HELLO: " + this.player1.getId() + " " + this.player1.getName() + "\n");
+                    this.log.write("C- HELLO: " + this.client.getId() + " " + this.client.getName() + "\n");
+                    this.log.write("S- HELLO: " + this.server.getId() + " " + this.server.getName() + "\n");
 
                     this.state = StateType.HASH;                                                                        //Change state to HASH
 
@@ -95,25 +101,27 @@ public class Game {
 
                 case HASH:               //HASH message
 
+                    do { // Check if already contains and always add pair of insults/comebacks
+                        contained = this.server.containsWithAddInsultComeback(this.dp.getRandomInsultComeback());
+                    } while (contained); // If already contains, get new pairs
+
                     try {
-                        this.player2.setHash(this.datagram1.read_hash());                                               //Read HASH message
+                        this.client.setHash(this.datagram1.read_hash());                                               //Read HASH message
                     } catch (IOException | OpcodeException e) {
                         this.log.write(e.getMessage());
                         this.log.flush();
-                        System.exit(1);
                     }
 
                     try {
-                        this.datagram1.write_hash(this.player1.generateSecret());                                       //Write HASH message
-                        this.player1.setHash(this.datagram1.getHash(this.player1.getSecret()));                         //Save player1's HASH
+                        this.datagram1.write_hash(this.server.generateSecret());                                       //Write HASH message
+                        this.server.setHash(this.getHash(this.server.getSecret()));                                    //Save server's HASH
                     } catch (IOException e) {
                         this.log.write(e.getMessage());
                         this.log.flush();
-                        System.exit(1);
                     }
 
-                    this.log.write("HASH: " + Arrays.toString(this.player2.getHash()) + "\n");
-                    this.log.write("HASH: " + Arrays.toString(this.player1.getHash()) + "\n");
+                    this.log.write("C- HASH: " + Arrays.toString(this.client.getHash()) + "\n");
+                    this.log.write("S- HASH: " + Arrays.toString(this.server.getHash()) + "\n");
 
                     this.state = StateType.SECRET;                                                                      //Change state to SECRET
 
@@ -122,28 +130,26 @@ public class Game {
                 case SECRET:            //SECRET message
 
                     try {
-                        this.player2.setSecret(this.datagram1.read_secret());                                           //Read SECRET message
+                        this.client.setSecret(this.datagram1.read_secret());                                           //Read SECRET message
                     } catch (IOException | OpcodeException e) {
                         this.log.write(e.getMessage());
                         this.log.flush();
-                        System.exit(1);
                     }
 
                     try {
-                        this.datagram1.write_secret(this.player1.getSecret());                                          //Write SECRET message
+                        this.datagram1.write_secret(this.server.getSecret());                                          //Write SECRET message
                     } catch (IOException e) {
                         this.log.write("ERROR SECRET");
                         this.log.flush();
-                        System.exit(1);
                     }
 
-                    if (this.proofHash(this.player2.getSecret(), this.player2.getHash())) {                             //Check correct HASH
+                    if (this.proofHash(this.client.getSecret(), this.client.getHash())) {                             //Check correct HASH
 
-                        if (this.player1.getId() != this.player2.getId()) {                                             //Check not same ID
+                        if (this.server.getId() != this.client.getId()) {                                             //Check not same ID
 
-                            if (this.isEven(this.player1.getSecret(), this.player2.getSecret())) {                      //Check EVEN or ODD
+                            if (this.isEven(this.server.getSecret(), this.client.getSecret())) {                      //Check EVEN or ODD
 
-                                if (this.player1.getId() < this.player2.getId()) {
+                                if (this.server.getId() < this.client.getId()) {
                                     this.state = StateType.INSULT;                                                      //Change state to INSULT
                                 } else {
                                     this.state = StateType.COMEBACK;                                                    //Change state to COMEBACK
@@ -151,7 +157,7 @@ public class Game {
 
                             } else {
 
-                                if (this.player1.getId() > this.player2.getId()) {
+                                if (this.server.getId() > this.client.getId()) {
                                     this.state = StateType.INSULT;                                                      //Change state to INSULT
                                 } else {
                                     this.state = StateType.COMEBACK;                                                    //Change state to COMEBACK
@@ -159,34 +165,22 @@ public class Game {
 
                             }
 
-                            this.log.write("SECRET: " + this.player1.getSecret() + "\n");
-                            this.log.write("SECRET: " + this.player2.getSecret() + "\n");
+                            this.log.write("C- SECRET: " + this.server.getSecret() + "\n");
+                            this.log.write("S- SECRET: " + this.client.getSecret() + "\n");
 
                         } else {                                                     //Same ID, ERROR
 
-                            System.out.println("ERROR ID");
-
-                            /*try {
-                                this.datagram1.write_error("ERROR ID");               //CODIGO INCOMPLETO
-                            } catch (IOException e) {
-                                this.log.write("ERROR");
-                                this.log.flush();
-                                System.exit(1);
-                            }*/
+                            this.log.write("C- ERROR SAME ID");
+                            this.errorType = ErrorType.INCOMPLETE_MESSAGE;
+                            this.state = StateType.ERROR;
 
                         }
 
                     } else {                                                         //Wrong HASH, ERROR
 
-                        System.out.println("ERROR HASH");
-
-                        /*try {
-                            this.datagram1.write_error("ERROR HASH");                 //CODIGO INCOMPLETO
-                        } catch (IOException e) {
-                            this.log.write("ERROR");
-                            this.log.flush();
-                            System.exit(1);
-                        }*/
+                        this.log.write("C- ERROR NOT COINCIDENT HASH");
+                        this.errorType = ErrorType.INCOMPLETE_MESSAGE;
+                        this.state = StateType.ERROR;
 
                     }
 
@@ -194,48 +188,54 @@ public class Game {
 
                 case INSULT:            //INSULT message
 
-                    if (this.player1.getDuel() == 3 || this.player2.getDuel() == 3) {                  //Check if there's a winner
+                    if (this.server.getDuel() == 3 || this.client.getDuel() == 3) {                  //Check if there's a winner
 
                         this.state = StateType.SHOUT;                                                  //Change state to SHOUT
 
                     } else {
 
-                        if (this.player1.getRound() == 2 || this.player2.getRound() == 2) {            //Check if someone win duel
+                        if (this.server.getRound() == 2 || this.client.getRound() == 2) {            //Check if someone win duel
 
                             this.state = StateType.SHOUT;                                              //Change state to SHOUT
 
                         } else {
 
-                            insult = this.player1.getRandomInsult();                                  //Random INSULT
+                            this.insult = this.server.getRandomInsult();                                  //Random INSULT
 
                             try {
-                                this.datagram1.write_insult(insult);                                  //Write INSULT message
+                                this.datagram1.write_insult(this.insult);                                  //Write INSULT message
                             } catch (IOException e) {
                                 this.log.write("ERROR");
                                 this.log.flush();
-                                System.exit(1);
                             }
 
                             try {
-                                opponentComeback = this.datagram1.read_comeback();                    //Read COMEBACK message and get COMEBACK
+                                this.opponentComeback = this.datagram1.read_comeback();                    //Read COMEBACK message and get COMEBACK
                             } catch (IOException | OpcodeException e) {
+                                this.errorType = ErrorType.WRONG_OPCODE;
+                                this.state = StateType.ERROR;
                                 this.log.write("ERROR");
-                                this.log.flush();
-                                System.exit(1);
                             }
 
-                            this.player1.addComeback(opponentComeback);                              //Get opponent comeback as learned
-                            this.log.write("INSULT: " + insult + "\n");
-                            this.log.write("COMEBACK: " + opponentComeback + "\n");
+                            /* ADD COMEBACK AS LEARNED */
+                            if (this.database.isComeback(this.opponentComeback)) {
+                                this.server.addComeback(this.opponentComeback);
+                            } else {
+                                this.errorType = ErrorType.INCOMPLETE_MESSAGE;
+                                this.state = StateType.ERROR;
+                            }                              //Get opponent comeback as learned
 
-                            if (this.dp.isRightComeback(insult, opponentComeback)) {                 //Check who win the round
+                            this.log.write("S- INSULT: " + this.insult + "\n");
+                            this.log.write("C- COMEBACK: " + this.opponentComeback + "\n");
 
-                                this.player2.addRound();
+                            if (this.database.isRightComeback(this.insult, this.opponentComeback)) {                 //Check who win the round
+
+                                this.client.addRound();
                                 this.state = StateType.COMEBACK;
 
                             } else {
 
-                                this.player1.addRound();
+                                this.server.addRound();
 
                             }
                         }
@@ -245,46 +245,51 @@ public class Game {
 
                 case COMEBACK:
 
-                    if (this.player1.getDuel() == 3 || this.player2.getDuel() == 3) {                  //Check if there's a winner
+                    if (this.server.getDuel() == 3 || this.client.getDuel() == 3) {                  //Check if there's a winner
 
                         this.state = StateType.SHOUT;                                                  //Change state to SHOUT
 
                     } else {
 
-                        if (this.player1.getRound() == 2 || this.player2.getRound() == 2) {            //Check if someone win duel
+                        if (this.server.getRound() == 2 || this.client.getRound() == 2) {            //Check if someone win duel
 
                             this.state = StateType.SHOUT;                                              //Change state to SHOUT
 
                         } else {
 
                             try {
-                                opponentInsult = this.datagram1.read_insult();                                 //Read COMEBACK message and get COMEBACK
+                                this.opponentInsult = this.datagram1.read_insult();                                 //Read COMEBACK message and get COMEBACK
                             } catch (IOException | OpcodeException e) {
-                                System.out.println("ERROR");
-                                System.exit(1);
+                                this.log.write("ERROR");
                             }
 
-                            this.player1.addInsult(opponentInsult);                                            //Get opponent comeback as learned
+                            /* ADD COMEBACK AS LEARNED */
+                            if (this.database.isInsult(this.opponentInsult)) {
+                                this.server.addInsult(this.opponentInsult);
+                            } else {
+                                this.errorType = ErrorType.INCOMPLETE_MESSAGE;
+                                this.state = StateType.ERROR;
+                            }                                         //Get opponent comeback as learned
 
-                            comeback = this.player1.getRandomComeback();                                       //Get random COMEBACK
+                            this.comeback = this.server.getRandomComeback();                                       //Get random COMEBACK
 
                             try {
-                                this.datagram1.write_comeback(comeback);                                       //Write COMEBACK message
+                                this.datagram1.write_comeback(this.comeback);                                       //Write COMEBACK message
                             } catch (IOException e) {
-                                System.out.println("ERROR");
+                                this.log.write("ERROR");
                             }
 
-                            this.log.write("INSULT: " + opponentInsult + "\n");
-                            this.log.write("COMEBACK: " + comeback + "\n");
+                            this.log.write("C- INSULT: " + this.opponentInsult + "\n");
+                            this.log.write("S- COMEBACK: " + this.comeback + "\n");
 
-                            if (this.dp.isRightComeback(opponentInsult, comeback)) {                          //Check who win the round
+                            if (this.database.isRightComeback(this.opponentInsult, this.comeback)) {                          //Check who win the round
 
-                                this.player1.addRound();                                                      //Client win round
+                                this.server.addRound();                                                      //Client win round
                                 this.state = StateType.INSULT;                                                //Change state to INSULT
 
                             } else {
 
-                                this.player2.addRound();                                                      //Server win round
+                                this.client.addRound();                                                      //Server win round
 
                             }
                         }
@@ -294,134 +299,112 @@ public class Game {
 
                 case SHOUT:
 
-                    String str = "";
-                    String str2 = "";
+                    if (this.server.getRound() == 2) {
 
-                    if (this.player1.getRound() == 2) {
+                        this.server.addDuel();
 
-                        this.player1.addDuel();
+                    } else if (this.client.getRound() == 2){
 
-                    } else if (this.player2.getRound() == 2){
-
-                        this.player2.addDuel();
+                        this.client.addDuel();
 
                     }
 
-                    if (this.player1.getDuel() == 3 | this.player1.getRound() == 2) {                                   //Check if Server win something
+                    try {
+                        clientShout = this.datagram1.read_shout();                                                          //Read SHOUT message and get message
+                    } catch (IOException | OpcodeException e) {
+                        this.log.write("ERROR SHOUT");
+                    }
 
-                        if (this.player1.getDuel() == 3) {
+                    if (this.server.getDuel() == 3 | this.server.getRound() == 2) {                                   //Check if Server win something
+
+                        if (this.server.getDuel() == 3) {
 
                             try {
-                                str = this.datagram1.read_shout();                                                          //Read SHOUT message and get message
-                            } catch (IOException | OpcodeException e) {
-                                System.out.println("ERROR SHOUT");
-                                System.exit(1);
-                            }
-
-                            try {
-                                str2 = this.dp.getShoutByEnumAddName(ShoutType.I_WIN, this.player2.getName());               //Select SHOUT type message
-                                this.datagram1.write_shout(str2);                                                            //Write SHOUT message
+                                serverShout = this.database.getShoutByEnumAddName(ShoutType.I_WIN, this.client.getName());               //Select SHOUT type message
+                                this.datagram1.write_shout(serverShout);                                                            //Write SHOUT message
                             } catch (IOException e) {
-                                System.out.println("ERROR SHOUT");
-                                System.exit(1);
+                                this.log.write("ERROR SHOUT");
                             }
 
 
-                            this.player1.resetDuelRound();                                                                  //Reset duels
-                            this.player2.resetDuelRound();
+                            this.server.resetDuelRound();                                                                  //Reset duels
+                            this.client.resetDuelRound();
                             System.out.println("New Game");
                             this.state = StateType.HELLO;
 
                         } else {
 
                             try {
-                                str = this.datagram1.read_shout();                                                          //Read SHOUT message and get message
-                            } catch (IOException | OpcodeException e) {
-                                System.out.println("ERROR SHOUT");
-                                System.exit(1);
-                            }
-
-
-                            try {
-                                str2 = this.dp.getShoutByEnumAddName(ShoutType.I_WIN, this.player2.getName());               //Select SHOUT type message
-                                this.datagram1.write_shout(str2);                                                            //Write SHOUT message
+                                serverShout = this.database.getShoutByEnumAddName(ShoutType.I_WIN, this.client.getName());               //Select SHOUT type message
+                                this.datagram1.write_shout(serverShout);                                                            //Write SHOUT message
                             } catch (IOException e) {
-                                System.out.println("ERROR SHOUT");
-                                System.exit(1);
+                                this.log.write("ERROR SHOUT");
                             }
 
-                            this.player1.resetRound();                                                                  //Reset rounds
-                            this.player2.resetRound();
+                            this.server.resetRound();                                                                  //Reset rounds
+                            this.client.resetRound();
                             this.state = StateType.HASH;
 
                         }
 
-                    } else if (this.player2.getDuel() == 3 | this.player2.getRound() == 2) {
+                    } else if (this.client.getDuel() == 3 | this.client.getRound() == 2) {
 
-                        if (this.player2.getDuel() == 3) {
-
-                            try {
-                                str = this.datagram1.read_shout();                                                          //Read SHOUT message and get message
-                            } catch (IOException | OpcodeException e) {
-                                System.out.println("ERROR SHOUT");
-                                System.exit(1);
-                            }
+                        if (this.client.getDuel() == 3) {
 
                             try {
-                                str2 = this.dp.getShoutByEnumAddName(ShoutType.YOU_WIN_FINAL, this.player2.getName());               //Select SHOUT type message
-                                this.datagram1.write_shout(str2);                                                            //Write SHOUT message
+                                serverShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN_FINAL, this.client.getName());               //Select SHOUT type message
+                                this.datagram1.write_shout(serverShout);                                                            //Write SHOUT message
                             } catch (IOException e) {
-                                System.out.println("ERROR SHOUT");
-                                System.exit(1);
+                                this.log.write("ERROR SHOUT");
                             }
 
-                            this.player1.resetDuelRound();                                                                  //Reset duels
-                            this.player2.resetDuelRound();
+                            this.server.resetDuelRound();                                                                  //Reset duels
+                            this.client.resetDuelRound();
                             System.out.println("New Game");
                             this.state = StateType.HELLO;
 
                         } else {
 
                             try {
-                                str = this.datagram1.read_shout();                                                          //Read SHOUT message and get message
-                            } catch (IOException | OpcodeException e) {
-                                System.out.println("ERROR SHOUT");
-                                System.exit(1);
-                            }
-
-
-                            try {
-                                str2 = this.dp.getShoutByEnumAddName(ShoutType.YOU_WIN, this.player2.getName());               //Select SHOUT type message
-                                this.datagram1.write_shout(str2);                                                            //Write SHOUT message
+                                serverShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN, this.client.getName());               //Select SHOUT type message
+                                this.datagram1.write_shout(serverShout);                                                            //Write SHOUT message
                             } catch (IOException e) {
-                                System.out.println("ERROR SHOUT");
-                                System.exit(1);
+                                this.log.write("ERROR SHOUT");
                             }
 
 
-                            this.player1.resetRound();                                                                  //Reset rounds
-                            this.player2.resetRound();
+                            this.server.resetRound();                                                                  //Reset rounds
+                            this.client.resetRound();
                             this.state = StateType.HASH;
 
                         }
 
                     }
 
-                    this.log.write("SHOUT: " + str + "\n");
-                    this.log.write("SHOUT: " + str2 + "\n");
+                    this.log.write("SHOUT: " + clientShout + "\n");
+                    this.log.write("SHOUT: " + serverShout + "\n");
 
                     break;
 
                 case ERROR:
 
+                    String errorMessage = this.database.getErrorByEnum(this.errorType);
+
+                    try {
+                        this.datagram1.write_error(errorMessage);
+                    } catch (IOException e) {
+                        System.out.println("S- EXIT");
+                    }
+
+                    this.gameBool = false;
 
             }
 
         }
     }
 
+    /* WILL BE TESTED IN DATAGRAM CLASS */
     public boolean proofHash(String secret, byte[] hash) {
-
         MessageDigest digest = null;
         try {
             digest = MessageDigest.getInstance("SHA-256");
@@ -432,9 +415,28 @@ public class Game {
                 secret.getBytes(StandardCharsets.UTF_8));
 
         return Arrays.equals(encodedhash, hash);
-
     }
 
+    /* WILL BE TESTED IN DATAGRAM CLASS */
+    public byte[] getHash(String str) {
+        byte hashBytes[] = new byte[32];
+        MessageDigest digest = null;
+
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        byte[] encodedhash = digest.digest(
+                str.getBytes(StandardCharsets.UTF_8));
+
+        for (int i = 0; i < 32; i++) hashBytes[i] = encodedhash[i];
+
+        return hashBytes;
+    }
+
+    /* WILL BE TESTED IN DATAGRAM CLASS */
     public boolean isEven(String s1, String s2) {
         int n1 = Integer.parseInt(s1);
         int n2 = Integer.parseInt(s2);

@@ -30,7 +30,8 @@ public class Menu {
 
     public boolean getExit() {
         System.out.println("To start new game press (N), other key will exit game");
-        if (scan.next().equals("N")) {
+        String answer = scan.next();
+        if (answer.equals("N") || answer.equals("n")) {
             return false;
         } else {
             return true;
