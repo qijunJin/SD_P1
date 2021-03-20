@@ -23,13 +23,9 @@ public class Datagram extends ComUtils {
         super(socket);
     }
 
-    public int read_opcode() throws IOException {
-        return this.readByte();
-    }
-
     /* OPCODE 1: HELLO */
-    public String read_hello(int opcode) throws IOException, OpcodeException {
-        int writtenOpcode = opcode;
+    public String read_hello() throws IOException, OpcodeException {
+        int writtenOpcode = readByte();
         String str;
 
         int requiredOpcode = 1;
@@ -52,8 +48,8 @@ public class Datagram extends ComUtils {
     }
 
     /* OPCODE 2: HASH */
-    public byte[] read_hash(int opcode) throws IOException, OpcodeException {
-        int writtenOpcode = opcode;
+    public byte[] read_hash() throws IOException, OpcodeException {
+        int writtenOpcode = readByte();
         byte[] hashBytes;
 
         int requiredOpcode = 2;
@@ -74,8 +70,8 @@ public class Datagram extends ComUtils {
 
 
     /* OPCODE 3: SECRET */
-    public String read_secret(int opcode) throws IOException, OpcodeException {
-        int writtenOpcode = opcode;
+    public String read_secret() throws IOException, OpcodeException {
+        int writtenOpcode = readByte();
         String str;
 
         int requiredOpcode = 3;
@@ -97,8 +93,8 @@ public class Datagram extends ComUtils {
 
 
     /* OPCODE 4: INSULT */
-    public String read_insult(int opcode) throws IOException, OpcodeException {
-        int writtenOpcode = opcode;
+    public String read_insult() throws IOException, OpcodeException {
+        int writtenOpcode = readByte();
         String str;
 
         int requiredOpcode = 4;
@@ -119,8 +115,8 @@ public class Datagram extends ComUtils {
     }
 
     /* OPCODE 5: COMEBACK */
-    public String read_comeback(int opcode) throws IOException, OpcodeException {
-        int writtenOpcode = opcode;
+    public String read_comeback() throws IOException, OpcodeException {
+        int writtenOpcode = readByte();
         String str;
 
         int requiredOpcode = 5;
@@ -141,8 +137,8 @@ public class Datagram extends ComUtils {
     }
 
     /* OPCODE 6: SHOUT */
-    public String read_shout(int opcode) throws IOException, OpcodeException {
-        int writtenOpcode = opcode;
+    public String read_shout() throws IOException, OpcodeException {
+        int writtenOpcode = readByte();
         String str;
 
         int requiredOpcode = 6;
@@ -163,8 +159,8 @@ public class Datagram extends ComUtils {
     }
 
     /* OPCODE 7: ERROR */
-    public String read_error(int opcode) throws IOException, OpcodeException {
-        int writtenOpcode = opcode;
+    public String read_error() throws IOException, OpcodeException {
+        int writtenOpcode = readByte();
         String str;
 
         int requiredOpcode = 7;
