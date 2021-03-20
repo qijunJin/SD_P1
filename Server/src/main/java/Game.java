@@ -119,7 +119,7 @@ public class Game {
 
                     break;
 
-                case SECRET:            //SECRET message
+                case SECRET:            // SECRET message
 
                     try {
                         this.player2.setSecret(this.datagram1.read_secret());                                           //Read SECRET message

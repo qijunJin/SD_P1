@@ -46,6 +46,7 @@ public class Game {
         }
         if (mode == 0) {
             while (gameBool) {
+                // int opcode=this.datagram.readByte();
 
                 switch (this.state) {
 
@@ -342,13 +343,13 @@ public class Game {
                                 System.out.println("ERROR SHOUT");
                             }
 
-                            /* WIN DUEL */
+                            /* WIN GAME */
                             if (this.server.getDuel() == 3) {
                                 this.client.resetDuelRound();
                                 this.server.resetDuelRound();
                                 this.state = StateType.HELLO;
 
-                                /* WIN ROUND */
+                                /* WIN DUEL */
                             } else {
                                 this.client.resetRound();
                                 this.server.resetRound();

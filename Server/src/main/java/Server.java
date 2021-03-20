@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+
 public class Server {
 
     public static void main(String[] args) throws Exception {
@@ -23,7 +24,6 @@ public class Server {
             } catch (Exception e) {
                 throw new Exception("Parameters introduced are wrong!");
             }
-
 
 
             try {
@@ -56,7 +56,7 @@ public class Server {
 
             try {
                 socket = serverSocket.accept();
-                socket.setSoTimeout(30000);
+                socket.setSoTimeout(30 * 1000);
                 System.out.println("Player connected");
             } catch (IOException e) {
                 System.out.println("IOException: " + e.getMessage());
