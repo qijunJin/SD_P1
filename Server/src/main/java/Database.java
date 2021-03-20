@@ -63,10 +63,7 @@ public class Database {
     }
 
 
-    public boolean isRightComeback(String insult, String comeback) {
-        return this.source.get(insult).equals(comeback);
-    }
-
+    /* GETTER */
     public ArrayList<String> getInsults() {
         return new ArrayList(this.source.keySet());
     }
@@ -75,17 +72,43 @@ public class Database {
         return new ArrayList(this.source.values());
     }
 
+    /* TESTED */
+    public boolean isInsult(String insult) {
+        return this.getInsults().contains(insult);
+    }
+
+    /* TESTED */
+    public boolean isComeback(String comeback) {
+        return this.getComebacks().contains(comeback);
+    }
+
+    /* TESTED */
+    public boolean isRightComeback(String insult, String comeback) {
+        if (insult != null && comeback != null) {
+            return this.source.get(insult).equals(comeback);
+        }
+        return false;
+    }
+
+    /* TESTED */
     public String getShoutByEnumAddName(ShoutType s, String name) {
         String str = this.shouts.get(s);
         str = str.replace("*", name);
         return str;
     }
 
+    /* TESTED */
     public String getErrorByEnum(ErrorType e) {
         return this.errors.get(e);
     }
 
+    /* USED FOR TESTING */
     public HashMap<ErrorType, String> getErrors() { // For test
         return this.errors;
+    }
+
+    /* USED FOR TESTING */
+    public HashMap<ShoutType, String> getShouts() { // For test
+        return this.shouts;
     }
 }
