@@ -411,10 +411,15 @@ public class Game {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        byte[] encodedhash = digest.digest(
-                secret.getBytes(StandardCharsets.UTF_8));
+        if (secret != null || hash != null) {
+            byte[] encodedhash = digest.digest(
+                    secret.getBytes(StandardCharsets.UTF_8));
 
-        return Arrays.equals(encodedhash, hash);
+            return Arrays.equals(encodedhash, hash);
+        }
+        else{
+            return false;
+        }
     }
 
     /* WILL BE TESTED IN DATAGRAM CLASS */
@@ -428,10 +433,13 @@ public class Game {
             e.printStackTrace();
         }
 
-        byte[] encodedhash = digest.digest(
-                str.getBytes(StandardCharsets.UTF_8));
+        if (str != null) {
+            byte[] encodedhash = digest.digest(
+                    str.getBytes(StandardCharsets.UTF_8));
 
-        for (int i = 0; i < 32; i++) hashBytes[i] = encodedhash[i];
+
+            for (int i = 0; i < 32; i++) hashBytes[i] = encodedhash[i];
+        }
 
         return hashBytes;
     }
