@@ -35,9 +35,9 @@ public class Menu {
 
         do {
             id = scan.next();
-            if (id.matches("[0-9]+") == true){
+            if (id.matches("[0-9]+")) {
                 check = false;
-            }else{
+            } else {
                 System.out.println("Invalid id, insert your id with digits: ");
             }
         } while(check);
@@ -48,22 +48,18 @@ public class Menu {
     public boolean getExit() {
         System.out.println("To continue playing press (C), other key will exit game");
         String answer = scan.next();
-        if (answer.equals("C") || answer.equals("c")) {
-            return false;
-        } else {
-            return true;
-        }
+        return !answer.equals("C") && !answer.equals("c");
     }
 
     public void showInsults(ArrayList<String> insults) {
-        System.out.println("Inserta el numero del insulto que quieras:");
+        System.out.println("Insert the number of insult:");
         for (int i = 0; i <= insults.size() - 1; i++) {
             System.out.println(i + 1 + ". " + insults.get(i));
         }
     }
 
     public void showComebacks(ArrayList<String> comebacks) {
-        System.out.println("Inserta el numero del comeback que quieras:");
+        System.out.println("Insert the number of comeback:");
         for (int i = 0; i <= comebacks.size() - 1; i++) {
             System.out.println(i + 1 + ". " + comebacks.get(i));
         }

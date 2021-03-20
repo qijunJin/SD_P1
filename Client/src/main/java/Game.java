@@ -40,7 +40,7 @@ public class Game {
 
     }
 
-    private void run(int mode) throws IOException {
+    private void run(int mode) {
         if (mode == 1) {
             this.automaticMode();
         }
