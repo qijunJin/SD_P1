@@ -7,23 +7,34 @@ public class Menu {
 
     public String getName() {
         System.out.println("Insert your name:");
-        String name = "";
+        /*String name = "";
         while (!scan.hasNext(ALPHABETS)) {
             name = scan.next();
             if (name.matches(ALPHABETS)) break;
             System.out.println("Invalid name, insert your name with alphabets:");
         }
-        return name;
+        return name;*/
+        return scan.next();
     }
 
     public int getId() {
         System.out.println("Insert your id:");
 
-        while (!scan.hasNextInt()) {
+        /*while (!scan.hasNextInt()) {
             scan.next();
             System.out.println("Invalid id, insert your id with digits: ");
-        }
+        }*/
+
         return scan.nextInt();
+    }
+
+    public boolean getExit() {
+        System.out.println("To start new game press (N), other key will exit game");
+        if (scan.next().equals("N")) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public void showInsults(ArrayList<String> insults) {
@@ -43,5 +54,4 @@ public class Menu {
     public int getOption() {
         return scan.nextInt() - 1;
     }
-
 }

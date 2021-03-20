@@ -57,12 +57,23 @@ public class Database {
 
     }
 
+    /* GETTER */
     public ArrayList<String> getInsults() {
         return new ArrayList(this.source.keySet());
     }
 
     public ArrayList<String> getComebacks() {
         return new ArrayList(this.source.values());
+    }
+
+    /* TESTED */
+    public boolean isInsult(String insult) {
+        return this.getInsults().contains(insult);
+    }
+
+    /* TESTED */
+    public boolean isComeback(String comeback) {
+        return this.getComebacks().contains(comeback);
     }
 
     /* TESTED */

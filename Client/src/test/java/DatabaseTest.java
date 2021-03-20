@@ -4,9 +4,64 @@ import org.junit.Test;
 
 import java.util.HashMap;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class DatabaseTest {
+
+    @Test
+    public void isInsult_test() {
+        Database database = new Database();
+
+        Boolean b = true;
+        int size = database.getInsults().size();
+
+        for (int i = 0; i < size; i++) {
+            String insult = database.getInsults().get(i);
+            if (!database.isInsult(insult)) b = false;
+        }
+
+        assertTrue(b);
+    }
+
+    @Test
+    public void isInsult_false_test() {
+        Database database = new Database();
+
+        Boolean b = true;
+        String insult = database.getInsults().get(0);
+
+        insult = insult.substring(0, 10);
+
+        assertFalse(database.isInsult(insult));
+    }
+
+    @Test
+    public void isComeback_test() {
+        Database database = new Database();
+
+        Boolean b = true;
+        int size = database.getComebacks().size();
+
+        for (int i = 0; i < size; i++) {
+            String insult = database.getComebacks().get(i);
+            if (!database.isComeback(insult)) b = false;
+        }
+
+        assertTrue(b);
+    }
+
+    @Test
+    public void isComeback_false_test() {
+        Database database = new Database();
+
+        Boolean b = true;
+        String insult = database.getComebacks().get(0);
+
+        insult = insult.substring(0, 10);
+
+        assertFalse(database.isComeback(insult));
+    }
 
     @Test
     public void isRightComeback_test() {

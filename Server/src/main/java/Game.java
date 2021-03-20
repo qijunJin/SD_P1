@@ -1,6 +1,5 @@
 import enumType.ShoutType;
 import enumType.StateType;
-import exception.EmptyHashException;
 import exception.OpcodeException;
 
 import java.io.BufferedWriter;
@@ -63,7 +62,7 @@ public class Game {
 
                 case HELLO:              //HELLO message
 
-                    this.player1.setName("Barba Negra");                                                                //Obtain server data
+                    this.player1.setName("AlphaGo");                                                                //Obtain server data
 
                     //For each game, two new INSULTS and COMEBACKS
                     this.player1.removeInsultsComebacks();
@@ -98,7 +97,7 @@ public class Game {
 
                     try {
                         this.player2.setHash(this.datagram1.read_hash());                                               //Read HASH message
-                    } catch (IOException | OpcodeException | EmptyHashException e) {
+                    } catch (IOException | OpcodeException e) {
                         this.log.write(e.getMessage());
                         this.log.flush();
                         System.exit(1);

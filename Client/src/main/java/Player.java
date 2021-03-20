@@ -21,14 +21,6 @@ public class Player {
         this.id = -1;
     }
 
-    public void addInsult(String insult) {
-        insults.add(insult);
-    }
-
-    public void addComeback(String comeback) {
-        this.comebacks.add(comeback);
-    }
-
     public boolean containsWithAddInsultComeback(ArrayList<String> list) {
         boolean b = false;
         if (!list.isEmpty()) {
@@ -39,11 +31,14 @@ public class Player {
         return b;
     }
 
-    public void removeInsultsComebacks() {
-        this.insults.clear();
-        this.comebacks.clear();
+    /* TESTED -> secret in range of 0 - MAX_VALUE */
+    public String generateSecret() {
+        int s = random.nextInt(Integer.MAX_VALUE);
+        this.secret = String.valueOf(s);
+        return String.valueOf(s);
     }
 
+    /* GETTER - SETTER */
     public int getId() {
         return id;
     }
@@ -56,6 +51,43 @@ public class Player {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public byte[] getHash() {
+        return hash;
+    }
+
+    public void setHash(byte[] hash) {
+        this.hash = hash;
+    }
+
+    public String getSecret() {
+        return secret;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
+
+    public ArrayList<String> getInsults() {
+        return new ArrayList(insults);
+    }
+
+    public ArrayList<String> getComebacks() {
+        return new ArrayList(comebacks);
+    }
+
+    public int getDuel() {
+        return duel;
+    }
+
+    public int getRound() {
+        return round;
+    }
+
+    /* EQUAL - HAS */
     public boolean hasSameName(String str) {
         return this.name.equals(str);
     }
@@ -72,54 +104,30 @@ public class Player {
         return this.id != -1;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    /* ADD - RESET */
+    public void addInsult(String insult) {
+        insults.add(insult);
     }
 
-    public String getSecret() {
-        return secret;
+    public void addComeback(String comeback) {
+        this.comebacks.add(comeback);
     }
 
-    public void setSecret(String secret) {
-        this.secret = secret;
-    }
-
-    public String generateSecret() {
-        int s = random.nextInt(Integer.MAX_VALUE);
-        this.secret = String.valueOf(s);
-        return String.valueOf(s);
-    }
-
-    public byte[] getHash() {
-        return hash;
-    }
-
-    public void setHash(byte[] hash) {
-        this.hash = hash;
-    }
-
-    public int getDuel() {
-        return duel;
+    public void resetInsultsComebacks() {
+        this.insults.clear();
+        this.comebacks.clear();
     }
 
     public void addDuel() {
         this.duel++;
     }
 
-    public int getRound() {
-        return round;
-    }
-
     public void addRound() {
         this.round++;
     }
 
-    public ArrayList<String> getInsults() {
-        return new ArrayList(insults);
-    }
-
-    public ArrayList<String> getComebacks() {
-        return new ArrayList(comebacks);
+    public void resetRound() {
+        this.round = 0;
     }
 
     public void resetDuelRound() {
@@ -127,7 +135,13 @@ public class Player {
         this.round = 0;
     }
 
-    public void resetRound() {
-        this.round = 0;
+    /* USED FOR TESTING */
+    public int getInsultSize() {
+        return this.insults.size();
+    }
+
+    /* USED FOR TESTING */
+    public int getComebackSize() {
+        return this.comebacks.size();
     }
 }
