@@ -385,6 +385,7 @@ public class Game {
     }
 
     public void automaticMode(){
+
         while (gameBool) {
 
             switch (this.state) {
