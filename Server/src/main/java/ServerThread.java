@@ -5,8 +5,8 @@ public class ServerThread implements Runnable {
 
     private Game game;
 
-    public ServerThread(Socket s1, Socket s2) throws IOException {
-        game = new Game(s1, s2);
+    public ServerThread(Socket s1, Socket s2, int mode) throws IOException {
+        game = new Game(s1, s2, mode);
     }
 
     public void run() {

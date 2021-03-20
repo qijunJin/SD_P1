@@ -19,6 +19,7 @@ public class Server {
                 numPort = Integer.parseInt(options.get("-p"));
                 if (options.containsKey("-m")) {
                     mode = Integer.parseInt(options.get("-m"));
+                    if (mode != 1 && mode != 2) throw new Exception();
                 }
             } catch (Exception e) {
                 throw new Exception("Parameters introduced are wrong!");
@@ -51,23 +52,21 @@ public class Server {
 
         System.out.println("Waiting for player");
 
-        while (true) {
-            Socket socket = null;
+        Socket socket = null;
 
-            try {
-                socket = serverSocket.accept();
-                socket.setSoTimeout(30000);
-                System.out.println("Player connected");
-            } catch (IOException e) {
-                System.out.println("IOException: " + e.getMessage());
-            }
+        try {
+            socket = serverSocket.accept();
+            socket.setSoTimeout(60 * 1000);
+            System.out.println("Player connected");
+        } catch (IOException e) {
+            System.out.println("IOException: " + e.getMessage());
+        }
 
-            try {
-                Thread t = new Thread(new ServerThread(socket, null));
-                t.start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            Thread t = new Thread(new ServerThread(socket, null, 1));
+            t.start();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
