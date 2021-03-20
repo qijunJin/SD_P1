@@ -189,7 +189,7 @@ public class Game {
 
                             /* SHOW & SELECT INSULT */
                             this.menu.showInsults(this.client.getInsults());
-                            this.insult = this.client.getInsults().get(this.menu.getOption());
+                            this.insult = this.client.getInsults().get(this.menu.getOptionInsult(this.client.getInsults()));
 
                             /* WRITE INSULT */
                             try {
@@ -259,9 +259,13 @@ public class Game {
                                 this.state = StateType.ERROR;
                             }
 
+                            /* SYSTEM OUTPUT */
+                            System.out.println("------------------------------------------------------------------------------------");
+                            System.out.println("INSULT: " + this.opponentInsult);
+
                             /* SHOW & SELECT COMEBACK */
                             this.menu.showComebacks(this.client.getComebacks());
-                            this.comeback = this.client.getComebacks().get(this.menu.getOption());
+                            this.comeback = this.client.getComebacks().get(this.menu.getOptionComeback(this.client.getComebacks()));
 
                             /* WRITE COMEBACK */
                             try {
@@ -270,9 +274,7 @@ public class Game {
                                 System.out.println("ERROR");
                             }
 
-                            /* SYSTEM OUTPUT */
-                            System.out.println("------------------------------------------------------------------------------------");
-                            System.out.println("INSULT: " + this.opponentInsult);
+
                             System.out.println("COMEBACK: " + this.comeback);
                             System.out.println("------------------------------------------------------------------------------------");
 
@@ -707,10 +709,15 @@ public class Game {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        byte[] encodedhash = digest.digest(
-                secret.getBytes(StandardCharsets.UTF_8));
+        if (secret != null || hash != null) {
+            byte[] encodedhash = digest.digest(
+                    secret.getBytes(StandardCharsets.UTF_8));
 
-        return Arrays.equals(encodedhash, hash);
+            return Arrays.equals(encodedhash, hash);
+        }
+        else{
+            return false;
+        }
     }
 
     /* WILL BE TESTED IN DATAGRAM CLASS */
@@ -724,10 +731,13 @@ public class Game {
             e.printStackTrace();
         }
 
-        byte[] encodedhash = digest.digest(
-                str.getBytes(StandardCharsets.UTF_8));
+        if (str != null) {
+            byte[] encodedhash = digest.digest(
+                    str.getBytes(StandardCharsets.UTF_8));
 
-        for (int i = 0; i < 32; i++) hashBytes[i] = encodedhash[i];
+
+            for (int i = 0; i < 32; i++) hashBytes[i] = encodedhash[i];
+        }
 
         return hashBytes;
     }
