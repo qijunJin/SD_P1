@@ -40,17 +40,13 @@ public class Game {
 
     }
 
-    private void run(int mode) {
+    private void run(int mode) throws IOException {
         if (mode == 1) {
             this.automaticMode();
         }
         if (mode == 0) {
             this.manualMode();
         }
-    }
-
-    private void setGameBool(boolean b) {
-        this.gameBool = b;
     }
 
     public void manualMode() {
@@ -359,6 +355,7 @@ public class Game {
                     System.out.println("S- SHOUT: " + serverShout + "\n");
 
                     if (this.menu.getExit()) {
+                        System.out.println("[Connexion closed]");
                         this.gameBool = false;
                         break;
                     }

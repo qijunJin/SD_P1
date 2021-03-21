@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="4" failures="0" name="ComUtilsTest" time="0.06" errors="0" skipped="0">
+<testsuite tests="4" failures="0" name="ComUtilsTest" time="0.019" errors="0" skipped="0">
   <properties>
     <property name="idea.version" value="2020.3.2"/>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
@@ -58,8 +58,8 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
   </properties>
-  <testcase classname="ComUtilsTest" name="byte_test" time="0.004"/>
-  <testcase classname="ComUtilsTest" name="string_test" time="0.036"/>
-  <testcase classname="ComUtilsTest" name="int32_test" time="0.002"/>
-  <testcase classname="ComUtilsTest" name="hash_test" time="0.018"/>
+  <testcase classname="ComUtilsTest" name="byte_test" time="0.005"/>
+  <testcase classname="ComUtilsTest" name="string_test" time="0.001"/>
+  <testcase classname="ComUtilsTest" name="int32_test" time="0.001"/>
+  <testcase classname="ComUtilsTest" name="hash_test" time="0.012"/>
 </testsuite>

@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -68,15 +67,8 @@ public class Game {
 
             try {
                 this.opcode = this.datagram1.read_opcode();
-            } catch (Exception e) {
-
-                String errorMessage;
-                if (e instanceof SocketException) {
-                    errorMessage = this.database.getErrorByEnum(ErrorType.TIMEOUT);
-                } else {
-                    errorMessage = this.database.getErrorByEnum(ErrorType.WRONG_OPCODE);
-                }
-                this.log.write("S- ERROR: " + errorMessage);
+            } catch (IOException e) {
+                this.log.write("[Connexion closed]");
 
                 this.gameBool = false;
                 break;
@@ -97,8 +89,8 @@ public class Game {
 
                     /* READ HELLO */
                     try {
-                        this.client.setName(this.datagram1.read_hello(this.opcode));                                              //Read HELLO message
-                        this.client.setId(this.datagram1.getIdOpponent());                                             //Obtain opponent data
+                        this.client.setName(this.datagram1.read_hello(this.opcode));
+                        this.client.setId(this.datagram1.getIdOpponent());
                     } catch (IOException | OpcodeException e) {
                         this.log.write("HELLO ERROR READ " + e.getMessage() + "\n");
                         this.log.flush();
@@ -107,7 +99,7 @@ public class Game {
 
                     /* WRITE HELLO */
                     try {
-                        this.datagram1.write_hello(this.server.generateId(), this.server.getName());                       //Write HELLO message
+                        this.datagram1.write_hello(this.server.generateId(), this.server.getName());
                     } catch (IOException e) {
                         this.log.write("HELLO ERROR WRITE" + e.getMessage() + "\n");
                         this.log.flush();
@@ -324,8 +316,8 @@ public class Game {
                         if (this.client.getDuel() == 3) {
                             /* WRITE SHOUT */
                             try {
-                                serverShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN_FINAL, this.client.getName());               //Select SHOUT type message
-                                this.datagram1.write_shout(serverShout);                                                            //Write SHOUT message
+                                serverShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN_FINAL, this.client.getName());
+                                this.datagram1.write_shout(serverShout);
                             } catch (IOException e) {
                                 this.log.write("ERROR SHOUT");
                             }
@@ -336,8 +328,8 @@ public class Game {
                         } else {
                             /* WRITE SHOUT */
                             try {
-                                serverShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN, this.client.getName());               //Select SHOUT type message
-                                this.datagram1.write_shout(serverShout);                                                            //Write SHOUT message
+                                serverShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN, this.client.getName());
+                                this.datagram1.write_shout(serverShout);
                             } catch (IOException e) {
                                 this.log.write("ERROR SHOUT");
                             }
@@ -366,6 +358,7 @@ public class Game {
                     /* LOG OUTPUT */
                     this.log.write("S- ERROR: " + "\n");
                     this.gameBool = false;
+
                     break;
             }
         }
