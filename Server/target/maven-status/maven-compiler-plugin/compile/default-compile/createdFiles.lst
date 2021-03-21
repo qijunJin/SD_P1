@@ -6,7 +6,6 @@ Datagram.class
 enumType/ShoutType.class
 DatagramException.class
 DatabaseProvider.class
-Game$1.class
 Server.class
 ServerThread.class
 Game.class

@@ -21,6 +21,7 @@ public class Player {
         this.id = -1;
     }
 
+    /* TESTED */
     public boolean containsWithAddInsultComeback(ArrayList<String> list) {
         boolean b = false;
         if (!list.isEmpty()) {
@@ -36,6 +37,26 @@ public class Player {
         int s = random.nextInt(Integer.MAX_VALUE);
         this.secret = String.valueOf(s);
         return String.valueOf(s);
+    }
+
+    /* TESTED */
+    public int generateId() {
+        this.id = random.nextInt(Integer.MAX_VALUE);
+        return this.id;
+    }
+
+    /* TESTED */
+    public String getRandomInsult() {
+        ArrayList<String> list = new ArrayList(insults);
+        int i = random.nextInt(this.insults.size());
+        return list.get(i);
+    }
+
+    /* TESTED */
+    public String getRandomComeback() {
+        ArrayList<String> list = new ArrayList(comebacks);
+        int i = random.nextInt(this.comebacks.size());
+        return list.get(i);
     }
 
     /* GETTER - SETTER */
@@ -79,6 +100,14 @@ public class Player {
         return new ArrayList(comebacks);
     }
 
+    public int getInsultSize() {
+        return this.insults.size();
+    }
+
+    public int getComebackSize() {
+        return this.comebacks.size();
+    }
+
     public int getDuel() {
         return duel;
     }
@@ -87,6 +116,22 @@ public class Player {
         return round;
     }
 
+    /* EQUAL - HAS */
+    public boolean hasSameName(String str) {
+        return this.name.equals(str);
+    }
+
+    public boolean hasSameId(int id) {
+        return this.id == id;
+    }
+
+    public boolean hasName() {
+        return !this.name.equals("");
+    }
+
+    public boolean hasId() {
+        return this.id != -1;
+    }
 
     /* ADD - RESET */
     public void addInsult(String insult) {
@@ -100,23 +145,6 @@ public class Player {
     public void resetInsultsComebacks() {
         this.insults.clear();
         this.comebacks.clear();
-    }
-
-    public int generateRandomID() {
-        this.id = random.nextInt(Integer.MAX_VALUE);
-        return this.id;
-    }
-
-    public String getRandomInsult(){
-        ArrayList<String> list = new ArrayList(insults);
-        int i = random.nextInt(this.insults.size());
-        return list.get(i);
-    }
-
-    public String getRandomComeback(){
-        ArrayList<String> list = new ArrayList(comebacks);
-        int i = random.nextInt(this.comebacks.size());
-        return list.get(i);
     }
 
     public void addDuel() {
@@ -134,15 +162,5 @@ public class Player {
     public void resetDuelRound() {
         this.duel = 0;
         this.round = 0;
-    }
-
-    /* USED FOR TESTING */
-    public int getInsultSize() {
-        return this.insults.size();
-    }
-
-    /* USED FOR TESTING */
-    public int getComebackSize() {
-        return this.comebacks.size();
     }
 }

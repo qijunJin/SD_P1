@@ -21,6 +21,7 @@ public class Player {
         this.id = -1;
     }
 
+    /* TESTED */
     public boolean containsWithAddInsultComeback(ArrayList<String> list) {
         boolean b = false;
         if (!list.isEmpty()) {

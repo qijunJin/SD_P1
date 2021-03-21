@@ -11,6 +11,11 @@ public class DatabaseProvider {
         this.comebacks = comebacks;
     }
 
+    /* GETTER */
+    public int getSize() {
+        return this.insults.size();
+    }
+
     /* TESTED */
     public ArrayList<String> getRandomInsultComeback() {
         ArrayList<String> list = new ArrayList<>();
@@ -20,10 +25,5 @@ public class DatabaseProvider {
             list.add(this.comebacks.remove(index));
         }
         return list;
-    }
-
-    /* USED FOR TESTING */
-    public int getSize() {
-        return this.insults.size();
     }
 }

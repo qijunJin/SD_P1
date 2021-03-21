@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -20,7 +21,6 @@ public class Game {
     private Database database;
     Datagram datagram1;
     Datagram datagram2;
-    private int mode;
 
     String clientShout, serverShout;
     private Player server = new Player();         //Data Server
@@ -32,22 +32,21 @@ public class Game {
     private ErrorType errorType;
     private boolean contained;
     private StateType state;
+    private int opcode;
 
-
-    public Game(Socket s1, Socket s2, int mode) throws IOException {
+    public Game(Socket s1, Socket s2) throws IOException {
 
         this.database = new Database();
         this.dp = new DatabaseProvider(this.database.getInsults(), this.database.getComebacks());
         this.datagram1 = new Datagram(s1);
-        this.mode = mode;
 
         if (s2 != null) {
             this.datagram2 = new Datagram(s2);
         }
 
         String lg = "Server" + Thread.currentThread().getName() + ".log"; // File name
-        (new File("../../logs")).mkdir(); // Directory
-        File f = new File("../../logs/" + lg); // File
+        (new File("../../../logs")).mkdir(); // Directory
+        File f = new File("../../../logs/" + lg); // File
         this.log = new BufferedWriter(new FileWriter(f));
 
         this.state = StateType.HELLO;
@@ -55,14 +54,341 @@ public class Game {
     }
 
     public void run() throws IOException {
-        if (this.mode == 1) {
+        if (this.datagram2 == null) {
             this.singlePlayer();
-        }else{
-            this.multiPlayer();
+        } else {
+            //this.multiPlayer();
         }
         this.log.close();
     }
 
+    public void singlePlayer() throws IOException {
+
+        while (gameBool) {
+
+            try {
+                this.opcode = this.datagram1.read_opcode();
+            } catch (Exception e) {
+                String errorMessage;
+                if (e instanceof SocketException) {
+                    errorMessage = this.database.getErrorByEnum(ErrorType.TIMEOUT);
+                } else {
+                    errorMessage = this.database.getErrorByEnum(ErrorType.WRONG_OPCODE);
+                }
+                this.log.write("S- ERROR: " + errorMessage);
+
+                this.gameBool = false;
+                break;
+            }
+
+            switch (this.opcode) {
+
+                case 0x01:              //HELLO message
+
+                    this.server.setName("AlphaGo");                                                                //Obtain server data
+
+                    // For each game, renew INSULTS and COMEBACKS
+                    this.server.resetInsultsComebacks();
+
+                    /* ADD RANDOM INSULT-COMEBACK */
+                    do { // Check if already contains and always add pair of insults/comebacks
+                        contained = this.server.containsWithAddInsultComeback(this.dp.getRandomInsultComeback());
+                    } while (contained); // If already contains, get new pairs
+
+                    try {
+                        this.client.setName(this.datagram1.read_hello(this.opcode));                                              //Read HELLO message
+                        this.client.setId(this.datagram1.getIdOpponent());                                             //Obtain opponent data
+                    } catch (IOException | OpcodeException e) {
+                        this.log.write("HELLO ERROR " + e.getMessage() + "\n");
+                        this.log.flush();
+                        //this.errorType = ErrorType.WRONG_OPCODE;
+                        //this.state = StateType.ERROR;
+                        break;
+                    }
+
+                    try {
+                        this.datagram1.write_hello(this.server.generateId(), this.server.getName());                       //Write HELLO message
+                    } catch (IOException e) {
+                        this.log.write("HELLO ERROR " + e.getMessage());
+                        this.log.flush();
+                    }
+
+                    this.log.write("C- HELLO: " + this.client.getId() + " " + this.client.getName() + "\n");
+                    this.log.write("S- HELLO: " + this.server.getId() + " " + this.server.getName() + "\n");
+
+                    //this.state = StateType.HASH;                                                                        //Change state to HASH
+
+                    break;
+
+                case 0x02:               //HASH message
+
+                    do { // Check if already contains and always add pair of insults/comebacks
+                        contained = this.server.containsWithAddInsultComeback(this.dp.getRandomInsultComeback());
+                    } while (contained); // If already contains, get new pairs
+
+                    try {
+                        this.client.setHash(this.datagram1.read_hash(this.opcode));                                               //Read HASH message
+                    } catch (IOException | OpcodeException e) {
+                        this.log.write(e.getMessage());
+                        this.log.flush();
+                        //this.errorType = ErrorType.TIMEOUT;
+                        //this.state = StateType.ERROR;
+                        break;
+                    }
+
+                    try {
+                        this.datagram1.write_hash(this.server.generateSecret());                                       //Write HASH message
+                        this.server.setHash(this.getHash(this.server.getSecret()));                                    //Save server's HASH
+                    } catch (IOException e) {
+                        this.log.write(e.getMessage());
+                        this.log.flush();
+                    }
+
+                    this.log.write("C- HASH: " + Arrays.toString(this.client.getHash()) + "\n");
+                    this.log.write("S- HASH: " + Arrays.toString(this.server.getHash()) + "\n");
+
+                    //this.state = StateType.SECRET;                                                                      //Change state to SECRET
+
+                    break;
+
+                case 0x03:            //SECRET message
+
+                    try {
+                        this.client.setSecret(this.datagram1.read_secret(this.opcode));                                           //Read SECRET message
+                    } catch (IOException | OpcodeException e) {
+                        this.log.write(e.getMessage());
+                        this.log.flush();
+                        break;
+                    }
+
+                    try {
+                        this.datagram1.write_secret(this.server.getSecret());                                          //Write SECRET message
+                    } catch (IOException e) {
+                        this.log.write("ERROR SECRET");
+                        this.log.flush();
+                    }
+
+                    if (this.proofHash(this.client.getSecret(), this.client.getHash())) {
+                        if (this.server.getId() != this.client.getId()) {
+                            if (this.isEven(this.server.getSecret(), this.client.getSecret())) {
+                                if (this.server.getId() < this.client.getId()) {
+
+                                    this.insult = this.server.getRandomInsult();
+                                    try {
+                                        this.datagram1.write_insult(this.insult);
+                                    } catch (IOException e) {
+                                        this.log.write("ERROR");
+                                        this.log.flush();
+                                    }
+                                }
+
+                            } else {
+                                if (this.server.getId() > this.client.getId()) {
+
+                                    this.insult = this.server.getRandomInsult();
+                                    try {
+                                        this.datagram1.write_insult(this.insult);
+                                    } catch (IOException e) {
+                                        this.log.write("ERROR");
+                                        this.log.flush();
+                                    }
+                                }
+
+                            }
+
+                            this.log.write("C- SECRET: " + this.server.getSecret() + "\n");
+                            this.log.write("S- SECRET: " + this.client.getSecret() + "\n");
+
+                        } else {
+                            this.log.write("C- ERROR SAME ID");
+                        }
+                    } else {
+                        this.log.write("C- ERROR NOT COINCIDENT HASH");
+                    }
+
+                    break;
+
+                case 0x04:
+
+                    /* READ INSULT */
+                    try {
+                        this.opponentInsult = this.datagram1.read_insult(this.opcode);
+                    } catch (IOException | OpcodeException e) {
+                        this.log.write("ERROR");
+                        break;
+                    }
+
+                    /* ADD COMEBACK AS LEARNED */
+                    if (this.database.isInsult(this.opponentInsult)) this.server.addInsult(this.opponentInsult);
+
+                    /* SELECT & WRITE COMEBACK */
+                    this.comeback = this.server.getRandomComeback();
+
+                    try {
+                        this.datagram1.write_comeback(this.comeback);
+                    } catch (IOException e) {
+                        this.log.write("ERROR");
+                    }
+
+                    /* LOG OUTPUT */
+                    this.log.write("C- INSULT: " + this.opponentInsult + "\n");
+                    this.log.write("S- COMEBACK: " + this.comeback + "\n");
+
+                    /* CHECK INSULT - COMEBACK WINNER */
+                    if (this.database.isRightComeback(this.opponentInsult, this.comeback)) {
+
+                        this.server.addRound();
+
+                        if (this.server.getRound() < 2) {
+                            this.insult = this.server.getRandomInsult();
+                            try {
+                                this.datagram1.write_insult(this.insult);
+                            } catch (IOException e) {
+                                this.log.write("ERROR");
+                                this.log.flush();
+                            }
+                        }
+                    } else {
+                        this.client.addRound();
+                    }
+
+                    if (this.server.getRound() == 2) {
+                        this.server.addDuel();
+                    }
+
+                    if (this.client.getRound() == 2) {
+                        this.client.addDuel();
+                    }
+
+                    break;
+
+                case 0x05:
+
+                    /* READ COMEBACK */
+                    try {
+                        this.opponentComeback = this.datagram1.read_comeback(this.opcode);
+                    } catch (IOException | OpcodeException e) {
+                        this.log.write("COMEBACK ERROR");
+                        break;
+                    }
+
+                    /* ADD COMEBACK AS LEARNED */
+                    if (this.database.isComeback(this.opponentComeback)) this.server.addComeback(this.opponentComeback);
+
+                    /* LOG OUTPUT */
+                    this.log.write("S- INSULT: " + this.insult + "\n");
+                    this.log.write("C- COMEBACK: " + this.opponentComeback + "\n");
+
+                    if (this.database.isRightComeback(this.insult, this.opponentComeback)) {
+                        this.client.addRound();
+
+                    } else {
+
+                        this.server.addRound();
+
+                        if (this.server.getRound() < 2) {
+                            this.insult = this.server.getRandomInsult();
+                            try {
+                                this.datagram1.write_insult(this.insult);
+                            } catch (IOException e) {
+                                this.log.write("ERROR");
+                                this.log.flush();
+                            }
+                        }
+                    }
+
+                    if (this.server.getRound() == 2) {
+                        this.server.addDuel();
+                    }
+
+                    if (this.client.getRound() == 2) {
+                        this.client.addDuel();
+                    }
+
+                    break;
+
+                case 0x06:
+
+                    /* READ SHOUT */
+                    try {
+                        clientShout = this.datagram1.read_shout(this.opcode);
+                    } catch (IOException | OpcodeException e) {
+                        this.log.write("ERROR SHOUT READ");
+                        break;
+                    }
+
+                    if (this.server.getDuel() == 3 | this.server.getRound() == 2) {                                   //Check if Server win something
+
+                        try {
+                            serverShout = this.database.getShoutByEnumAddName(ShoutType.I_WIN, this.client.getName());
+                            this.datagram1.write_shout(serverShout);
+                        } catch (IOException e) {
+                            this.log.write("ERROR SHOUT WRITE");
+                        }
+
+                        if (this.server.getDuel() == 3) {
+                            this.server.resetDuelRound();
+                            this.client.resetDuelRound();
+
+                        } else {
+                            this.server.resetRound();
+                            this.client.resetRound();
+                        }
+
+                    }
+
+                    if (this.client.getDuel() == 3 | this.client.getRound() == 2) {
+
+                        if (this.client.getDuel() == 3) {
+
+                            try {
+                                serverShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN_FINAL, this.client.getName());               //Select SHOUT type message
+                                this.datagram1.write_shout(serverShout);                                                            //Write SHOUT message
+                            } catch (IOException e) {
+                                this.log.write("ERROR SHOUT");
+                            }
+
+                            this.server.resetDuelRound();
+                            this.client.resetDuelRound();
+
+                        } else {
+
+                            try {
+                                serverShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN, this.client.getName());               //Select SHOUT type message
+                                this.datagram1.write_shout(serverShout);                                                            //Write SHOUT message
+                            } catch (IOException e) {
+                                this.log.write("ERROR SHOUT");
+                            }
+
+                            this.server.resetRound();
+                            this.client.resetRound();
+                        }
+                    }
+
+                    this.log.write("C- SHOUT: " + clientShout + "\n");
+                    this.log.write("S- SHOUT: " + serverShout + "\n");
+
+                    break;
+
+                case 0x07:
+
+                    //String errorMessage = this.database.getErrorByEnum(this.errorType);
+
+                    try {
+                        this.datagram1.read_error(this.opcode);
+                    } catch (IOException | OpcodeException e) {
+                        System.out.println("S- EXIT");
+                    }
+
+                    this.log.write("S- ERROR: " + "\n");
+
+                    this.gameBool = false;
+
+            }
+        }
+    }
+
+/*
     public void singlePlayer() throws IOException {
 
         while (gameBool) {
@@ -76,7 +402,7 @@ public class Game {
                     //For each game, renew INSULTS and COMEBACKS
                     this.server.resetInsultsComebacks();
 
-                    /* ADD RANDOM INSULT-COMEBACK */
+                    *//* ADD RANDOM INSULT-COMEBACK *//*
                     do { // Check if already contains and always add pair of insults/comebacks
                         contained = this.server.containsWithAddInsultComeback(this.dp.getRandomInsultComeback());
                     } while (contained); // If already contains, get new pairs
@@ -85,17 +411,17 @@ public class Game {
                         this.client.setName(this.datagram1.read_hello());                                              //Read HELLO message
                         this.client.setId(this.datagram1.getIdOpponent());                                             //Obtain opponent data
                     } catch (IOException | OpcodeException e) {
-                        this.log.write("HELLO ERROR " + e.getMessage());
-                        this.log.flush();
+                        this.log.write("HELLO ERROR R" + e.getMessage());
                         this.errorType = ErrorType.WRONG_OPCODE;
                         this.state = StateType.ERROR;
+                        this.log.flush();
                         break;
                     }
 
                     try {
                         this.datagram1.write_hello(this.server.generateRandomID(), this.server.getName());                       //Write HELLO message
                     } catch (IOException e) {
-                        this.log.write("HELLO ERROR " + e.getMessage());
+                        this.log.write("HELLO ERROR W" + e.getMessage());
                         this.log.flush();
                     }
 
@@ -233,7 +559,7 @@ public class Game {
                                 break;
                             }
 
-                            /* ADD COMEBACK AS LEARNED */
+                            *//* ADD COMEBACK AS LEARNED *//*
                             if (this.database.isComeback(this.opponentComeback)) {
                                 this.server.addComeback(this.opponentComeback);
                             } else {
@@ -281,7 +607,7 @@ public class Game {
                                 break;
                             }
 
-                            /* ADD COMEBACK AS LEARNED */
+                            *//* ADD COMEBACK AS LEARNED *//*
                             if (this.database.isInsult(this.opponentInsult)) {
                                 this.server.addInsult(this.opponentInsult);
                             } else {
@@ -426,8 +752,8 @@ public class Game {
             }
 
         }
-    }
-
+    }*/
+/*
     public void multiPlayer() throws IOException {
 
         while (gameBool) {
@@ -441,7 +767,7 @@ public class Game {
                     //For each game, renew INSULTS and COMEBACKS
                     this.server.resetInsultsComebacks();
 
-                    /* ADD RANDOM INSULT-COMEBACK */
+                    *//* ADD RANDOM INSULT-COMEBACK *//*
                     do { // Check if already contains and always add pair of insults/comebacks
                         contained = this.server.containsWithAddInsultComeback(this.dp.getRandomInsultComeback());
                     } while (contained); // If already contains, get new pairs
@@ -457,7 +783,7 @@ public class Game {
                     }
 
                     try {
-                        this.datagram1.write_hello(this.server.generateRandomID(), this.server.getName());                       //Write HELLO message
+                        this.datagram1.write_hello(this.server.generateId(), this.server.getName());                       //Write HELLO message
                     } catch (IOException e) {
                         this.log.write("Hello Error Read " + e.getMessage());
                         this.log.flush();
@@ -588,7 +914,7 @@ public class Game {
                                 this.log.write("ERROR");
                             }
 
-                            /* ADD COMEBACK AS LEARNED */
+                            *//* ADD COMEBACK AS LEARNED *//*
                             if (this.database.isComeback(this.opponentComeback)) {
                                 this.server.addComeback(this.opponentComeback);
                             } else {
@@ -634,7 +960,7 @@ public class Game {
                                 this.log.write("ERROR");
                             }
 
-                            /* ADD COMEBACK AS LEARNED */
+                            *//* ADD COMEBACK AS LEARNED *//*
                             if (this.database.isInsult(this.opponentInsult)) {
                                 this.server.addInsult(this.opponentInsult);
                             } else {
@@ -772,7 +1098,7 @@ public class Game {
             }
 
         }
-    }
+    }*/
 
     /* WILL BE TESTED IN DATAGRAM CLASS */
     public boolean proofHash(String secret, byte[] hash) {
@@ -787,8 +1113,7 @@ public class Game {
                     secret.getBytes(StandardCharsets.UTF_8));
 
             return Arrays.equals(encodedhash, hash);
-        }
-        else{
+        } else {
             return false;
         }
     }

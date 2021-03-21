@@ -49,6 +49,10 @@ public class Game {
         }
     }
 
+    private void setGameBool(boolean b) {
+        this.gameBool = b;
+    }
+
     public void manualMode() {
         while (gameBool) {
 
@@ -72,9 +76,8 @@ public class Game {
                             this.client.setName(name);
                             this.client.setId(id);
                             this.client.resetInsultsComebacks(); // Remove all insults and comebacks
-                            this.dp = new DatabaseProvider(this.database.getInsults(), this.client.getComebacks()); // Restart databaseProvider
+                            this.dp = new DatabaseProvider(this.database.getInsults(), this.database.getComebacks()); // Renew databaseProvider
                         }
-
                     }
 
                     /* ADD RANDOM INSULT-COMEBACK */
@@ -316,8 +319,9 @@ public class Game {
                             this.server.resetRound();
                             this.state = StateType.HASH;
                         }
+                    }
 
-                    } else if (this.server.getDuel() == 3 | this.server.getRound() == 2) { // Check if server wins
+                    if (this.server.getDuel() == 3 | this.server.getRound() == 2) { // Check if server wins
 
                         /* WRITE SHOUT */
                         try {
@@ -339,14 +343,13 @@ public class Game {
                             this.server.resetRound();
                             this.state = StateType.HASH;
                         }
-
                     }
 
                     /* READ SHOUT */
                     try {
                         serverShout = this.datagram.read_shout();
                     } catch (IOException | OpcodeException e) {
-                        System.out.println("ERROR SHOUT");
+                        System.out.println("ERROR SHOUT READ");
                     }
 
                     /* SYSTEM OUTPUT */
@@ -607,11 +610,8 @@ public class Game {
                 case SHOUT:
 
                     /* CONDITION OF ADD DUEL */
-                    if (this.client.getRound() == 2) {
-                        this.client.addDuel();
-                    } else if (this.server.getRound() == 2) {
-                        this.server.addDuel();
-                    }
+                    if (this.client.getRound() == 2) this.client.addDuel();
+                    if (this.server.getRound() == 2) this.server.addDuel();
 
                     /* CONDITION OF WIN GAME - WIN DUEL */
                     if (this.client.getDuel() == 3 | this.client.getRound() == 2) { // Check if client wins
@@ -637,7 +637,9 @@ public class Game {
                             this.state = StateType.HASH;
                         }
 
-                    } else if (this.server.getDuel() == 3 | this.server.getRound() == 2) { // Check if server wins
+                    }
+
+                    if (this.server.getDuel() == 3 | this.server.getRound() == 2) { // Check if server wins
 
                         /* WRITE SHOUT */
                         try {
@@ -659,7 +661,6 @@ public class Game {
                             this.server.resetRound();
                             this.state = StateType.HASH;
                         }
-
                     }
 
                     /* READ SHOUT */

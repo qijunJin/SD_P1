@@ -66,6 +66,14 @@ public class Database {
         return new ArrayList(this.sources.values());
     }
 
+    public HashMap<ErrorType, String> getErrors() { // For test
+        return this.errors;
+    }
+
+    public HashMap<ShoutType, String> getShouts() { // For test
+        return this.shouts;
+    }
+
     /* TESTED */
     public boolean isInsult(String insult) {
         return this.getInsults().contains(insult);
@@ -92,15 +100,5 @@ public class Database {
     /* TESTED */
     public String getErrorByEnum(ErrorType e) {
         return this.errors.get(e);
-    }
-
-    /* USED FOR TESTING */
-    public HashMap<ErrorType, String> getErrors() { // For test
-        return this.errors;
-    }
-
-    /* USED FOR TESTING */
-    public HashMap<ShoutType, String> getShouts() { // For test
-        return this.shouts;
     }
 }
