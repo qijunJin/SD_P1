@@ -20,6 +20,8 @@ public class Client {
             int port = 0;
             int mode = 0; // By default
 
+            Socket socket = null;
+
             try {
                 hostname = options.get("-s");
                 port = Integer.parseInt(options.get("-p"));
@@ -31,20 +33,25 @@ public class Client {
                 System.out.println("Parameters introduced are wrong!");
             }
 
-
-
             /* CREATE SOCKET & GAME */
             try {
                 InetAddress host = InetAddress.getByName(hostname);
-                Socket socket = new Socket(host, port);
+                socket = new Socket(host, port);
                 socket.setSoTimeout(60 * 1000);
                 System.out.println("Connexion established!");
 
                 Datagram datagram = new Datagram(socket);
-
                 Game game = new Game(datagram, mode);
+
             } catch (Exception e) {
                 System.out.println("Connexion failed!");
+
+            } finally {
+                try {
+                    if (socket != null) socket.close();
+                } catch (Exception e) {
+                    System.out.println("Connexion closed");
+                }
             }
 
         } else {

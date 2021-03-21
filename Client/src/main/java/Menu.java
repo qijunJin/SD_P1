@@ -18,12 +18,11 @@ public class Menu {
                     System.out.println("Invalid name, insert your name with alphabets:");
                     check = true;
                     break;
-                }
-                else {
+                } else {
                     check = false;
                 }
             }
-        } while(check);
+        } while (check);
 
         return name;
     }
@@ -35,12 +34,12 @@ public class Menu {
 
         do {
             id = scan.next();
-            if (id.matches("[0-9]+") == true){
+            if (id.matches("[0-9]+")) {
                 check = false;
-            }else{
+            } else {
                 System.out.println("Invalid id, insert your id with digits: ");
             }
-        } while(check);
+        } while (check);
 
         return Integer.parseInt(id);
     }
@@ -48,39 +47,25 @@ public class Menu {
     public boolean getExit() {
         System.out.println("To continue playing press (C), other key will exit game");
         String answer = scan.next();
-        if (answer.equals("C") || answer.equals("c")) {
-            return false;
-        } else {
-            return true;
-        }
+        return !answer.equals("C") && !answer.equals("c");
     }
 
-    public void showInsults(ArrayList<String> insults) {
-        System.out.println("Inserta el numero del insulto que quieras:");
-        for (int i = 0; i <= insults.size() - 1; i++) {
-            System.out.println(i + 1 + ". " + insults.get(i));
+    public String getOption(ArrayList<String> list, String title) {
+        System.out.println("Insert the number of " + title + ":");
+        for (int i = 0; i <= list.size() - 1; i++) {
+            System.out.println(i + 1 + ". " + list.get(i));
         }
-    }
 
-    public void showComebacks(ArrayList<String> comebacks) {
-        System.out.println("Inserta el numero del comeback que quieras:");
-        for (int i = 0; i <= comebacks.size() - 1; i++) {
-            System.out.println(i + 1 + ". " + comebacks.get(i));
-        }
-    }
-
-    public int getOption(ArrayList<String> list) {
         int option;
-
         do {
             option = scan.nextInt();
-            if (option >= 0 && option <= list.size()){
+            if (option >= 0 && option <= list.size()) {
                 break;
-            }else{
+            } else {
                 System.out.println("Invalid option, try again: ");
             }
-        } while(true);
+        } while (true);
 
-        return option - 1;
+        return list.get(option - 1);
     }
 }

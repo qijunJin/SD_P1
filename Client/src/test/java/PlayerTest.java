@@ -15,6 +15,16 @@ public class PlayerTest {
     }
 
     @Test
+    public void generateId_test() {
+        Player player = new Player();
+
+        int id = player.generateId();
+
+        assertTrue(id > 0);
+        assertTrue(id < Integer.MAX_VALUE);
+    }
+
+    @Test
     public void containsWithAddInsultComeback_test() {
         Player player = new Player();
         Database database = new Database();
@@ -23,7 +33,7 @@ public class PlayerTest {
         player.containsWithAddInsultComeback(databaseProvider.getRandomInsultComeback());
         player.containsWithAddInsultComeback(databaseProvider.getRandomInsultComeback());
 
-        assertTrue(player.getInsultSize() == 2);
+        assertTrue(player.getInsultSize() == 2 && player.getComebackSize() == 2);
 
         /* Until here we have 2 pairs of insult - comeback */
 
@@ -46,5 +56,29 @@ public class PlayerTest {
         assertTrue(databaseProvider2.getSize() == 0);
         /* We can also see that databaseProvider2 initiate with 16 pairs of insult - comeback */
         /* And we remove pair by pair of data until it is empty */
+    }
+
+    @Test
+    public void getRandomInsult_test() {
+        Player player = new Player();
+        Database database = new Database();
+        DatabaseProvider databaseProvider = new DatabaseProvider(database.getInsults(), database.getComebacks());
+
+        player.containsWithAddInsultComeback(databaseProvider.getRandomInsultComeback());
+        player.containsWithAddInsultComeback(databaseProvider.getRandomInsultComeback());
+
+        assertTrue(player.getInsults().contains(player.getRandomInsult()));
+    }
+
+    @Test
+    public void getRandomComeback_test() {
+        Player player = new Player();
+        Database database = new Database();
+        DatabaseProvider databaseProvider = new DatabaseProvider(database.getComebacks(), database.getComebacks());
+
+        player.containsWithAddInsultComeback(databaseProvider.getRandomInsultComeback());
+        player.containsWithAddInsultComeback(databaseProvider.getRandomInsultComeback());
+
+        assertTrue(player.getComebacks().contains(player.getRandomComeback()));
     }
 }

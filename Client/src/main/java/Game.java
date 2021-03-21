@@ -40,7 +40,7 @@ public class Game {
 
     }
 
-    private void run(int mode) throws IOException {
+    private void run(int mode) {
         if (mode == 1) {
             this.automaticMode();
         }
@@ -49,7 +49,11 @@ public class Game {
         }
     }
 
-    public void manualMode(){
+    private void setGameBool(boolean b) {
+        this.gameBool = b;
+    }
+
+    public void manualMode() {
         while (gameBool) {
 
             switch (this.state) {
@@ -72,9 +76,8 @@ public class Game {
                             this.client.setName(name);
                             this.client.setId(id);
                             this.client.resetInsultsComebacks(); // Remove all insults and comebacks
-                            this.dp = new DatabaseProvider(this.database.getInsults(), this.client.getComebacks()); // Restart databaseProvider
+                            this.dp = new DatabaseProvider(this.database.getInsults(), this.database.getComebacks()); // Renew databaseProvider
                         }
-
                     }
 
                     /* ADD RANDOM INSULT-COMEBACK */
@@ -86,7 +89,7 @@ public class Game {
                     try {
                         this.datagram.write_hello(this.client.getId(), this.client.getName());
                     } catch (IOException e) {
-                        System.out.println("Hello Error Write " + e.getMessage());
+                        System.out.println("HELLO WRITE ERROR " + e.getMessage());
                     }
 
                     /* READ HELLO */
@@ -94,9 +97,10 @@ public class Game {
                         this.server.setName(this.datagram.read_hello());
                         this.server.setId(this.datagram.getIdOpponent());
                     } catch (IOException | OpcodeException e) {
-                        System.out.println("Hello Error Read " + e.getMessage());
+                        System.out.println("HELLO READ ERROR " + e.getMessage());
                         this.errorType = ErrorType.WRONG_OPCODE;
                         this.state = StateType.ERROR;
+                        break;
                     }
 
                     /* SYSTEM OUTPUT */
@@ -126,6 +130,7 @@ public class Game {
                         this.server.setHash(this.datagram.read_hash());
                     } catch (IOException | OpcodeException e) {
                         System.out.println(e.getMessage());
+                        break;
                     }
 
                     /* SYSTEM OUTPUT */
@@ -188,8 +193,7 @@ public class Game {
                         } else {
 
                             /* SHOW & SELECT INSULT */
-                            this.menu.showInsults(this.client.getInsults());
-                            this.insult = this.client.getInsults().get(this.menu.getOption(this.client.getInsults()));
+                            this.insult = this.menu.getOption(this.client.getInsults(), "insult");
 
                             /* WRITE INSULT */
                             try {
@@ -264,8 +268,7 @@ public class Game {
                             System.out.println("INSULT: " + this.opponentInsult);
 
                             /* SHOW & SELECT COMEBACK */
-                            this.menu.showComebacks(this.client.getComebacks());
-                            this.comeback = this.client.getComebacks().get(this.menu.getOption(this.client.getComebacks()));
+                            this.comeback = this.menu.getOption(this.client.getComebacks(), "comeback");
 
                             /* WRITE COMEBACK */
                             try {
@@ -273,7 +276,6 @@ public class Game {
                             } catch (IOException e) {
                                 System.out.println("ERROR");
                             }
-
 
                             System.out.println("COMEBACK: " + this.comeback);
                             System.out.println("------------------------------------------------------------------------------------");
@@ -293,14 +295,11 @@ public class Game {
                 case SHOUT:
 
                     /* CONDITION OF ADD DUEL */
-                    if (this.client.getRound() == 2) {
-                        this.client.addDuel();
-                    } else if (this.server.getRound() == 2) {
-                        this.server.addDuel();
-                    }
+                    if (this.client.getRound() == 2) this.client.addDuel();
+                    if (this.server.getRound() == 2) this.server.addDuel();
 
-                    /* CONDITION OF WIN GAME - WIN DUEL */
-                    if (this.client.getDuel() == 3 | this.client.getRound() == 2) { // Check if client wins
+                    /* CLIENT - WIN GAME - WIN DUEL */
+                    if (this.client.getDuel() == 3 | this.client.getRound() == 2) {
 
                         /* WRITE SHOUT */
                         try {
@@ -312,18 +311,18 @@ public class Game {
 
                         /* WIN GAME */
                         if (this.client.getDuel() == 3) {
-                            this.client.resetDuelRound();
-                            this.server.resetDuelRound();
+                            this.client.resetDuel();
+                            this.server.resetDuel();
                             this.state = StateType.HELLO;
 
                             /* WIN DUEL */
                         } else {
-                            this.client.resetRound();
-                            this.server.resetRound();
                             this.state = StateType.HASH;
                         }
+                    }
 
-                    } else if (this.server.getDuel() == 3 | this.server.getRound() == 2) { // Check if server wins
+                    /* SERVER - WIN GAME - WIN DUEL */
+                    if (this.server.getDuel() == 3 | this.server.getRound() == 2) {
 
                         /* WRITE SHOUT */
                         try {
@@ -333,33 +332,36 @@ public class Game {
                             System.out.println("ERROR SHOUT");
                         }
 
-                        /* WIN DUEL */
+                        /* WIN GAME */
                         if (this.server.getDuel() == 3) {
-                            this.client.resetDuelRound();
-                            this.server.resetDuelRound();
+                            this.client.resetDuel();
+                            this.server.resetDuel();
                             this.state = StateType.HELLO;
 
-                            /* WIN ROUND */
+                            /* WIN DUEL */
                         } else {
-                            this.client.resetRound();
-                            this.server.resetRound();
                             this.state = StateType.HASH;
                         }
-
                     }
+
+                    this.client.resetRound();
+                    this.server.resetRound();
 
                     /* READ SHOUT */
                     try {
                         serverShout = this.datagram.read_shout();
                     } catch (IOException | OpcodeException e) {
-                        System.out.println("ERROR SHOUT");
+                        System.out.println("ERROR SHOUT READ");
                     }
 
                     /* SYSTEM OUTPUT */
                     System.out.println("C- SHOUT: " + clientShout);
                     System.out.println("S- SHOUT: " + serverShout + "\n");
 
-                    if (this.menu.getExit()) this.gameBool = false;
+                    if (this.menu.getExit()) {
+                        this.gameBool = false;
+                        break;
+                    }
 
                     break;
 
@@ -367,26 +369,20 @@ public class Game {
 
                     String errorMessage = this.database.getErrorByEnum(this.errorType);
 
+                    /* WRITE ERROR */
                     try {
                         this.datagram.write_error(errorMessage);
                     } catch (IOException e) {
                         System.out.println("C- ERROR");
                     }
-                    this.gameBool = false;
-                    /*
-                    try {
-                        String error = this.datagram.read_error();
-                        System.out.println(error);
-                    } catch (IOException | OpcodeException e) {
-                        System.out.println("S- ERROR");
-                    }*/
 
+                    this.gameBool = false;
                     break;
             }
         }
     }
 
-    public void automaticMode(){
+    public void automaticMode() {
 
         while (gameBool) {
 
@@ -403,7 +399,7 @@ public class Game {
 
                     /* WRITE HELLO */
                     try {
-                        this.datagram.write_hello(this.client.generateRandomID(), this.client.getName());
+                        this.datagram.write_hello(this.client.generateId(), this.client.getName());
                     } catch (IOException e) {
                         System.out.println("Hello Error Write " + e.getMessage());
                     }
@@ -610,11 +606,8 @@ public class Game {
                 case SHOUT:
 
                     /* CONDITION OF ADD DUEL */
-                    if (this.client.getRound() == 2) {
-                        this.client.addDuel();
-                    } else if (this.server.getRound() == 2) {
-                        this.server.addDuel();
-                    }
+                    if (this.client.getRound() == 2) this.client.addDuel();
+                    if (this.server.getRound() == 2) this.server.addDuel();
 
                     /* CONDITION OF WIN GAME - WIN DUEL */
                     if (this.client.getDuel() == 3 | this.client.getRound() == 2) { // Check if client wins
@@ -629,8 +622,10 @@ public class Game {
 
                         /* WIN GAME */
                         if (this.client.getDuel() == 3) {
-                            this.client.resetDuelRound();
-                            this.server.resetDuelRound();
+                            this.client.resetDuel();
+                            this.server.resetDuel();
+                            this.client.resetRound();
+                            this.server.resetRound();
                             this.gameBool = false;
 
                             /* WIN DUEL */
@@ -640,7 +635,9 @@ public class Game {
                             this.state = StateType.HASH;
                         }
 
-                    } else if (this.server.getDuel() == 3 | this.server.getRound() == 2) { // Check if server wins
+                    }
+
+                    if (this.server.getDuel() == 3 | this.server.getRound() == 2) { // Check if server wins
 
                         /* WRITE SHOUT */
                         try {
@@ -652,8 +649,10 @@ public class Game {
 
                         /* WIN DUEL */
                         if (this.server.getDuel() == 3) {
-                            this.client.resetDuelRound();
-                            this.server.resetDuelRound();
+                            this.client.resetDuel();
+                            this.server.resetDuel();
+                            this.client.resetRound();
+                            this.server.resetRound();
                             this.gameBool = false;
 
                             /* WIN ROUND */
@@ -662,7 +661,6 @@ public class Game {
                             this.server.resetRound();
                             this.state = StateType.HASH;
                         }
-
                     }
 
                     /* READ SHOUT */
@@ -714,8 +712,7 @@ public class Game {
                     secret.getBytes(StandardCharsets.UTF_8));
 
             return Arrays.equals(encodedhash, hash);
-        }
-        else{
+        } else {
             return false;
         }
     }

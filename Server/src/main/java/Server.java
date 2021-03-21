@@ -2,11 +2,13 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+
 public class Server {
 
     public static void main(String[] args) throws Exception {
 
         if (args.length == 4) {
+
             /* Control of parameters */
             HashMap<String, String> options = new HashMap();
             for (int i = 0; i < args.length; i = i + 2)
@@ -14,6 +16,8 @@ public class Server {
 
             int numPort;
             int mode = 1; // By default
+
+            ServerSocket serverSocket = null;
 
             try {
                 numPort = Integer.parseInt(options.get("-p"));
@@ -25,10 +29,8 @@ public class Server {
                 throw new Exception("Parameters introduced are wrong!");
             }
 
-
-
             try {
-                ServerSocket serverSocket = new ServerSocket(numPort);
+                serverSocket = new ServerSocket(numPort);
                 System.out.println("Connexion has been accepted with port: " + numPort);
 
                 if (mode == 1) {
@@ -36,8 +38,15 @@ public class Server {
                 } else {
                     // multiPlayer(serverSocket);
                 }
+
             } catch (IOException e) {
                 System.out.println("IOException: " + e.getMessage());
+            } finally {
+                try {
+                    if (serverSocket != null) serverSocket.close();
+                } catch (IOException e) {
+                    System.out.println("Connexion closed");
+                }
             }
 
         } else if (args.length == 1 && args[0].equals("-h")) {
@@ -45,29 +54,30 @@ public class Server {
         } else {
             System.out.println("Parameters are incorrect. Use: java Server -p <port> -m [1|2]");
         }
-
     }
 
     private static void singlePlayer(ServerSocket serverSocket) {
 
-        System.out.println("Waiting for player");
+        while (true) {
+            System.out.println("------------------------------------------------------------------------------------");
 
-        Socket socket = null;
+            System.out.println("Waiting for player");
+            Socket socket = null;
 
-        try {
-            socket = serverSocket.accept();
-            socket.setSoTimeout(60 * 1000);
-            System.out.println("Player connected");
-        } catch (IOException e) {
-            System.out.println("IOException: " + e.getMessage());
-        }
+            try {
+                socket = serverSocket.accept();
+                socket.setSoTimeout(60 * 1000);
+                System.out.println("Player connected");
+            } catch (IOException e) {
+                System.out.println("IOException: " + e.getMessage());
+            }
 
-        try {
-            Thread t = new Thread(new ServerThread(socket, null, 1));
-            t.start();
-        } catch (IOException e) {
-            e.printStackTrace();
+            try {
+                Thread t = new Thread(new ServerThread(socket, null));
+                t.start();
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
-
 }

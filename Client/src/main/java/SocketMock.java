@@ -4,6 +4,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+/* USED FOR TESTING */
 public class SocketMock extends Socket {
 
     private List<Byte> bytes = new ArrayList<>();
@@ -18,7 +19,6 @@ public class SocketMock extends Socket {
     }
 
     public OutputStream getOutputStream() {
-
         return new OutputStream() {
             @Override
             public void write(int b) {
@@ -26,5 +26,4 @@ public class SocketMock extends Socket {
             }
         };
     }
-
 }

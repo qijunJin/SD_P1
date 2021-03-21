@@ -2,8 +2,6 @@ import exception.OpcodeException;
 import utils.ComUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -14,10 +12,6 @@ public class Datagram extends ComUtils {
 
     private Socket socket;
     private int id;
-
-    public Datagram(InputStream inputStream, OutputStream outputStream) throws IOException {
-        super(inputStream, outputStream);
-    }
 
     public Datagram(Socket socket) throws IOException {
         super(socket);
