@@ -295,8 +295,8 @@ public class Game {
                         break;
                     }
 
-                    /* CONDITION OF WIN GAME - WIN DUEL */
-                    if (this.server.getDuel() == 3 | this.server.getRound() == 2) {                                   //Check if Server win something
+                    /* SERVER - WIN GAME - WIN DUEL */
+                    if (this.server.getDuel() == 3 | this.server.getRound() == 2) {
 
                         /* WRITE SHOUT */
                         try {
@@ -308,43 +308,42 @@ public class Game {
 
                         /* WIN GAME */
                         if (this.server.getDuel() == 3) {
-                            this.server.resetDuelRound();
-                            this.client.resetDuelRound();
+                            this.client.resetDuel();
+                            this.server.resetDuel();
+                        }
+
+                        /* WIN GAME OR DUEL */
+                        this.server.resetRound();
+                        this.client.resetRound();
+                    }
+
+                    /* CLIENT - WIN GAME - WIN DUEL */
+                    if (this.client.getDuel() == 3 | this.client.getRound() == 2) {
+
+                        /* WIN GAME */
+                        if (this.client.getDuel() == 3) {
+                            /* WRITE SHOUT */
+                            try {
+                                serverShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN_FINAL, this.client.getName());               //Select SHOUT type message
+                                this.datagram1.write_shout(serverShout);                                                            //Write SHOUT message
+                            } catch (IOException e) {
+                                this.log.write("ERROR SHOUT");
+                            }
+                            this.server.resetDuel();
+                            this.client.resetDuel();
 
                             /* WIN DUEL */
                         } else {
-                            this.server.resetRound();
-                            this.client.resetRound();
+                            /* WRITE SHOUT */
+                            try {
+                                serverShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN, this.client.getName());               //Select SHOUT type message
+                                this.datagram1.write_shout(serverShout);                                                            //Write SHOUT message
+                            } catch (IOException e) {
+                                this.log.write("ERROR SHOUT");
+                            }
                         }
 
-                    }
-
-                    /* WIN GAME */
-                    if (this.client.getDuel() == 3) {
-
-                        /* WRITE SHOUT */
-                        try {
-                            serverShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN_FINAL, this.client.getName());               //Select SHOUT type message
-                            this.datagram1.write_shout(serverShout);                                                            //Write SHOUT message
-                        } catch (IOException e) {
-                            this.log.write("ERROR SHOUT");
-                        }
-
-                        this.server.resetDuelRound();
-                        this.client.resetDuelRound();
-                    }
-
-                    /* WIN DUEL */
-                    if (this.client.getRound() == 2) {
-
-                        /* WRITE SHOUT */
-                        try {
-                            serverShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN, this.client.getName());               //Select SHOUT type message
-                            this.datagram1.write_shout(serverShout);                                                            //Write SHOUT message
-                        } catch (IOException e) {
-                            this.log.write("ERROR SHOUT");
-                        }
-
+                        /* WIN GAME OR DUEL */
                         this.server.resetRound();
                         this.client.resetRound();
                     }
