@@ -41,15 +41,16 @@ public class Client {
                 System.out.println("Connexion established!");
 
                 Datagram datagram = new Datagram(socket);
-
                 Game game = new Game(datagram, mode);
+
             } catch (Exception e) {
                 System.out.println("Connexion failed!");
+
             } finally {
                 try {
                     if (socket != null) socket.close();
                 } catch (Exception e) {
-                    System.out.println("Socket closed");
+                    System.out.println("Connexion closed");
                 }
             }
 

@@ -89,7 +89,7 @@ public class Game {
                     try {
                         this.datagram.write_hello(this.client.getId(), this.client.getName());
                     } catch (IOException e) {
-                        System.out.println("Hello Error Write " + e.getMessage());
+                        System.out.println("HELLO WRITE ERROR " + e.getMessage());
                     }
 
                     /* READ HELLO */
@@ -97,9 +97,10 @@ public class Game {
                         this.server.setName(this.datagram.read_hello());
                         this.server.setId(this.datagram.getIdOpponent());
                     } catch (IOException | OpcodeException e) {
-                        System.out.println("Hello Error Read " + e.getMessage());
+                        System.out.println("HELLO READ ERROR " + e.getMessage());
                         this.errorType = ErrorType.WRONG_OPCODE;
                         this.state = StateType.ERROR;
+                        break;
                     }
 
                     /* SYSTEM OUTPUT */
@@ -129,6 +130,7 @@ public class Game {
                         this.server.setHash(this.datagram.read_hash());
                     } catch (IOException | OpcodeException e) {
                         System.out.println(e.getMessage());
+                        break;
                     }
 
                     /* SYSTEM OUTPUT */

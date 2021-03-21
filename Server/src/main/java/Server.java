@@ -45,7 +45,7 @@ public class Server {
                 try {
                     if (serverSocket != null) serverSocket.close();
                 } catch (IOException e) {
-                    System.out.println("Server socket closed");
+                    System.out.println("Connexion closed");
                 }
             }
 
@@ -59,6 +59,8 @@ public class Server {
     private static void singlePlayer(ServerSocket serverSocket) {
 
         while (true) {
+            System.out.println("------------------------------------------------------------------------------------");
+
             System.out.println("Waiting for player");
             Socket socket = null;
 
@@ -74,9 +76,8 @@ public class Server {
                 Thread t = new Thread(new ServerThread(socket, null));
                 t.start();
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
         }
     }
-
 }

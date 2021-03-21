@@ -11,7 +11,7 @@ public class ComUtils {
 
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
-
+    private Socket socket;
     public ComUtils(InputStream inputStream, OutputStream outputStream) throws IOException {
         dataInputStream = new DataInputStream(inputStream);
         dataOutputStream = new DataOutputStream(outputStream);
@@ -20,6 +20,7 @@ public class ComUtils {
     public ComUtils(Socket socket) throws IOException {
         dataInputStream = new DataInputStream(socket.getInputStream());
         dataOutputStream = new DataOutputStream(socket.getOutputStream());
+        this.socket = socket;
     }
 
     /* BYTE */
@@ -146,5 +147,9 @@ public class ComUtils {
                     ((bytes[2] & 0xFF) << 16) | ((bytes[3] & 0xFF) << 24);
         }
         return number;
+    }
+
+    public Socket getSocket() {
+        return socket;
     }
 }
