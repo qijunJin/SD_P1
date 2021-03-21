@@ -298,8 +298,8 @@ public class Game {
                     if (this.client.getRound() == 2) this.client.addDuel();
                     if (this.server.getRound() == 2) this.server.addDuel();
 
-                    /* CONDITION OF WIN GAME - WIN DUEL */
-                    if (this.client.getDuel() == 3 | this.client.getRound() == 2) { // Check if client wins
+                    /* CLIENT - WIN GAME - WIN DUEL */
+                    if (this.client.getDuel() == 3 | this.client.getRound() == 2) {
 
                         /* WRITE SHOUT */
                         try {
@@ -311,19 +311,18 @@ public class Game {
 
                         /* WIN GAME */
                         if (this.client.getDuel() == 3) {
-                            this.client.resetDuelRound();
-                            this.server.resetDuelRound();
+                            this.client.resetDuel();
+                            this.server.resetDuel();
                             this.state = StateType.HELLO;
 
                             /* WIN DUEL */
                         } else {
-                            this.client.resetRound();
-                            this.server.resetRound();
                             this.state = StateType.HASH;
                         }
                     }
 
-                    if (this.server.getDuel() == 3 | this.server.getRound() == 2) { // Check if server wins
+                    /* SERVER - WIN GAME - WIN DUEL */
+                    if (this.server.getDuel() == 3 | this.server.getRound() == 2) {
 
                         /* WRITE SHOUT */
                         try {
@@ -333,19 +332,20 @@ public class Game {
                             System.out.println("ERROR SHOUT");
                         }
 
-                        /* WIN DUEL */
+                        /* WIN GAME */
                         if (this.server.getDuel() == 3) {
-                            this.client.resetDuelRound();
-                            this.server.resetDuelRound();
+                            this.client.resetDuel();
+                            this.server.resetDuel();
                             this.state = StateType.HELLO;
 
-                            /* WIN ROUND */
+                            /* WIN DUEL */
                         } else {
-                            this.client.resetRound();
-                            this.server.resetRound();
                             this.state = StateType.HASH;
                         }
                     }
+
+                    this.client.resetRound();
+                    this.server.resetRound();
 
                     /* READ SHOUT */
                     try {
@@ -369,20 +369,14 @@ public class Game {
 
                     String errorMessage = this.database.getErrorByEnum(this.errorType);
 
+                    /* WRITE ERROR */
                     try {
                         this.datagram.write_error(errorMessage);
                     } catch (IOException e) {
                         System.out.println("C- ERROR");
                     }
-                    this.gameBool = false;
-                    /*
-                    try {
-                        String error = this.datagram.read_error();
-                        System.out.println(error);
-                    } catch (IOException | OpcodeException e) {
-                        System.out.println("S- ERROR");
-                    }*/
 
+                    this.gameBool = false;
                     break;
             }
         }
@@ -628,8 +622,10 @@ public class Game {
 
                         /* WIN GAME */
                         if (this.client.getDuel() == 3) {
-                            this.client.resetDuelRound();
-                            this.server.resetDuelRound();
+                            this.client.resetDuel();
+                            this.server.resetDuel();
+                            this.client.resetRound();
+                            this.server.resetRound();
                             this.gameBool = false;
 
                             /* WIN DUEL */
@@ -653,8 +649,10 @@ public class Game {
 
                         /* WIN DUEL */
                         if (this.server.getDuel() == 3) {
-                            this.client.resetDuelRound();
-                            this.server.resetDuelRound();
+                            this.client.resetDuel();
+                            this.server.resetDuel();
+                            this.client.resetRound();
+                            this.server.resetRound();
                             this.gameBool = false;
 
                             /* WIN ROUND */

@@ -1,13 +1,11 @@
 /Users/QIJUNJIN/projects/practica-1-c10/Server/src/main/java/Server.java
 /Users/QIJUNJIN/projects/practica-1-c10/Server/src/main/java/exception/OpcodeException.java
 /Users/QIJUNJIN/projects/practica-1-c10/Server/src/main/java/Game.java
+/Users/QIJUNJIN/projects/practica-1-c10/Server/src/main/java/DatabaseProvider.java
 /Users/QIJUNJIN/projects/practica-1-c10/Server/src/main/java/enumType/ShoutType.java
 /Users/QIJUNJIN/projects/practica-1-c10/Server/src/main/java/Database.java
+/Users/QIJUNJIN/projects/practica-1-c10/Server/src/main/java/enumType/ErrorType.java
 /Users/QIJUNJIN/projects/practica-1-c10/Server/src/main/java/enumType/StateType.java
 /Users/QIJUNJIN/projects/practica-1-c10/Server/src/main/java/Player.java
-/Users/QIJUNJIN/projects/practica-1-c10/Server/src/main/java/DatagramException.java
 /Users/QIJUNJIN/projects/practica-1-c10/Server/src/main/java/Datagram.java
-/Users/QIJUNJIN/projects/practica-1-c10/Server/src/main/java/exception/EmptyHashException.java
-/Users/QIJUNJIN/projects/practica-1-c10/Server/src/main/java/DatabaseProvider.java
-/Users/QIJUNJIN/projects/practica-1-c10/Server/src/main/java/enumType/ErrorType.java
 /Users/QIJUNJIN/projects/practica-1-c10/Server/src/main/java/ServerThread.java

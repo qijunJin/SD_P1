@@ -1,10 +1,8 @@
-exception/EmptyHashException.class
 enumType/ErrorType.class
 Player.class
 Database.class
 Datagram.class
 enumType/ShoutType.class
-DatagramException.class
 DatabaseProvider.class
 Server.class
 ServerThread.class

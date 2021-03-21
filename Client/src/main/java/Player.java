@@ -159,8 +159,7 @@ public class Player {
         this.round = 0;
     }
 
-    public void resetDuelRound() {
+    public void resetDuel() {
         this.duel = 0;
-        this.round = 0;
     }
 }
