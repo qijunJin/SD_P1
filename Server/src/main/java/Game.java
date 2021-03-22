@@ -92,6 +92,9 @@ public class Game {
                         this.client.setName(this.datagram1.read_hello(this.opcode));
                         this.client.setId(this.datagram1.getIdOpponent());
                     } catch (IOException | OpcodeException e) {
+
+                        //String er = this.database.getErrorByEnum(ErrorType.WRONG_OPCODE);
+                        //this.log.write(er);
                         this.log.write("HELLO ERROR READ " + e.getMessage() + "\n");
                         this.log.flush();
                         break;
