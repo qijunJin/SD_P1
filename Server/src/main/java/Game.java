@@ -379,7 +379,6 @@ public class Game {
             try {
                 this.opcode1 = this.datagram1.read_opcode();
             } catch (Exception e) {
-
                 String errorMessage;
                 if (e instanceof SocketException) {
                     errorMessage = this.database.getErrorByEnum(ErrorType.TIMEOUT);
