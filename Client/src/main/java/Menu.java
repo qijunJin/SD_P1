@@ -56,11 +56,17 @@ public class Menu {
             System.out.println(i + 1 + ". " + list.get(i));
         }
 
+        String tmp;
         int option;
         do {
-            option = scan.nextInt();
-            if (option >= 0 && option <= list.size()) {
-                break;
+            tmp = scan.next();
+            if (tmp.matches("[0-9]+")) {
+                option = Integer.parseInt(tmp);
+                if (option >= 0 && option <= list.size()) {
+                    break;
+                } else {
+                    System.out.println("Invalid option, try again: ");
+                }
             } else {
                 System.out.println("Invalid option, try again: ");
             }
