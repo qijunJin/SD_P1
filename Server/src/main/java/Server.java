@@ -36,7 +36,7 @@ public class Server {
                 if (mode == 1) {
                     singlePlayer(serverSocket);
                 } else {
-                    // multiPlayer(serverSocket);
+                    multiPlayer(serverSocket);
                 }
 
             } catch (IOException e) {
@@ -74,6 +74,43 @@ public class Server {
 
             try {
                 Thread t = new Thread(new ServerThread(socket, null));
+                t.start();
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private static void multiPlayer(ServerSocket serverSocket) {
+
+        while (true) {
+            System.out.println("------------------------------------------------------------------------------------");
+
+            /* SOCKET 1 */
+            System.out.println("Waiting for players [0/2]");
+            Socket socket = null;
+
+            try {
+                socket = serverSocket.accept();
+                socket.setSoTimeout(60 * 1000);
+                System.out.println("Player connected [1/2]");
+            } catch (IOException e) {
+                System.out.println("IOException: " + e.getMessage());
+            }
+
+            /* SOCKET 2 */
+            Socket socket2 = null;
+
+            try {
+                socket2 = serverSocket.accept();
+                socket2.setSoTimeout(60 * 1000);
+                System.out.println("Player connected [2/2]");
+            } catch (IOException e) {
+                System.out.println("IOException: " + e.getMessage());
+            }
+
+            try {
+                Thread t = new Thread(new ServerThread(socket, socket2));
                 t.start();
             } catch (IOException e) {
                 System.out.println(e.getMessage());
