@@ -577,16 +577,19 @@ public class Game {
                                 break;
                             }
 
-                            System.out.println("INSULT: " + this.insult);
-                            System.out.println("COMEBACK: " + this.opponentComeback);
+                            System.out.println("C- INSULT: " + this.insult);
+                            System.out.println("S- COMEBACK: " + this.opponentComeback);
                             System.out.println("------------------------------------------------------------------------------------");
 
                             /* CHECK INSULT - COMEBACK WINNER */
                             if (this.database.isRightComeback(this.insult, this.opponentComeback)) {
                                 this.server.addRound();
                                 this.state = StateType.COMEBACK;
+
+                                System.out.println("S- WIN");
                             } else {
                                 this.client.addRound();
+                                System.out.println("C- WIN");
                             }
                         }
                     }
@@ -616,7 +619,7 @@ public class Game {
 
                             /* SYSTEM OUTPUT */
                             System.out.println("------------------------------------------------------------------------------------");
-                            System.out.println("INSULT: " + this.opponentInsult);
+                            System.out.println("S- INSULT: " + this.opponentInsult);
 
                             /* ADD COMEBACK AS LEARNED */
                             if (this.database.isInsult(this.opponentInsult)) {
@@ -639,15 +642,18 @@ public class Game {
                                 break;
                             }
 
-                            System.out.println("COMEBACK: " + this.comeback);
+                            System.out.println("C- COMEBACK: " + this.comeback);
                             System.out.println("------------------------------------------------------------------------------------");
 
                             /* CHECK INSULT - COMEBACK WINNER */
                             if (this.database.isRightComeback(this.opponentInsult, this.comeback)) {
                                 this.client.addRound();
                                 this.state = StateType.INSULT;
+
+                                System.out.println("C- WIN");
                             } else {
                                 this.server.addRound();
+                                System.out.println("S- WIN");
                             }
                         }
                     }
@@ -660,8 +666,8 @@ public class Game {
                     if (this.client.getRound() == 2) this.client.addDuel();
                     if (this.server.getRound() == 2) this.server.addDuel();
 
-                    /* CONDITION OF WIN GAME - WIN DUEL */
-                    if (this.client.getDuel() == 3 | this.client.getRound() == 2) { // Check if client wins
+                    /* CLIENT - WIN DUEL */
+                    if (this.client.getRound() == 2) {
 
                         /* WRITE SHOUT */
                         try {
@@ -673,24 +679,14 @@ public class Game {
                             break;
                         }
 
-                        /* WIN GAME */
-                        if (this.client.getDuel() == 3) {
-                            this.client.resetDuel();
-                            this.server.resetDuel();
-                            this.client.resetRound();
-                            this.server.resetRound();
-                            this.gameBool = false;
-
-                            /* WIN DUEL */
-                        } else {
-                            this.client.resetRound();
-                            this.server.resetRound();
-                            this.state = StateType.HASH;
-                        }
-
+                        /* WIN DUEL */
+                        this.client.resetRound();
+                        this.server.resetRound();
+                        this.state = StateType.HASH;
                     }
 
-                    if (this.server.getDuel() == 3 | this.server.getRound() == 2) { // Check if server wins
+                    /* SERVER - WIN DUEL */
+                    if (this.server.getRound() == 2) {
 
                         /* WRITE SHOUT */
                         try {
@@ -702,20 +698,10 @@ public class Game {
                             break;
                         }
 
-                        /* WIN DUEL */
-                        if (this.server.getDuel() == 3) {
-                            this.client.resetDuel();
-                            this.server.resetDuel();
-                            this.client.resetRound();
-                            this.server.resetRound();
-                            this.gameBool = false;
-
-                            /* WIN ROUND */
-                        } else {
-                            this.client.resetRound();
-                            this.server.resetRound();
-                            this.state = StateType.HASH;
-                        }
+                        /* WIN ROUND */
+                        this.client.resetRound();
+                        this.server.resetRound();
+                        this.state = StateType.HASH;
                     }
 
                     /* READ SHOUT */
@@ -731,6 +717,12 @@ public class Game {
                     /* SYSTEM OUTPUT */
                     System.out.println("C- SHOUT: " + clientShout);
                     System.out.println("S- SHOUT: " + serverShout + "\n");
+
+                    /* WIN GAME */
+                    if (this.client.getDuel() == 3 | this.server.getDuel() == 3) {
+                        System.out.println("[Connexion closed]");
+                        this.gameBool = false;
+                    }
 
                     break;
 
