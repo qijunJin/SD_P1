@@ -1,9 +1,9 @@
-Datagram.class
-enumType/ShoutType.class
 enumType/ErrorType.class
 Player.class
-DatabaseProvider.class
 Database.class
+Datagram.class
+enumType/ShoutType.class
+DatabaseProvider.class
 Server.class
 ServerThread.class
 Game.class

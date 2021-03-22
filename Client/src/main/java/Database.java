@@ -46,7 +46,7 @@ public class Database {
         this.errors.put(ErrorType.WRONG_OPCODE, "¡Código de operación inválido, marinero de agua dulce! ¡Hasta la vista!");
         this.errors.put(ErrorType.INCOMPLETE_MESSAGE, "¡Mensaje incompleto, grumete! ¡Hasta la vista!");
         this.errors.put(ErrorType.TIMEOUT, "¡Me he candado de esperar tus mensajes, mequetrefe! ¡Hasta la vista!");
-
+        this.errors.put(ErrorType.NOT_SAME, "¡No eres tú, soy yo! !Hasta la vista!");
     }
 
     private void initShoutsTyped() {
