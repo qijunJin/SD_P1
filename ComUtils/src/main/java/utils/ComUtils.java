@@ -91,6 +91,12 @@ public class ComUtils {
         dataOutputStream.write(hashBytes, 0, 32);
     }
 
+    public void writeHash2(byte[] encodedhash) throws IOException {
+
+        dataOutputStream.write(encodedhash, 0, 32);
+
+    }
+
     /* INT32 */
     public int readInt32() throws IOException {
         byte bytes[] = readBytes(4);
