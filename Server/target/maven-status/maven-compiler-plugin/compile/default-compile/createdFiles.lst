@@ -1,11 +1,11 @@
-enumType/ErrorType.class
+Datagram.class
+enumType\ShoutType.class
+enumType\ErrorType.class
+enumType\StateType.class
 Player.class
 Database.class
-Datagram.class
-enumType/ShoutType.class
 DatabaseProvider.class
+exception\OpcodeException.class
 Server.class
 ServerThread.class
 Game.class
-enumType/StateType.class
-exception/OpcodeException.class

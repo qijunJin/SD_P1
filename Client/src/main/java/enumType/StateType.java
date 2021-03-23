@@ -1,5 +1,8 @@
 package enumType;
 
+/**
+ * <h1>States of the game.</h1>
+ */
 public enum StateType {
     HELLO,
     HASH,
