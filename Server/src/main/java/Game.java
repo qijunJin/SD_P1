@@ -454,6 +454,10 @@ public class Game {
                 }
             }
 
+            if (this.opcode1 == 0x07 || this.opcode2 == 0x07){
+                this.opcode1 = 0x07;
+            }
+
 
             switch (this.opcode1) {
 
@@ -827,23 +831,7 @@ public class Game {
                     String str = "";
 
                     /* READ ERROR */
-                    if (this.opcode1 == 0x07) {
-                        try {
-                            str = this.datagram1.read_error(this.opcode1);
-                        } catch (IOException | OpcodeException e) {
-                            System.out.println("C1- EXIT");
-                        }
-
-                        try {
-                            this.datagram2.write_error(str);
-                        } catch (IOException e) {
-                            System.out.println("C1- EXIT");
-                        }
-
-                        /* LOG OUTPUT */
-                        this.log.write("C1- ERROR: " + str + "\n");
-
-                    }else{
+                    if (this.opcode2 == 0x07) {
                         try {
                             str = this.datagram2.read_error(this.opcode2);
                         } catch (IOException | OpcodeException e) {
@@ -858,6 +846,22 @@ public class Game {
 
                         /* LOG OUTPUT */
                         this.log.write("C2- ERROR: " + str + "\n");
+
+                    }else{
+                        try {
+                            str = this.datagram1.read_error(this.opcode1);
+                        } catch (IOException | OpcodeException e) {
+                            System.out.println("C1- EXIT");
+                        }
+
+                        try {
+                            this.datagram2.write_error(str);
+                        } catch (IOException e) {
+                            System.out.println("C1- EXIT");
+                        }
+
+                        /* LOG OUTPUT */
+                        this.log.write("C1- ERROR: " + str + "\n");
                     }
 
                     this.gameBool = false;

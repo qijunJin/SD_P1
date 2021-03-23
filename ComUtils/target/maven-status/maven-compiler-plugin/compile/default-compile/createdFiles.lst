@@ -1,3 +1,3 @@
-utils/ComUtils.class
 Main.class
-utils/Endianness.class
+utils\ComUtils.class
+utils\Endianness.class

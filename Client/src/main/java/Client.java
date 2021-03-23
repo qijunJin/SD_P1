@@ -2,7 +2,16 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.HashMap;
 
+/**
+ * <h1>Client class</h1>
+ * Main class of the project client.
+ */
 public class Client {
+
+    /**
+     * Main program of client.
+     * @param args arguments expected: -s [SERVER] -p [PORT] -i [0 o 1] or -h.
+     */
     public static void main(String[] args) {
 
         /* HELP */
@@ -37,7 +46,7 @@ public class Client {
             try {
                 InetAddress host = InetAddress.getByName(hostname);
                 socket = new Socket(host, port);
-                socket.setSoTimeout(60 * 1000);
+                socket.setSoTimeout(30 * 1000);
                 System.out.println("Connexion established!");
 
                 Datagram datagram = new Datagram(socket);
