@@ -12,6 +12,7 @@ public class ComUtils {
     private DataInputStream dataInputStream;
     private DataOutputStream dataOutputStream;
     private Socket socket;
+
     public ComUtils(InputStream inputStream, OutputStream outputStream) throws IOException {
         dataInputStream = new DataInputStream(inputStream);
         dataOutputStream = new DataOutputStream(outputStream);
@@ -44,9 +45,7 @@ public class ComUtils {
             byte b = readByte();
             if (b == 0) break;
             int unsignedByte = b;
-            if (b < 0) {
-                unsignedByte = b + 256;
-            }
+            if (b < 0) unsignedByte = b + 256;
             cStr[pos] = (char) unsignedByte;
             pos++;
             cStr = Arrays.copyOf(cStr, cStr.length + 1);
@@ -158,4 +157,10 @@ public class ComUtils {
     public Socket getSocket() {
         return socket;
     }
+
+    public enum Endianness {
+        BIG_ENNDIAN,
+        LITTLE_ENDIAN
+    }
 }
+

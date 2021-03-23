@@ -9,12 +9,15 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
+/**
+ * <h1>Game class</h1>
+ * The logic of both manual mode and automatic mode of the game.
+ */
 public class Game {
     private DatabaseProvider dp;
     private Database database;
     private Datagram datagram;
     private Menu menu;
-    private int mode;
 
     String clientShout, serverShout;
     private boolean gameBool; // Infinite loop
@@ -27,28 +30,34 @@ public class Game {
     private Player server = new Player(); // Server data
     private ErrorType errorType;
 
-    public Game(Datagram datagram, int mode) throws IOException {
 
+    /**
+     * Constructor of game
+     *
+     * @param datagram instance of datagram
+     * @param mode     mode of game
+     */
+    public Game(Datagram datagram, int mode) {
         this.database = new Database();
         this.dp = new DatabaseProvider(database.getInsults(), database.getComebacks());
         this.state = StateType.HELLO;
         this.datagram = datagram;
         this.menu = new Menu();
         this.gameBool = true;
-        this.mode = mode;
         this.run(mode);
-
     }
 
-    private void run(int mode) throws IOException {
-        if (mode == 1) {
-            this.automaticMode();
-        }
-        if (mode == 0) {
-            this.manualMode();
-        }
+    /**
+     * @param mode mode of game
+     */
+    private void run(int mode) {
+        if (mode == 1) this.automaticMode();
+        if (mode == 0) this.manualMode();
     }
 
+    /**
+     * Game in manual mode
+     */
     public void manualMode() {
         while (gameBool) {
 
@@ -94,9 +103,10 @@ public class Game {
                     try {
                         this.server.setName(this.datagram.read_hello());
                         this.server.setId(this.datagram.getIdOpponent());
-                    } catch (IOException | OpcodeException e) {
+                    } catch (Exception e) {
                         System.out.println("C- ERROR: " + e.getMessage());
-                        this.errorType = ErrorType.WRONG_OPCODE;
+                        if (e instanceof IOException) this.errorType = ErrorType.TIMEOUT;
+                        if (e instanceof OpcodeException) this.errorType = ErrorType.WRONG_OPCODE;
                         this.state = StateType.ERROR;
                         break;
                     }
@@ -128,9 +138,10 @@ public class Game {
                     /* READ HASH */
                     try {
                         this.server.setHash(this.datagram.read_hash());
-                    } catch (IOException | OpcodeException e) {
+                    } catch (Exception e) {
                         System.out.println("C- ERROR: " + e.getMessage());
-                        this.errorType = ErrorType.WRONG_OPCODE;
+                        if (e instanceof IOException) this.errorType = ErrorType.TIMEOUT;
+                        if (e instanceof OpcodeException) this.errorType = ErrorType.WRONG_OPCODE;
                         this.state = StateType.ERROR;
                         break;
                     }
@@ -156,10 +167,12 @@ public class Game {
                     /* READ SECRET */
                     try {
                         this.server.setSecret(this.datagram.read_secret());
-                    } catch (IOException | OpcodeException e) {
+                    } catch (Exception e) {
                         System.out.println("C- ERROR: " + e.getMessage());
-                        this.errorType = ErrorType.WRONG_OPCODE;
+                        if (e instanceof IOException) this.errorType = ErrorType.TIMEOUT;
+                        if (e instanceof OpcodeException) this.errorType = ErrorType.WRONG_OPCODE;
                         this.state = StateType.ERROR;
+                        break;
                     }
 
                     /* PROOF HASH - NOT EQUAL ID - EVEN/ODD ^ GREATER/LESSER -> DECIDE STATE */
@@ -215,9 +228,10 @@ public class Game {
                             /* READ COMEBACK */
                             try {
                                 this.opponentComeback = this.datagram.read_comeback();
-                            } catch (IOException | OpcodeException e) {
+                            } catch (Exception e) {
                                 System.out.println("C- ERROR: " + e.getMessage());
-                                this.errorType = ErrorType.WRONG_OPCODE;
+                                if (e instanceof IOException) this.errorType = ErrorType.TIMEOUT;
+                                if (e instanceof OpcodeException) this.errorType = ErrorType.WRONG_OPCODE;
                                 this.state = StateType.ERROR;
                                 break;
                             }
@@ -263,9 +277,10 @@ public class Game {
                             /* READ INSULT */
                             try {
                                 this.opponentInsult = this.datagram.read_insult();
-                            } catch (IOException | OpcodeException e) {
+                            } catch (Exception e) {
                                 System.out.println("C- ERROR: " + e.getMessage());
-                                this.errorType = ErrorType.WRONG_OPCODE;
+                                if (e instanceof IOException) this.errorType = ErrorType.TIMEOUT;
+                                if (e instanceof OpcodeException) this.errorType = ErrorType.WRONG_OPCODE;
                                 this.state = StateType.ERROR;
                                 break;
                             }
@@ -372,9 +387,10 @@ public class Game {
                     /* READ SHOUT */
                     try {
                         serverShout = this.datagram.read_shout();
-                    } catch (IOException | OpcodeException e) {
+                    } catch (Exception e) {
                         System.out.println("C- ERROR: " + e.getMessage());
-                        this.errorType = ErrorType.WRONG_OPCODE;
+                        if (e instanceof IOException) this.errorType = ErrorType.TIMEOUT;
+                        if (e instanceof OpcodeException) this.errorType = ErrorType.WRONG_OPCODE;
                         this.state = StateType.ERROR;
                         break;
                     }
@@ -408,6 +424,9 @@ public class Game {
         }
     }
 
+    /**
+     * Game in automatic mode
+     */
     public void automaticMode() {
 
         while (gameBool) {
@@ -743,7 +762,13 @@ public class Game {
         }
     }
 
-    /* WILL BE TESTED IN DATAGRAM CLASS */
+    /**
+     * Function to check if the hash of given secret is coincident to the given hash
+     *
+     * @param secret the given secret in String
+     * @param hash   the given hash in Array
+     * @return true as they are coincident, false adversely.
+     */
     public boolean proofHash(String secret, byte[] hash) {
         MessageDigest digest = null;
         try {
@@ -761,8 +786,13 @@ public class Game {
         }
     }
 
-    /* WILL BE TESTED IN DATAGRAM CLASS */
-    public byte[] getHash(String str) {
+    /**
+     * Function that returns the hash of the given secret
+     *
+     * @param secret the given secret in String
+     * @return the hash value of the secret
+     */
+    public byte[] getHash(String secret) {
         byte hashBytes[] = new byte[32];
         MessageDigest digest = null;
 
@@ -772,9 +802,9 @@ public class Game {
             e.printStackTrace();
         }
 
-        if (str != null) {
+        if (secret != null) {
             byte[] encodedhash = digest.digest(
-                    str.getBytes(StandardCharsets.UTF_8));
+                    secret.getBytes(StandardCharsets.UTF_8));
 
 
             for (int i = 0; i < 32; i++) hashBytes[i] = encodedhash[i];
@@ -783,7 +813,13 @@ public class Game {
         return hashBytes;
     }
 
-    /* WILL BE TESTED IN DATAGRAM CLASS */
+    /**
+     * Function to check the parity of two numbers
+     *
+     * @param s1 first number in String
+     * @param s2 second number in String
+     * @return the parity of given numbers, true as even, false as odd
+     */
     public boolean isEven(String s1, String s2) {
         int n1 = Integer.parseInt(s1);
         int n2 = Integer.parseInt(s2);

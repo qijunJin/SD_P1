@@ -47,14 +47,14 @@ public class Player {
 
     /* TESTED */
     public String getRandomInsult() {
-        ArrayList<String> list = new ArrayList(insults);
+        ArrayList<String> list = new ArrayList<>(insults);
         int i = random.nextInt(this.insults.size());
         return list.get(i);
     }
 
     /* TESTED */
     public String getRandomComeback() {
-        ArrayList<String> list = new ArrayList(comebacks);
+        ArrayList<String> list = new ArrayList<>(comebacks);
         int i = random.nextInt(this.comebacks.size());
         return list.get(i);
     }
@@ -93,11 +93,11 @@ public class Player {
     }
 
     public ArrayList<String> getInsults() {
-        return new ArrayList(insults);
+        return new ArrayList<>(insults);
     }
 
     public ArrayList<String> getComebacks() {
-        return new ArrayList(comebacks);
+        return new ArrayList<>(comebacks);
     }
 
     public int getInsultSize() {

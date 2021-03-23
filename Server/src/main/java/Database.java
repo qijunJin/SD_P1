@@ -59,11 +59,11 @@ public class Database {
 
     /* GETTER */
     public ArrayList<String> getInsults() {
-        return new ArrayList(this.sources.keySet());
+        return new ArrayList<>(this.sources.keySet());
     }
 
     public ArrayList<String> getComebacks() {
-        return new ArrayList(this.sources.values());
+        return new ArrayList<>(this.sources.values());
     }
 
     public HashMap<ErrorType, String> getErrors() { // For test

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="11" failures="0" name="DatagramTest" time="0.089" errors="0" skipped="0">
+<testsuite tests="11" failures="0" name="DatagramTest" time="0.094" errors="0" skipped="0">
   <properties>
     <property name="idea.version" value="2020.3.2"/>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
@@ -58,15 +58,15 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
   </properties>
-  <testcase classname="DatagramTest" name="secret_test" time="0.013"/>
+  <testcase classname="DatagramTest" name="secret_test" time="0.018"/>
   <testcase classname="DatagramTest" name="hello_test" time="0"/>
-  <testcase classname="DatagramTest" name="comeback_test" time="0.002"/>
+  <testcase classname="DatagramTest" name="comeback_test" time="0.005"/>
   <testcase classname="DatagramTest" name="opcodeException_test" time="0.001"/>
-  <testcase classname="DatagramTest" name="proofHash_test" time="0.035"/>
-  <testcase classname="DatagramTest" name="shout_test" time="0.027"/>
-  <testcase classname="DatagramTest" name="getHash_test" time="0.004"/>
+  <testcase classname="DatagramTest" name="proofHash_test" time="0.066"/>
+  <testcase classname="DatagramTest" name="shout_test" time="0"/>
+  <testcase classname="DatagramTest" name="getHash_test" time="0.002"/>
   <testcase classname="DatagramTest" name="hash_test" time="0.001"/>
-  <testcase classname="DatagramTest" name="insult_test" time="0.001"/>
-  <testcase classname="DatagramTest" name="isEven_test" time="0.004"/>
+  <testcase classname="DatagramTest" name="insult_test" time="0"/>
+  <testcase classname="DatagramTest" name="isEven_test" time="0"/>
   <testcase classname="DatagramTest" name="error_test" time="0.001"/>
 </testsuite>

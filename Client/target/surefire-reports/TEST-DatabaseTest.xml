@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="7" failures="0" name="DatabaseTest" time="0" errors="0" skipped="0">
+<testsuite tests="7" failures="0" name="DatabaseTest" time="0.003" errors="0" skipped="0">
   <properties>
     <property name="idea.version" value="2020.3.2"/>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
@@ -59,10 +59,10 @@
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
   </properties>
   <testcase classname="DatabaseTest" name="isRightComeback_test" time="0"/>
-  <testcase classname="DatabaseTest" name="isInsult_test" time="0"/>
+  <testcase classname="DatabaseTest" name="isInsult_test" time="0.001"/>
   <testcase classname="DatabaseTest" name="isComeback_false_test" time="0"/>
   <testcase classname="DatabaseTest" name="isComeback_test" time="0"/>
-  <testcase classname="DatabaseTest" name="getShoutByEnum_test" time="0"/>
-  <testcase classname="DatabaseTest" name="isInsult_false_test" time="0"/>
+  <testcase classname="DatabaseTest" name="getShoutByEnum_test" time="0.001"/>
+  <testcase classname="DatabaseTest" name="isInsult_false_test" time="0.001"/>
   <testcase classname="DatabaseTest" name="getErrorByEnum_test" time="0"/>
 </testsuite>

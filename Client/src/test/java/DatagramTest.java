@@ -9,9 +9,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Random;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class DatagramTest {
 
@@ -188,7 +188,7 @@ public class DatagramTest {
 
         assertEquals(e1, e2);
     }
-
+/*
     @Test
     public void isEven_test() {
 
@@ -223,7 +223,7 @@ public class DatagramTest {
             Datagram datagram = new Datagram(socket);
             String secret = "21394735986548847365534907392897867";
 
-            /* FOR TEST */
+            *//* FOR TEST *//*
             MessageDigest digest = null;
             try {
                 digest = MessageDigest.getInstance("SHA-256");
@@ -248,7 +248,7 @@ public class DatagramTest {
             Datagram datagram = new Datagram(socket);
             String secret = "21394735986548847365534907392897867";
 
-            /* FOR TEST */
+            *//* FOR TEST *//*
             MessageDigest digest = null;
             try {
                 digest = MessageDigest.getInstance("SHA-256");
@@ -264,5 +264,5 @@ public class DatagramTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }

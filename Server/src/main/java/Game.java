@@ -1,6 +1,4 @@
-import enumType.ErrorType;
 import enumType.ShoutType;
-import enumType.StateType;
 import exception.OpcodeException;
 
 import java.io.BufferedWriter;
@@ -22,16 +20,14 @@ public class Game {
     Datagram datagram2;
 
     String clientShout, serverShout;
-    private Player server = new Player();         //Data Server
-    private Player client = new Player();         //Data Opponent
-    private Player client2 = new Player();        //Data Opponent2 multiplayer
+    private Player server = new Player();
+    private Player client = new Player();
+    private Player client2 = new Player();
 
     private String opponentInsult, opponentComeback;
     private String insult, comeback;
     private boolean gameBool = true;
-    private ErrorType errorType;
     private boolean contained;
-    private StateType state;
     private int opcode1, opcode2;
     private boolean turn, a, b;
 
@@ -43,19 +39,15 @@ public class Game {
 
         if (s2 != null) {
             this.datagram2 = new Datagram(s2);
-            this.state = StateType.HELLO;
             turn = true;
             a = false;
             b = false;
         }
 
         String lg = "Server" + Thread.currentThread().getName() + ".log"; // File name
-        (new File("../../../logs")).mkdir(); // Directory
-        File f = new File("../../../logs/" + lg); // File
+        (new File("../../logs")).mkdir(); // Directory
+        File f = new File("../../logs/" + lg); // File
         this.log = new BufferedWriter(new FileWriter(f));
-
-        this.state = StateType.HELLO;
-
     }
 
     public void run() throws IOException {
@@ -75,7 +67,6 @@ public class Game {
                 this.opcode1 = this.datagram1.read_opcode();
             } catch (Exception e) {
                 this.log.write("[Connexion closed]");
-
                 this.gameBool = false;
                 break;
             }
@@ -421,14 +412,40 @@ public class Game {
                 try {
                     this.opcode1 = this.datagram1.read_opcode();
                 } catch (Exception e) {
-                    this.log.write("C1- [Connexion closed]");
+                    this.log.write("C1- [Connexion closed]\n");
+                    this.log.flush();
+                    try {
+                        this.opcode2 = this.datagram2.read_opcode();
+                        if (opcode2 == 0x07) {
+                            this.log.write("C2- ERROR: " + this.datagram2.read_error(this.opcode2) + "\n");
+                            this.log.write("C2- [Connexion closed]");
+                            this.log.flush();
+                        }
+                    } catch (Exception e3) {
+                        this.log.write("C2- [Connexion closed]");
+                        this.log.flush();
+                        break;
+                    }
                     break;
                 }
             } else {
                 try {
                     this.opcode2 = this.datagram2.read_opcode();
                 } catch (Exception e) {
-                    this.log.write("C2- [Connexion closed]");
+                    this.log.write("C2- [Connexion closed]\n");
+                    this.log.flush();
+                    try {
+                        this.opcode1 = this.datagram1.read_opcode();
+                        if (opcode1 == 0x07) {
+                            this.log.write("C1- ERROR: " + this.datagram1.read_error(this.opcode1) + "\n");
+                            this.log.write("C1- [Connexion closed]");
+                            this.log.flush();
+                        }
+                    } catch (Exception e3) {
+                        this.log.write("C1- [Connexion closed]");
+                        this.log.flush();
+                        break;
+                    }
                     break;
                 }
             }
