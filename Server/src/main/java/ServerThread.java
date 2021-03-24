@@ -10,7 +10,7 @@ public class ServerThread implements Runnable {
 
     /**
      * Costructor of the server thread.
-     * @param s1 instanc eof socket of the first player.
+     * @param s1 instance of socket of the first player.
      * @param s2 instance of socket of the second player.
      * @throws IOException
      */
