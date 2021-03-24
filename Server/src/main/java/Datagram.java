@@ -143,7 +143,7 @@ public class Datagram extends ComUtils {
     public void write_hash_array(byte[] bytes) throws IOException {
         writeByte(2); // OPCODE
         writeHashArray(bytes); // HASH
-
+    }
 
     public void write_secret(String str) throws IOException {
         writeByte(3);
