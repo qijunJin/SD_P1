@@ -9,7 +9,9 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 public class Game {
 
@@ -44,7 +46,9 @@ public class Game {
             b = false;
         }
 
-        String lg = "Server" + Thread.currentThread().getName() + ".log"; // File name
+        Date asd = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyyHH.mm.ss");
+        String lg = "Server" + Thread.currentThread().getId() + "_" + formatter.format(asd) + ".log"; // File name
         (new File("../../logs")).mkdir(); // Directory
         File f = new File("../../logs/" + lg); // File
         this.log = new BufferedWriter(new FileWriter(f));
