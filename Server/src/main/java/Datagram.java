@@ -139,10 +139,11 @@ public class Datagram extends ComUtils {
         writeHash(str); // HASH
     }
 
-    public void write_hash2(byte[] ecodedHash) throws IOException {
+
+    public void write_hash_array(byte[] bytes) throws IOException {
         writeByte(2); // OPCODE
-        writeHash2(ecodedHash); // HASH
-    }
+        writeHashArray(bytes); // HASH
+
 
     public void write_secret(String str) throws IOException {
         writeByte(3);

@@ -19,7 +19,6 @@
             <groupId>groupId</groupId>
             <artifactId>comutils</artifactId>
             <version>1.0</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>

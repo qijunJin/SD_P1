@@ -18,7 +18,7 @@ public class Server {
         if (args.length == 4) {
 
             /* Control of parameters */
-            HashMap<String, String> options = new HashMap();
+            HashMap<String, String> options = new HashMap<>();
             for (int i = 0; i < args.length; i = i + 2)
                 options.put(args[i], args[i + 1]);
 
