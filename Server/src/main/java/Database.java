@@ -86,10 +86,7 @@ public class Database {
 
     /* TESTED */
     public boolean isRightComeback(String insult, String comeback) {
-        if (insult != null && comeback != null) {
-            return this.sources.get(insult).equals(comeback);
-        }
-        return false;
+        return this.sources.get(insult).equals(comeback);
     }
 
     /* TESTED */
