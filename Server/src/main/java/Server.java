@@ -3,8 +3,16 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 
+/**
+ * <h1>Server class</h1>
+ * Main class of the project server.
+ */
 public class Server {
 
+    /**
+     * Main program of server.
+     * @param args arguments expected: -p [PORT] -m [MODE] or -h.
+     */
     public static void main(String[] args) throws Exception {
 
         if (args.length == 4) {
@@ -56,6 +64,10 @@ public class Server {
         }
     }
 
+    /**
+     * Method where the server accept one player.
+     * @param serverSocket instance of server socket.
+     */
     private static void singlePlayer(ServerSocket serverSocket) {
 
         while (true) {
@@ -81,6 +93,10 @@ public class Server {
         }
     }
 
+    /**
+     * Method where the server accept two players.
+     * @param serverSocket instance of server socket.
+     */
     private static void multiPlayer(ServerSocket serverSocket) {
 
         while (true) {

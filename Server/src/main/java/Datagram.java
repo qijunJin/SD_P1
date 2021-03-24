@@ -139,10 +139,11 @@ public class Datagram extends ComUtils {
         writeHash(str); // HASH
     }
 
+
     public void write_hash_array(byte[] bytes) throws IOException {
         writeByte(2); // OPCODE
         writeHashArray(bytes); // HASH
-    }
+
 
     public void write_secret(String str) throws IOException {
         writeByte(3);
@@ -211,6 +212,113 @@ public class Datagram extends ComUtils {
             hashBytes[i] = encodedhash[i];
 
         return hashBytes;
+    }
+
+    /* TESTED */
+    public String read_hello() throws IOException, OpcodeException {
+        int writtenOpcode = readByte();
+        String str;
+
+        int requiredOpcode = 1;
+
+        if (writtenOpcode == requiredOpcode) {
+            id = readInt32();
+            str = readString();
+        } else {
+            throw new OpcodeException(writtenOpcode, requiredOpcode);
+        }
+        return str;
+    }
+
+    /* TESTED */
+    public byte[] read_hash() throws IOException, OpcodeException {
+        int writtenOpcode = readByte();
+        byte[] hashBytes;
+
+        int requiredOpcode = 2;
+
+        if (writtenOpcode == requiredOpcode) {
+            hashBytes = readHash();
+        } else {
+            throw new OpcodeException(writtenOpcode, requiredOpcode);
+        }
+
+        return hashBytes;
+    }
+
+    /* TESTED */
+    public String read_secret() throws IOException, OpcodeException {
+        int requiredOpcode = 3;
+        int writtenOpcode = readByte();
+        String str;
+
+        if (writtenOpcode == requiredOpcode) {
+            str = readString();
+        } else {
+            throw new OpcodeException(writtenOpcode, requiredOpcode);
+        }
+
+        return str;
+    }
+
+    /* TESTED */
+    public String read_insult() throws IOException, OpcodeException {
+        int requiredOpcode = 4;
+        int writtenOpcode = readByte();
+        String str;
+
+        if (writtenOpcode == requiredOpcode) {
+            str = readString();
+        } else {
+            throw new OpcodeException(writtenOpcode, requiredOpcode);
+        }
+
+        return str;
+    }
+
+    /* TESTED */
+    public String read_comeback() throws IOException, OpcodeException {
+        int requiredOpcode = 5;
+        int writtenOpcode = readByte();
+        String str;
+
+        if (writtenOpcode == requiredOpcode) {
+            str = readString();
+        } else {
+            throw new OpcodeException(writtenOpcode, requiredOpcode);
+        }
+
+        return str;
+    }
+
+    /* TESTED */
+    public String read_shout() throws IOException, OpcodeException {
+        int requiredOpcode = 6;
+        int writtenOpcode = readByte();
+        String str;
+
+        if (writtenOpcode == requiredOpcode) {
+            str = readString();
+        } else {
+            throw new OpcodeException(writtenOpcode, requiredOpcode);
+        }
+
+        return str;
+    }
+
+    /* TESTED */
+    public String read_error() throws IOException, OpcodeException {
+        int requiredOpcode = 7;
+        int writtenOpcode = readByte();
+        String str;
+
+        if (writtenOpcode == requiredOpcode) {
+            str = readString();
+        } else {
+            throw new OpcodeException(writtenOpcode, requiredOpcode);
+        }
+
+        return str;
     }
 
 }
