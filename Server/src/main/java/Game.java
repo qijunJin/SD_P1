@@ -450,6 +450,7 @@ public class Game {
                 }
             }
 
+            
             if (this.opcode1 == 0x01) {
 
                 /* READ HELLO PLAYER1 */
