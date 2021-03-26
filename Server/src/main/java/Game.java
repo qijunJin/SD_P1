@@ -1,3 +1,4 @@
+import shared.functions.Functions;
 import shared.database.Database;
 import shared.enumType.ShoutType;
 import shared.exception.OpcodeException;
@@ -10,14 +11,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
-public class Game {
+public class Game implements Functions {
 
     private DatabaseProvider dp;
     private final BufferedWriter log;
@@ -149,7 +147,6 @@ public class Game {
                     /* WRITE HASH */
                     try {
                         this.datagram1.writeHash(2, this.server.generateSecret());
-                        this.server.setHash(this.getHash(this.server.getSecret()));
                     } catch (IOException e) {
                         this.log.write("S- ERROR: " + e.getMessage());
                         this.log.flush();
@@ -193,9 +190,9 @@ public class Game {
                     this.log.flush();
 
                     /* PROOF HASH - NOT EQUAL ID - EVEN/ODD ^ GREATER/LESSER -> DECIDE STATE */
-                    if (this.proofHash(this.client.getSecret(), this.client.getHash())) {
+                    if (Functions.proofHash(this.client.getSecret(), this.client.getHash())) {
                         if (this.server.getId() != this.client.getId()) {
-                            if (this.isEven(this.server.getSecret(), this.client.getSecret()) ^ (this.server.getId() > this.client.getId())) {
+                            if (Functions.isEven(this.server.getSecret(), this.client.getSecret()) ^ (this.server.getId() > this.client.getId())) {
 
                                 /* WRITE INSULT */
                                 this.insult = this.server.getRandomInsult();
@@ -517,6 +514,7 @@ public class Game {
                         break;
                     }
 
+
                     break;
 
                 case 0x06:
@@ -767,7 +765,7 @@ public class Game {
 
                 this.opcode2 = 0x00;
 
-                turn = this.isEven(this.client.getSecret(), this.client2.getSecret()) == this.client2.getId() > this.client.getId();
+                turn = Functions.isEven(this.client.getSecret(), this.client2.getSecret()) == this.client2.getId() > this.client.getId();
 
             } else if (this.opcode1 == 0x04) {
 
@@ -967,52 +965,5 @@ public class Game {
                 break;
             }
         }
-    }
-
-    /* WILL BE TESTED IN DATAGRAM CLASS */
-    public boolean proofHash(String secret, byte[] hash) {
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        if (secret != null || hash != null) {
-            byte[] encodedhash = digest.digest(
-                    secret.getBytes(StandardCharsets.UTF_8));
-
-            return Arrays.equals(encodedhash, hash);
-        } else {
-            return false;
-        }
-    }
-
-    /* WILL BE TESTED IN DATAGRAM CLASS */
-    public byte[] getHash(String str) {
-        byte hashBytes[] = new byte[32];
-        MessageDigest digest = null;
-
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-
-        if (str != null) {
-            byte[] encodedhash = digest.digest(
-                    str.getBytes(StandardCharsets.UTF_8));
-
-
-            for (int i = 0; i < 32; i++) hashBytes[i] = encodedhash[i];
-        }
-
-        return hashBytes;
-    }
-
-    /* WILL BE TESTED IN DATAGRAM CLASS */
-    public boolean isEven(String s1, String s2) {
-        int n1 = Integer.parseInt(s1);
-        int n2 = Integer.parseInt(s2);
-        return ((n1 + n2) % 2 == 0);
     }
 }

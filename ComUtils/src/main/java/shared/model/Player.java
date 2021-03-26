@@ -1,5 +1,7 @@
 package shared.model;
 
+import shared.functions.Functions;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
@@ -8,7 +10,7 @@ import java.util.Random;
  * <h1>Player class</h1>
  * Store all tha data of a player.
  */
-public class Player {
+public class Player implements Functions {
     private final HashSet<String> insults;
     private final HashSet<String> comebacks;
     private final Random random = new Random();
@@ -52,9 +54,9 @@ public class Player {
      * @return a random secret.
      */
     public String generateSecret() {
-        int s = random.nextInt(Integer.MAX_VALUE);
-        this.secret = String.valueOf(s);
-        return String.valueOf(s);
+        this.secret = String.valueOf(random.nextInt(Integer.MAX_VALUE));
+        this.hash = Functions.toHash(this.secret);
+        return this.secret;
     }
 
     /**

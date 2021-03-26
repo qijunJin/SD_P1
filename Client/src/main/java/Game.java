@@ -2,38 +2,33 @@ import shared.database.Database;
 import shared.enumType.ErrorType;
 import shared.enumType.ShoutType;
 import shared.exception.OpcodeException;
+import shared.functions.Functions;
 import shared.model.DatabaseProvider;
 import shared.model.Player;
 import utils.Datagram;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
  * <h1>Game class</h1>
  * The logic of both manual mode and automatic mode of the game.
  */
-public class Game {
+public class Game implements Functions {
     private DatabaseProvider dp;
     private final Database database;
     private final Datagram datagram;
     private final Menu menu;
 
     String clientShout, serverShout;
-    private boolean gameBool; // Infinite loop
+    private final Player client = new Player();
     private boolean newGame;
-    private StateType state;
 
     private String insult, comeback;
     private String opponentInsult, opponentComeback;
     private boolean contained;
-    private final Player client = new Player(); // Client data
-    private final Player server = new Player(); // Server data
-    private ErrorType errorType;
-    private String errorMessage;
+    private final Player server = new Player();
+    private boolean inGame;
     private int opcode;
 
     /**
@@ -45,20 +40,12 @@ public class Game {
     public Game(Datagram datagram, int mode) {
         this.database = new Database();
         this.dp = new DatabaseProvider(database.getInsults(), database.getComebacks());
-        this.state = StateType.HELLO;
-        this.datagram = datagram;
         this.menu = new Menu();
-        this.gameBool = true;
+        this.inGame = true;
         this.newGame = true;
-        this.run(mode);
-    }
-
-    /**
-     * @param mode mode of game
-     */
-    private void run(int mode) {
-        if (mode == 1) this.automaticMode();
+        this.datagram = datagram;
         if (mode == 0) this.manualMode();
+        if (mode == 1) this.automaticMode();
     }
 
     /**
@@ -66,13 +53,10 @@ public class Game {
      */
     public void manualMode() {
 
-        while (gameBool) {
+        while (inGame) {
+            if (this.newGame) { // New game
 
-            if (this.newGame) {
-
-                /* NEW CLIENT OR NOT */
                 if (!this.client.hasName() && !this.client.hasId()) { // New client & get data
-
                     this.client.setName(this.menu.getName());
                     this.client.setId(this.menu.getId());
 
@@ -90,16 +74,16 @@ public class Game {
                     }
                 }
 
-                do {
+                do { // Add random insult - comeback pair to client
                     contained = this.client.containsWithAddInsultComeback(this.dp.getRandomInsultComeback());
-                } while (contained); // If already contains, get new pairs
+                } while (contained);
 
                 try {
                     this.datagram.writeIntString(1, this.client.getId(), this.client.getName());
                     System.out.println("C- HELLO: " + this.client.getId() + " " + this.client.getName());
                 } catch (IOException e) {
-                    System.out.println("C- ERROR: " + e.getMessage());
-                    this.gameBool = false;
+                    System.out.println("C- EXCEPTION: " + e.getMessage());
+                    this.inGame = false;
                     break;
                 }
                 this.newGame = false;
@@ -121,19 +105,19 @@ public class Game {
                         System.out.println("S- HELLO: " + this.server.getId() + " " + this.server.getName());
                     } catch (IOException | OpcodeException e) {
                         if (e instanceof IOException)
-                            writeErrorToStream("S- ERROR: " + e.getMessage(), ErrorType.TIMEOUT);
+                            writeErrorToStream(e.getMessage(), ErrorType.TIMEOUT);
                         if (e instanceof OpcodeException)
-                            writeErrorToStream("S- ERROR: " + e.getMessage(), ErrorType.WRONG_OPCODE);
+                            writeErrorToStream(e.getMessage(), ErrorType.WRONG_OPCODE);
                         break;
                     }
 
                     try {
                         this.datagram.writeHash(2, this.client.generateSecret());
-                        this.client.setHash(this.getHash(this.client.getSecret()));
+                        this.client.setHash(Functions.toHash(this.client.getSecret()));
                         System.out.println("C- HASH: " + Arrays.toString(this.client.getHash()));
                     } catch (IOException e) {
-                        System.out.println("C- ERROR: " + e.getMessage());
-                        this.gameBool = false;
+                        System.out.println("C- EXCEPTION: " + e.getMessage());
+                        this.inGame = false;
                         break;
                     }
 
@@ -150,9 +134,9 @@ public class Game {
                         System.out.println("S- HASH: " + Arrays.toString(this.server.getHash()));
                     } catch (IOException | OpcodeException e) {
                         if (e instanceof IOException)
-                            writeErrorToStream("S- ERROR: " + e.getMessage(), ErrorType.TIMEOUT);
+                            writeErrorToStream(e.getMessage(), ErrorType.TIMEOUT);
                         if (e instanceof OpcodeException)
-                            writeErrorToStream("S- ERROR: " + e.getMessage(), ErrorType.WRONG_OPCODE);
+                            writeErrorToStream(e.getMessage(), ErrorType.WRONG_OPCODE);
                         break;
                     }
 
@@ -161,7 +145,7 @@ public class Game {
                         System.out.println("C- SECRET: " + this.client.getSecret());
                     } catch (IOException e) {
                         System.out.println("C- ERROR: " + e.getMessage());
-                        this.gameBool = false;
+                        this.inGame = false;
                         break;
                     }
 
@@ -174,16 +158,16 @@ public class Game {
                         System.out.println("S- SECRET: " + this.server.getSecret());
                     } catch (IOException | OpcodeException e) {
                         if (e instanceof IOException)
-                            writeErrorToStream("S- ERROR: " + e.getMessage(), ErrorType.TIMEOUT);
+                            writeErrorToStream(e.getMessage(), ErrorType.TIMEOUT);
                         if (e instanceof OpcodeException)
-                            writeErrorToStream("S- ERROR: " + e.getMessage(), ErrorType.WRONG_OPCODE);
+                            writeErrorToStream(e.getMessage(), ErrorType.WRONG_OPCODE);
                         break;
                     }
 
                     /* PROOF HASH - NOT EQUAL ID - EVEN/ODD ^ GREATER/LESSER -> DECIDE STATE */
-                    if (this.proofHash(this.server.getSecret(), this.server.getHash())) {
+                    if (Functions.proofHash(this.server.getSecret(), this.server.getHash())) {
                         if (this.client.getId() != this.server.getId()) {
-                            if (isEven(client.getSecret(), server.getSecret()) ^ (client.getId() > server.getId())) {
+                            if (Functions.isEven(client.getSecret(), server.getSecret()) ^ (client.getId() > server.getId())) {
 
                                 this.insult = this.menu.getOption(this.client.getInsults(), "insult");
                                 try {
@@ -192,7 +176,7 @@ public class Game {
                                     System.out.println("C- INSULT: " + this.insult);
                                 } catch (IOException e) {
                                     System.out.println("C- ERROR: " + e.getMessage());
-                                    this.gameBool = false;
+                                    this.inGame = false;
                                     break;
                                 }
                             }
@@ -232,7 +216,7 @@ public class Game {
                             this.datagram.writeString(5, this.comeback);
                         } catch (IOException e) {
                             System.out.println("C- ERROR: " + e.getMessage());
-                            this.gameBool = false;
+                            this.inGame = false;
                             break;
                         }
 
@@ -251,7 +235,7 @@ public class Game {
                                     System.out.println("C- INSULT: " + this.insult);
                                 } catch (IOException e) {
                                     System.out.println("C- ERROR: " + e.getMessage());
-                                    this.gameBool = false;
+                                    this.inGame = false;
                                     break;
                                 }
                             }
@@ -274,7 +258,7 @@ public class Game {
                             System.out.println("C- SHOUT: " + clientShout);
                         } catch (IOException e) {
                             System.out.println("C- ERROR: " + e.getMessage());
-                            this.gameBool = false;
+                            this.inGame = false;
                             break;
                         }
                     }
@@ -289,7 +273,7 @@ public class Game {
                             System.out.println("C- SHOUT: " + clientShout);
                         } catch (IOException e) {
                             System.out.println("C- ERROR: " + e.getMessage());
-                            this.gameBool = false;
+                            this.inGame = false;
                             break;
                         }
                     }
@@ -333,7 +317,7 @@ public class Game {
                                     System.out.println("C- INSULT: " + this.insult);
                                 } catch (IOException e) {
                                     System.out.println("C- ERROR: " + e.getMessage());
-                                    this.gameBool = false;
+                                    this.inGame = false;
                                     break;
                                 }
                             }
@@ -353,7 +337,7 @@ public class Game {
                             System.out.println("C- SHOUT: " + clientShout);
                         } catch (IOException e) {
                             System.out.println("C- ERROR: " + e.getMessage());
-                            this.gameBool = false;
+                            this.inGame = false;
                             break;
                         }
                     }
@@ -368,7 +352,7 @@ public class Game {
                             System.out.println("C- SHOUT: " + clientShout);
                         } catch (IOException e) {
                             System.out.println("C- ERROR: " + e.getMessage());
-                            this.gameBool = false;
+                            this.inGame = false;
                             break;
                         }
                     }
@@ -391,7 +375,7 @@ public class Game {
 
                     if (this.menu.getExit()) {
                         System.out.println("[Connexion closed]");
-                        this.gameBool = false;
+                        this.inGame = false;
                         break;
                     }
 
@@ -403,11 +387,11 @@ public class Game {
                     } else {
                         try {
                             this.datagram.writeHash(2, this.client.generateSecret());
-                            this.client.setHash(this.getHash(this.client.getSecret()));
+                            this.client.setHash(Functions.toHash(this.client.getSecret()));
                             System.out.println("C- HASH: " + Arrays.toString(this.client.getHash()));
                         } catch (IOException e) {
                             System.out.println("C- ERROR: " + e.getMessage());
-                            this.gameBool = false;
+                            this.inGame = false;
                             break;
                         }
                     }
@@ -415,12 +399,17 @@ public class Game {
                     this.client.resetRound();
                     this.server.resetRound();
 
-
                     break;
 
                 case 0x07:
 
-                    this.writeErrorToStream("", this.errorType);
+                    try {
+                        System.out.println("S- ERROR: " + this.datagram.readString(7, this.opcode) + "\n");
+                    } catch (IOException | OpcodeException e) {
+                        if (e instanceof IOException) writeErrorToStream(e.getMessage(), ErrorType.TIMEOUT);
+                        if (e instanceof OpcodeException) writeErrorToStream(e.getMessage(), ErrorType.WRONG_OPCODE);
+                        break;
+                    }
 
                     break;
             }
@@ -428,15 +417,15 @@ public class Game {
     }
 
     private void writeErrorToStream(String s, ErrorType errorType) {
-        System.out.println(s);
+        System.out.println("S- EXCEPTION: " + s);
         try {
-            this.errorMessage = this.database.getErrorByEnum(errorType);
+            String errorMessage = this.database.getErrorByEnum(errorType);
             this.datagram.writeString(7, errorMessage);
             System.out.println(errorMessage);
         } catch (IOException e2) {
             System.out.println("C- ERROR: " + e2.getMessage());
         }
-        this.gameBool = false;
+        this.inGame = false;
     }
 
     /**
@@ -444,7 +433,7 @@ public class Game {
      */
     public void automaticMode() {
 
-        while (gameBool) {
+        while (inGame) {
 
             if (this.newGame) {
 
@@ -459,7 +448,7 @@ public class Game {
                     System.out.println("C- HELLO: " + this.client.getId() + " " + this.client.getName());
                 } catch (IOException e) {
                     System.out.println("C- ERROR: " + e.getMessage());
-                    this.gameBool = false;
+                    this.inGame = false;
                     break;
                 }
                 this.newGame = false;
@@ -489,11 +478,11 @@ public class Game {
 
                     try {
                         this.datagram.writeHash(2, this.client.generateSecret());
-                        this.client.setHash(this.getHash(this.client.getSecret()));
+                        this.client.setHash(Functions.toHash(this.client.getSecret()));
                         System.out.println("C- HASH: " + Arrays.toString(this.client.getHash()));
                     } catch (IOException e) {
                         System.out.println("C- ERROR: " + e.getMessage());
-                        this.gameBool = false;
+                        this.inGame = false;
                         break;
                     }
 
@@ -521,7 +510,7 @@ public class Game {
                         System.out.println("C- SECRET: " + this.client.getSecret());
                     } catch (IOException e) {
                         System.out.println("C- ERROR: " + e.getMessage());
-                        this.gameBool = false;
+                        this.inGame = false;
                         break;
                     }
 
@@ -541,9 +530,9 @@ public class Game {
                     }
 
                     /* PROOF HASH - NOT EQUAL ID - EVEN/ODD ^ GREATER/LESSER -> DECIDE STATE */
-                    if (this.proofHash(this.server.getSecret(), this.server.getHash())) {
+                    if (Functions.proofHash(this.server.getSecret(), this.server.getHash())) {
                         if (this.client.getId() != this.server.getId()) {
-                            if (isEven(client.getSecret(), server.getSecret()) ^ (client.getId() > server.getId())) {
+                            if (Functions.isEven(client.getSecret(), server.getSecret()) ^ (client.getId() > server.getId())) {
 
                                 this.insult = this.client.getRandomInsult();
                                 try {
@@ -552,7 +541,7 @@ public class Game {
                                     System.out.println("C- INSULT: " + this.insult);
                                 } catch (IOException e) {
                                     System.out.println("C- ERROR: " + e.getMessage());
-                                    this.gameBool = false;
+                                    this.inGame = false;
                                     break;
                                 }
                             }
@@ -592,7 +581,7 @@ public class Game {
                             this.datagram.writeString(5, this.comeback);
                         } catch (IOException e) {
                             System.out.println("C- ERROR: " + e.getMessage());
-                            this.gameBool = false;
+                            this.inGame = false;
                             break;
                         }
 
@@ -611,7 +600,7 @@ public class Game {
                                     System.out.println("C- INSULT: " + this.insult);
                                 } catch (IOException e) {
                                     System.out.println("C- ERROR: " + e.getMessage());
-                                    this.gameBool = false;
+                                    this.inGame = false;
                                     break;
                                 }
                             }
@@ -634,7 +623,7 @@ public class Game {
                             System.out.println("C- SHOUT: " + clientShout);
                         } catch (IOException e) {
                             System.out.println("C- ERROR: " + e.getMessage());
-                            this.gameBool = false;
+                            this.inGame = false;
                             break;
                         }
                     }
@@ -649,7 +638,7 @@ public class Game {
                             System.out.println("C- SHOUT: " + clientShout);
                         } catch (IOException e) {
                             System.out.println("C- ERROR: " + e.getMessage());
-                            this.gameBool = false;
+                            this.inGame = false;
                             break;
                         }
                     }
@@ -693,7 +682,7 @@ public class Game {
                                     System.out.println("C- INSULT: " + this.insult);
                                 } catch (IOException e) {
                                     System.out.println("C- ERROR: " + e.getMessage());
-                                    this.gameBool = false;
+                                    this.inGame = false;
                                     break;
                                 }
                             }
@@ -713,7 +702,7 @@ public class Game {
                             System.out.println("C- SHOUT: " + clientShout);
                         } catch (IOException e) {
                             System.out.println("C- ERROR: " + e.getMessage());
-                            this.gameBool = false;
+                            this.inGame = false;
                             break;
                         }
                     }
@@ -728,7 +717,7 @@ public class Game {
                             System.out.println("C- SHOUT: " + clientShout);
                         } catch (IOException e) {
                             System.out.println("C- ERROR: " + e.getMessage());
-                            this.gameBool = false;
+                            this.inGame = false;
                             break;
                         }
                     }
@@ -753,16 +742,16 @@ public class Game {
                     if (this.client.getDuel() == 3 | this.server.getDuel() == 3) {
                         this.client.resetDuel();
                         this.server.resetDuel();
-                        this.gameBool = false;
                         System.out.println("[Connexion closed]");
+                        this.inGame = false;
                     } else {
                         try {
                             this.datagram.writeHash(2, this.client.generateSecret());
-                            this.client.setHash(this.getHash(this.client.getSecret()));
+                            this.client.setHash(Functions.toHash(this.client.getSecret()));
                             System.out.println("C- HASH: " + Arrays.toString(this.client.getHash()));
                         } catch (IOException e) {
                             System.out.println("C- ERROR: " + e.getMessage());
-                            this.gameBool = false;
+                            this.inGame = false;
                             break;
                         }
                     }
@@ -775,130 +764,19 @@ public class Game {
 
                 case 0x07:
 
-                    this.writeErrorToStream("", this.errorType);
+                    try {
+                        String errorMessage = this.datagram.readString(7, this.opcode);
+                        System.out.println("S- ERROR: " + errorMessage + "\n");
+                    } catch (IOException | OpcodeException e) {
+                        if (e instanceof IOException)
+                            writeErrorToStream("S- ERROR: " + e.getMessage(), ErrorType.TIMEOUT);
+                        if (e instanceof OpcodeException)
+                            writeErrorToStream("S- ERROR: " + e.getMessage(), ErrorType.WRONG_OPCODE);
+                        break;
+                    }
 
                     break;
             }
         }
     }
-
-    /**
-     * Function to check if the hash of given secret is coincident to the given hash
-     *
-     * @param secret the given secret in String
-     * @param hash   the given hash in Array
-     * @return true as they are coincident, false adversely.
-     */
-    public boolean proofHash(String secret, byte[] hash) {
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        if (secret != null || hash != null) {
-            byte[] encodedhash = digest.digest(
-                    secret.getBytes(StandardCharsets.UTF_8));
-
-            return Arrays.equals(encodedhash, hash);
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Function that returns the hash of the given secret
-     *
-     * @param secret the given secret in String
-     * @return the hash value of the secret
-     */
-    public byte[] getHash(String secret) {
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-
-        byte[] encodedhash = new byte[32];
-        if (secret != null) {
-            encodedhash = digest.digest(
-                    secret.getBytes(StandardCharsets.UTF_8));
-        }
-
-        return encodedhash;
-    }
-
-    /**
-     * Function to check the parity of two numbers
-     *
-     * @param s1 first number in String
-     * @param s2 second number in String
-     * @return the parity of given numbers, true as even, false as odd
-     */
-    public boolean isEven(String s1, String s2) {
-        int n1 = Integer.parseInt(s1);
-        int n2 = Integer.parseInt(s2);
-        return ((n1 + n2) % 2 == 0);
-    }
 }
-
-
-            /*
-            this.state = StateType.HELLO;
-                switch (this.state) {
-
-                    (opcode = 0x01) {
-                        write_hello();
-                        this.state = StateType.HASH;
-                    }
-                    (opcode = 0x02) {
-                        write_hash();
-                    }
-
-                    (this.state  = StateType.INSULT) {
-                        write_insult();
-                    }
-                    (opcode = 0x07) {
-
-                    }
-                }
-
-                this.opcode = this.read_opcode();
-
-                switch(this.opcode){
-
-                    (opcode = 0x01) {
-                       read_hello();
-                    }
-                    (opcode = 0x02) {
-                        read_hash();
-                    }
-                    (opcode = 0x03) {
-                        read_secret();
-                    }
-                    (opcode = 0x04) {
-                        read_insult();
-                        this.state = StateType.COMEBACK;
-                    }
-                    this.state = StateType.BLOCK;
-                    (opcode = 0x07){
-
-                    }
-                }
-            }*/
-
-
-                    /*
-                      try {
-                        this.opcode = this.datagram.read_opcode();
-                        if(this.opcode == 0x01){
-                            this.server.setName(this.datagram.read_hello());
-                            this.server.setId(this.datagram.getIdOpponent());
-                        }
-                        else if( 0x07){
-                            this.emessage = this.datagram.read_error(this.opcode);
-                            System.out.println(emessage);
-                            this.gameBool = false;
-                        }
-                    */
