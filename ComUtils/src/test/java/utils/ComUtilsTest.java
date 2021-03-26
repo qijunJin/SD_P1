@@ -1,10 +1,9 @@
-import org.junit.Test;
-import utils.ComUtils;
+package utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import org.junit.Test;
+
 import java.io.IOException;
+import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -16,10 +15,9 @@ public class ComUtilsTest {
 
     @Test
     public void byte_test() {
-        File file = new File("test");
         try {
-            file.createNewFile();
-            ComUtils com = new ComUtils(new FileInputStream(file), new FileOutputStream(file));
+            Socket socket = new SocketMock();
+            ComUtils com = new ComUtils(socket);
 
             int i = 12;
             com.writeByte(i);
@@ -34,12 +32,11 @@ public class ComUtilsTest {
 
     @Test
     public void string_test() {
-        File file = new File("test");
         try {
-            file.createNewFile();
-            ComUtils com = new ComUtils(new FileInputStream(file), new FileOutputStream(file));
+            Socket socket = new SocketMock();
+            ComUtils com = new ComUtils(socket);
 
-            String s = "joe";
+            String s = "¡joe!";
             com.writeString(s);
             com.writeByte(0);
             String readedStr = com.readString();
@@ -53,10 +50,10 @@ public class ComUtilsTest {
 
     @Test
     public void hash_test() {
-        File file = new File("test");
+
         try {
-            file.createNewFile();
-            ComUtils com = new ComUtils(new FileInputStream(file), new FileOutputStream(file));
+            Socket socket = new SocketMock();
+            ComUtils com = new ComUtils(socket);
 
             String s = "21394735986548847365534907392897867";
 
@@ -82,10 +79,10 @@ public class ComUtilsTest {
 
     @Test
     public void int32_test() {
-        File file = new File("test");
+
         try {
-            file.createNewFile();
-            ComUtils com = new ComUtils(new FileInputStream(file), new FileOutputStream(file));
+            Socket socket = new SocketMock();
+            ComUtils com = new ComUtils(socket);
 
             int i = 2349230;
             com.writeInt32(i);

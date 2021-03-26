@@ -1,6 +1,9 @@
-import enumType.ErrorType;
-import enumType.ShoutType;
+package database;
+
 import org.junit.Test;
+import shared.database.Database;
+import shared.enumType.ErrorType;
+import shared.enumType.ShoutType;
 
 import java.util.HashMap;
 

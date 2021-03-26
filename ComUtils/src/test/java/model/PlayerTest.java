@@ -1,4 +1,9 @@
+package model;
+
 import org.junit.Test;
+import shared.database.Database;
+import shared.model.DatabaseProvider;
+import shared.model.Player;
 
 import static org.junit.Assert.assertTrue;
 

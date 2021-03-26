@@ -1,4 +1,4 @@
-package enumType;
+package shared.enumType;
 
 /**
  * <h1>Types of shouts</h1>

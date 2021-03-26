@@ -1,3 +1,5 @@
+package shared.model;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
@@ -7,9 +9,9 @@ import java.util.Random;
  * Store all tha data of a player.
  */
 public class Player {
-    private HashSet<String> insults;
-    private HashSet<String> comebacks;
-    private Random random = new Random();
+    private final HashSet<String> insults;
+    private final HashSet<String> comebacks;
+    private final Random random = new Random();
 
     private String name;
     private int id;
@@ -34,6 +36,7 @@ public class Player {
      * @param list list with one insult and comeback.
      * @return true to warn that the insult and comeback have been added properly and false to warn us to search a new insult and comeback.
      */
+
     public boolean containsWithAddInsultComeback(ArrayList<String> list) {
         boolean b = false;
         if (!list.isEmpty()) {

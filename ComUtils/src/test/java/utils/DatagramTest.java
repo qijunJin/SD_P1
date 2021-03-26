@@ -1,7 +1,11 @@
-import enumType.ErrorType;
-import enumType.ShoutType;
-import exception.OpcodeException;
+package utils;
+
 import org.junit.Test;
+import shared.database.Database;
+import shared.enumType.ErrorType;
+import shared.enumType.ShoutType;
+import shared.exception.OpcodeException;
+import shared.model.DatabaseProvider;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -24,11 +28,11 @@ public class DatagramTest {
             int id = 40;
             String str = "joe";
 
-            datagram.write_hello(id, str);
-            String readedStr = datagram.read_hello();
+            datagram.writeIntString(1, id, str);
+            String[] readedStr = datagram.readIntString(1, datagram.readByte());
 
-            assertEquals(str, readedStr);
-            assertEquals(id, datagram.getIdOpponent());
+            assertEquals(id, Integer.parseInt(readedStr[0]));
+            assertEquals(str, readedStr[1]);
 
         } catch (IOException | OpcodeException e) {
             System.out.println(e.getMessage());
@@ -43,8 +47,8 @@ public class DatagramTest {
 
             String s = "21394735986548847365534907392897867";
 
-            datagram.write_hash(s);
-            byte[] readedBytes = datagram.read_hash();
+            datagram.writeHash(2, s);
+            byte[] readedBytes = datagram.readHash(2, datagram.readByte());
 
             MessageDigest digest = null;
             try {
@@ -70,9 +74,9 @@ public class DatagramTest {
             Datagram datagram = new Datagram(socket);
 
             String str = "123456";
-            datagram.write_secret(str);
+            datagram.writeString(3, str);
 
-            String readedStr = datagram.read_secret();
+            String readedStr = datagram.readString(3, datagram.readByte());
 
             assertEquals(str, readedStr);
 
@@ -91,9 +95,9 @@ public class DatagramTest {
             DatabaseProvider databaseProvider = new DatabaseProvider(database.getInsults(), database.getComebacks());
 
             ArrayList<String> str = databaseProvider.getRandomInsultComeback();
-            datagram.write_insult(str.get(0));
+            datagram.writeString(4, str.get(0));
 
-            String readedStr = datagram.read_insult();
+            String readedStr = datagram.readString(4, datagram.readByte());
 
             assertEquals(str.get(0), readedStr);
 
@@ -111,9 +115,9 @@ public class DatagramTest {
             DatabaseProvider databaseProvider = new DatabaseProvider(database.getInsults(), database.getComebacks());
 
             ArrayList<String> str = databaseProvider.getRandomInsultComeback();
-            datagram.write_comeback(str.get(1));
+            datagram.writeString(5, str.get(1));
 
-            String readedStr = datagram.read_comeback();
+            String readedStr = datagram.readString(5, datagram.readByte());
 
             assertEquals(str.get(1), readedStr);
 
@@ -134,8 +138,8 @@ public class DatagramTest {
             String name = "AlphaGo";
             String str = database.getShoutByEnumAddName(s, name);
 
-            datagram.write_shout(str);
-            String readedStr = datagram.read_shout();
+            datagram.writeString(6, str);
+            String readedStr = datagram.readString(6, datagram.readByte());
 
             assertEquals(str, readedStr);
 
@@ -153,9 +157,9 @@ public class DatagramTest {
             Database database = new Database();
 
             String str = database.getErrorByEnum(ErrorType.WRONG_OPCODE);
-            datagram.write_error(str);
+            datagram.writeString(7, str);
 
-            String readedStr = datagram.read_error();
+            String readedStr = datagram.readString(7, datagram.readByte());
 
             assertEquals(str, readedStr);
 
@@ -179,8 +183,8 @@ public class DatagramTest {
             int id = 40;
             String str = "joe";
 
-            datagram.write_hello(id, str);
-            String readedStr = datagram.read_insult();
+            datagram.writeIntString(1, id, str);
+            String readedStr = datagram.readString(4, datagram.readByte());
 
         } catch (IOException | OpcodeException e) {
             e2 = e.getMessage();
@@ -193,7 +197,7 @@ public class DatagramTest {
     public void isEven_test() {
 
         try {
-            Socket socket = new SocketMock();
+            Socket socket = new shared.SocketMock();
             Datagram datagram = new Datagram(socket);
             Random random = new Random();
 
@@ -219,7 +223,7 @@ public class DatagramTest {
     @Test
     public void proofHash_test() {
         try {
-            Socket socket = new SocketMock();
+            Socket socket = new shared.SocketMock();
             Datagram datagram = new Datagram(socket);
             String secret = "21394735986548847365534907392897867";
 
@@ -244,7 +248,7 @@ public class DatagramTest {
     @Test
     public void getHash_test() {
         try {
-            Socket socket = new SocketMock();
+            Socket socket = new shared.SocketMock();
             Datagram datagram = new Datagram(socket);
             String secret = "21394735986548847365534907392897867";
 
