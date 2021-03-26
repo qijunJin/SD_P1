@@ -105,6 +105,10 @@ public class Game {
                         break;
                     }
 
+                    /* LOG OUTPUT */
+                    this.log.write("C- HELLO: " + this.client.getId() + " " + this.client.getName() + "\n");
+                    this.log.flush();
+
                     /* WRITE HELLO */
                     try {
                         this.datagram1.writeIntString(1, this.server.generateId(), this.server.getName());
@@ -116,7 +120,6 @@ public class Game {
                     }
 
                     /* LOG OUTPUT */
-                    this.log.write("C- HELLO: " + this.client.getId() + " " + this.client.getName() + "\n");
                     this.log.write("S- HELLO: " + this.server.getId() + " " + this.server.getName() + "\n");
                     this.log.flush();
 
@@ -139,6 +142,10 @@ public class Game {
                         break;
                     }
 
+                    /* LOG OUTPUT */
+                    this.log.write("C- HASH: " + Arrays.toString(this.client.getHash()) + "\n");
+                    this.log.flush();
+
                     /* WRITE HASH */
                     try {
                         this.datagram1.writeHash(2, this.server.generateSecret());
@@ -151,7 +158,6 @@ public class Game {
                     }
 
                     /* LOG OUTPUT */
-                    this.log.write("C- HASH: " + Arrays.toString(this.client.getHash()) + "\n");
                     this.log.write("S- HASH: " + Arrays.toString(this.server.getHash()) + "\n");
                     this.log.flush();
 
@@ -169,6 +175,10 @@ public class Game {
                         break;
                     }
 
+                    /* LOG OUTPUT */
+                    this.log.write("S- SECRET: " + this.client.getSecret() + "\n");
+                    this.log.flush();
+
                     /* WRITE SECRET */
                     try {
                         this.datagram1.writeString(3, this.server.getSecret());
@@ -179,9 +189,7 @@ public class Game {
                         break;
                     }
 
-                    /* LOG OUTPUT */
                     this.log.write("C- SECRET: " + this.server.getSecret() + "\n");
-                    this.log.write("S- SECRET: " + this.client.getSecret() + "\n");
                     this.log.flush();
 
                     /* PROOF HASH - NOT EQUAL ID - EVEN/ODD ^ GREATER/LESSER -> DECIDE STATE */
@@ -228,6 +236,7 @@ public class Game {
                         this.gameBool = false;
                         break;
                     }
+
                     this.log.write("C- INSULT: " + this.opponentInsult + "\n");
                     this.log.flush();
 
@@ -247,13 +256,13 @@ public class Game {
                             this.gameBool = false;
                             break;
                         }
+
                         this.log.write("S- COMEBACK: " + this.comeback + "\n");
                         this.log.flush();
 
                         /* CHECK INSULT - COMEBACK WINNER */
                         if (this.database.isRightComeback(this.opponentInsult, this.comeback)) {
                             this.server.addRound();
-                            if (this.server.getRound() == 2) this.server.addDuel();
 
                             /* WRITE INSULT */
                             if (this.server.getRound() < 2) {
@@ -262,6 +271,7 @@ public class Game {
                                     this.datagram1.writeString(4, this.insult);
                                     this.log.write("S- INSULT: " + this.insult + "\n");
                                     this.log.flush();
+                                    break;
                                 } catch (IOException e) {
                                     this.log.write("S- ERROR: " + e.getMessage());
                                     this.log.flush();
@@ -269,9 +279,96 @@ public class Game {
                                     break;
                                 }
                             }
+
+                            if (this.server.getRound() == 2) {
+                                this.server.addDuel();
+
+                                if (this.server.getDuel() == 3) {
+                                    /* WRITE SHOUT */
+                                    try {
+                                        serverShout = this.database.getShoutByEnumAddName(ShoutType.I_WIN, this.client.getName());
+                                        this.datagram1.writeString(6, serverShout);
+                                        this.log.write("S- SHOUT: " + serverShout + "\n");
+                                        this.log.flush();
+                                    } catch (IOException e) {
+                                        this.log.write("S- ERROR: " + e.getMessage());
+                                        this.log.flush();
+                                        this.gameBool = false;
+                                        break;
+                                    }
+
+                                    this.server.resetRound();
+                                    this.client.resetRound();
+                                    this.client.resetDuel();
+                                    this.server.resetDuel();
+
+                                } else {
+
+                                    /* WRITE SHOUT */
+                                    try {
+                                        serverShout = this.database.getShoutByEnumAddName(ShoutType.I_WIN, this.client.getName());
+                                        this.datagram1.writeString(6, serverShout);
+                                        this.log.write("S- SHOUT: " + serverShout + "\n");
+                                        this.log.flush();
+                                    } catch (IOException e) {
+                                        this.log.write("S- ERROR: " + e.getMessage());
+                                        this.log.flush();
+                                        this.gameBool = false;
+                                        break;
+                                    }
+
+                                    this.server.resetRound();
+                                    this.client.resetRound();
+
+                                }
+                            }
+
                         } else {
                             this.client.addRound();
-                            if (this.client.getRound() == 2) this.client.addDuel();
+
+                            if (this.client.getRound() == 2) {
+                                this.client.addDuel();
+
+                                if (this.client.getDuel() == 3) {
+
+                                    /* WRITE SHOUT */
+                                    try {
+                                        serverShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN_FINAL, this.client.getName());
+                                        this.datagram1.writeString(6, serverShout);
+                                        this.log.write("S- SHOUT: " + serverShout + "\n");
+                                        this.log.flush();
+                                    } catch (IOException e) {
+                                        this.log.write("S- ERROR: " + e.getMessage());
+                                        this.log.flush();
+                                        this.gameBool = false;
+                                        break;
+                                    }
+
+                                    this.server.resetRound();
+                                    this.client.resetRound();
+                                    this.client.resetDuel();
+                                    this.server.resetDuel();
+
+                                } else {
+
+                                    /* WRITE SHOUT */
+                                    try {
+                                        serverShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN, this.client.getName());
+                                        this.datagram1.writeString(6, serverShout);
+                                        this.log.write("S- SHOUT: " + serverShout + "\n");
+                                        this.log.flush();
+                                    } catch (IOException e) {
+                                        this.log.write("S- ERROR: " + e.getMessage());
+                                        this.log.flush();
+                                        this.gameBool = false;
+                                        break;
+                                    }
+
+                                    this.server.resetRound();
+                                    this.client.resetRound();
+
+                                }
+                            }
                         }
                     } else {
                         this.log.write("S- ERROR: WRONG INSULT");
@@ -304,24 +401,112 @@ public class Game {
                         /* CHECK INSULT - COMEBACK WINNER */
                         if (this.database.isRightComeback(this.insult, this.opponentComeback)) {
                             this.client.addRound();
-                            if (this.client.getRound() == 2) this.client.addDuel();
+
+                            if (this.client.getRound() == 2) {
+                                this.client.addDuel();
+
+                                if (this.client.getDuel() == 3) {
+
+                                    /* WRITE SHOUT */
+                                    try {
+                                        serverShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN_FINAL, this.client.getName());
+                                        this.datagram1.writeString(6, serverShout);
+                                        this.log.write("S- SHOUT: " + serverShout + "\n");
+                                        this.log.flush();
+                                    } catch (IOException e) {
+                                        this.log.write("S- ERROR: " + e.getMessage());
+                                        this.log.flush();
+                                        this.gameBool = false;
+                                        break;
+                                    }
+
+                                    this.server.resetRound();
+                                    this.client.resetRound();
+                                    this.client.resetDuel();
+                                    this.server.resetDuel();
+                                    break;
+
+                                } else {
+
+                                    /* WRITE SHOUT */
+                                    try {
+                                        serverShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN, this.client.getName());
+                                        this.datagram1.writeString(6, serverShout);
+                                        this.log.write("S- SHOUT: " + serverShout + "\n");
+                                        this.log.flush();
+                                    } catch (IOException e) {
+                                        this.log.write("S- ERROR: " + e.getMessage());
+                                        this.log.flush();
+                                        this.gameBool = false;
+                                        break;
+                                    }
+
+                                    this.server.resetRound();
+                                    this.client.resetRound();
+
+                                }
+                            }
 
                         } else {
                             this.server.addRound();
-                            if (this.server.getRound() == 2) this.server.addDuel();
 
                             /* WRITE INSULT */
                             if (this.server.getRound() < 2) {
                                 this.insult = this.server.getRandomInsult();
+
                                 try {
                                     this.datagram1.writeString(4, this.insult);
                                     this.log.write("S- INSULT: " + this.insult + "\n");
                                     this.log.flush();
+                                    break;
                                 } catch (IOException e) {
                                     this.log.write("S- ERROR: " + e.getMessage());
                                     this.log.flush();
                                     this.gameBool = false;
                                     break;
+                                }
+                            }
+
+                            if (this.server.getRound() == 2) {
+                                this.server.addDuel();
+
+                                if (this.server.getDuel() == 3) {
+                                    /* WRITE SHOUT */
+                                    try {
+                                        serverShout = this.database.getShoutByEnumAddName(ShoutType.I_WIN, this.client.getName());
+                                        this.datagram1.writeString(6, serverShout);
+                                        this.log.write("S- SHOUT: " + serverShout + "\n");
+                                        this.log.flush();
+                                    } catch (IOException e) {
+                                        this.log.write("S- ERROR: " + e.getMessage());
+                                        this.log.flush();
+                                        this.gameBool = false;
+                                        break;
+                                    }
+
+                                    this.server.resetRound();
+                                    this.client.resetRound();
+                                    this.client.resetDuel();
+                                    this.server.resetDuel();
+                                    break;
+                                } else {
+
+                                    /* WRITE SHOUT */
+                                    try {
+                                        serverShout = this.database.getShoutByEnumAddName(ShoutType.I_WIN, this.client.getName());
+                                        this.datagram1.writeString(6, serverShout);
+                                        this.log.write("S- SHOUT: " + serverShout + "\n");
+                                        this.log.flush();
+                                    } catch (IOException e) {
+                                        this.log.write("S- ERROR: " + e.getMessage());
+                                        this.log.flush();
+                                        this.gameBool = false;
+                                        break;
+                                    }
+
+                                    this.server.resetRound();
+                                    this.client.resetRound();
+
                                 }
                             }
                         }
@@ -346,71 +531,8 @@ public class Game {
                         break;
                     }
 
-                    /* SERVER - WIN GAME - WIN DUEL */
-                    if (this.server.getDuel() == 3 | this.server.getRound() == 2) {
-
-                        /* WRITE SHOUT */
-                        try {
-                            serverShout = this.database.getShoutByEnumAddName(ShoutType.I_WIN, this.client.getName());
-                            this.datagram1.writeString(6, serverShout);
-                        } catch (IOException e) {
-                            this.log.write("S- ERROR: " + e.getMessage());
-                            this.log.flush();
-                            this.gameBool = false;
-                            break;
-                        }
-
-                        /* WIN GAME */
-                        if (this.server.getDuel() == 3) {
-                            this.client.resetDuel();
-                            this.server.resetDuel();
-                        }
-
-                        /* WIN GAME OR DUEL */
-                        this.server.resetRound();
-                        this.client.resetRound();
-                    }
-
-                    /* CLIENT - WIN GAME - WIN DUEL */
-                    if (this.client.getDuel() == 3 | this.client.getRound() == 2) {
-
-                        /* WIN GAME */
-                        if (this.client.getDuel() == 3) {
-                            /* WRITE SHOUT */
-                            try {
-                                serverShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN_FINAL, this.client.getName());               //Select SHOUT type message
-                                this.datagram1.writeString(6, serverShout);                                                            //Write SHOUT message
-                            } catch (IOException e) {
-                                this.log.write("S- ERROR: " + e.getMessage());
-                                this.log.flush();
-                                this.gameBool = false;
-                                break;
-                            }
-                            this.server.resetDuel();
-                            this.client.resetDuel();
-
-                            /* WIN DUEL */
-                        } else {
-                            /* WRITE SHOUT */
-                            try {
-                                serverShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN, this.client.getName());               //Select SHOUT type message
-                                this.datagram1.writeString(6, serverShout);                                                            //Write SHOUT message
-                            } catch (IOException e) {
-                                this.log.write("S- ERROR: " + e.getMessage());
-                                this.log.flush();
-                                this.gameBool = false;
-                                break;
-                            }
-                        }
-
-                        /* WIN GAME OR DUEL */
-                        this.server.resetRound();
-                        this.client.resetRound();
-                    }
-
                     /* LOG OUTPUT */
                     this.log.write("C- SHOUT: " + clientShout + "\n");
-                    this.log.write("S- SHOUT: " + serverShout + "\n");
                     this.log.flush();
 
                     break;
