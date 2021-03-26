@@ -9,7 +9,9 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 public class Game {
 
@@ -44,7 +46,9 @@ public class Game {
             b = false;
         }
 
-        String lg = "Server" + Thread.currentThread().getName() + ".log"; // File name
+        Date asd = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH.mm.ss");
+        String lg = "Server_" + Thread.currentThread().getId() + "_" + formatter.format(asd) + ".log"; // File name
         (new File("../../logs")).mkdir(); // Directory
         File f = new File("../../logs/" + lg); // File
         this.log = new BufferedWriter(new FileWriter(f));
@@ -430,7 +434,6 @@ public class Game {
 
     public void multiPlayer() throws IOException {
 
-
         while (gameBool) {
 
             if (turn) {
@@ -635,11 +638,7 @@ public class Game {
 
                 this.opcode2 = 0x00;
 
-                if (this.isEven(this.client.getSecret(), this.client2.getSecret()) ^ (this.client2.getId() > this.client.getId())) {
-                    turn = false;
-                } else {
-                    turn = true;
-                }
+                turn = this.isEven(this.client.getSecret(), this.client2.getSecret()) == this.client2.getId() > this.client.getId();
 
             } else if (this.opcode1 == 0x04) {
 
@@ -744,7 +743,7 @@ public class Game {
                 this.opcode2 = 0x00;
                 if (this.database.isInsult(this.insult)) {
                     this.turn = !this.database.isRightComeback(this.insult, this.comeback);
-                }else {
+                } else {
                     this.turn = false;
                 }
 

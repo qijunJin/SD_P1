@@ -15,9 +15,9 @@ import java.util.Arrays;
  */
 public class Game {
     private DatabaseProvider dp;
-    private Database database;
-    private Datagram datagram;
-    private Menu menu;
+    private final Database database;
+    private final Datagram datagram;
+    private final Menu menu;
 
     String clientShout, serverShout;
     private boolean gameBool; // Infinite loop
@@ -26,10 +26,9 @@ public class Game {
     private String insult, comeback;
     private String opponentInsult, opponentComeback;
     private boolean contained;
-    private Player client = new Player(); // Client data
-    private Player server = new Player(); // Server data
+    private final Player client = new Player(); // Client data
+    private final Player server = new Player(); // Server data
     private ErrorType errorType;
-
 
     /**
      * Constructor of game
@@ -59,7 +58,53 @@ public class Game {
      * Game in manual mode
      */
     public void manualMode() {
+
+
         while (gameBool) {
+
+            /*
+            this.state = StateType.HELLO;
+                switch (this.state) {
+
+                    (opcode = 0x01) {
+                        write_hello();
+                        this.state = StateType.HASH;
+                    }
+                    (opcode = 0x02) {
+                        write_hash();
+                    }
+
+                    (this.state  = StateType.INSULT) {
+                        write_insult();
+                    }
+                    (opcode = 0x07) {
+
+                    }
+                }
+
+                this.opcode = this.read_opcode();
+
+                switch(this.opcode){
+
+                    (opcode = 0x01) {
+                       read_hello();
+                    }
+                    (opcode = 0x02) {
+                        read_hash();
+                    }
+                    (opcode = 0x03) {
+                        read_secret();
+                    }
+                    (opcode = 0x04) {
+                        read_insult();
+                        this.state = StateType.COMEBACK;
+                    }
+                    this.state = StateType.BLOCK;
+                    (opcode = 0x07){
+
+                    }
+                }
+            }*/
 
             switch (this.state) {
 
@@ -92,17 +137,32 @@ public class Game {
 
                     /* WRITE HELLO */
                     try {
-                        this.datagram.write_hello(this.client.getId(), this.client.getName());
+                        this.datagram.writeIntString(1, this.client.getId(), this.client.getName());
                     } catch (IOException e) {
                         System.out.println("C- ERROR: " + e.getMessage());
                         this.gameBool = false;
                         break;
                     }
 
+                    /*
+                      try {
+                        this.opcode = this.datagram.read_opcode();
+                        if(this.opcode == 0x01){
+                            this.server.setName(this.datagram.read_hello());
+                            this.server.setId(this.datagram.getIdOpponent());
+                        }
+                        else if( 0x07){
+                            this.emessage = this.datagram.read_error(this.opcode);
+                            System.out.println(emessage);
+                            this.gameBool = false;
+                        }
+                    */
+
                     /* READ HELLO */
                     try {
-                        this.server.setName(this.datagram.read_hello());
-                        this.server.setId(this.datagram.getIdOpponent());
+                        String[] str = this.datagram.readStringArray(this.datagram.readByte(), 1);
+                        this.server.setId(Integer.parseInt(str[0]));
+                        this.server.setName(str[1]);
                     } catch (Exception e) {
                         System.out.println("C- ERROR: " + e.getMessage());
                         if (e instanceof IOException) this.errorType = ErrorType.TIMEOUT;
@@ -127,7 +187,7 @@ public class Game {
 
                     /* WRITE HASH */
                     try {
-                        this.datagram.write_hash(this.client.generateSecret());
+                        this.datagram.writeHash(2, this.client.generateSecret());
                         this.client.setHash(this.getHash(this.client.getSecret()));
                     } catch (IOException e) {
                         System.out.println("C- ERROR: " + e.getMessage());
@@ -137,7 +197,7 @@ public class Game {
 
                     /* READ HASH */
                     try {
-                        this.server.setHash(this.datagram.read_hash());
+                        this.server.setHash(this.datagram.readHash(this.datagram.readByte(), 2));
                     } catch (Exception e) {
                         System.out.println("C- ERROR: " + e.getMessage());
                         if (e instanceof IOException) this.errorType = ErrorType.TIMEOUT;
@@ -157,7 +217,7 @@ public class Game {
 
                     /* WRITE SECRET */
                     try {
-                        this.datagram.write_secret(this.client.getSecret());
+                        this.datagram.writeString(3, this.client.getSecret());
                     } catch (IOException e) {
                         System.out.println("C- ERROR: " + e.getMessage());
                         this.gameBool = false;
@@ -166,7 +226,7 @@ public class Game {
 
                     /* READ SECRET */
                     try {
-                        this.server.setSecret(this.datagram.read_secret());
+                        this.server.setSecret(this.datagram.readString(this.datagram.readByte(), 3));
                     } catch (Exception e) {
                         System.out.println("C- ERROR: " + e.getMessage());
                         if (e instanceof IOException) this.errorType = ErrorType.TIMEOUT;
@@ -218,7 +278,7 @@ public class Game {
 
                             /* WRITE INSULT */
                             try {
-                                this.datagram.write_insult(this.insult);
+                                this.datagram.writeString(4, this.insult);
                             } catch (IOException e) {
                                 System.out.println("C- ERROR: " + e.getMessage());
                                 this.gameBool = false;
@@ -227,7 +287,7 @@ public class Game {
 
                             /* READ COMEBACK */
                             try {
-                                this.opponentComeback = this.datagram.read_comeback();
+                                this.opponentComeback = this.datagram.readString(this.datagram.readByte(), 5);
                             } catch (Exception e) {
                                 System.out.println("C- ERROR: " + e.getMessage());
                                 if (e instanceof IOException) this.errorType = ErrorType.TIMEOUT;
@@ -276,7 +336,7 @@ public class Game {
 
                             /* READ INSULT */
                             try {
-                                this.opponentInsult = this.datagram.read_insult();
+                                this.opponentInsult = this.datagram.readString(this.datagram.readByte(), 4);
                             } catch (Exception e) {
                                 System.out.println("C- ERROR: " + e.getMessage());
                                 if (e instanceof IOException) this.errorType = ErrorType.TIMEOUT;
@@ -303,7 +363,7 @@ public class Game {
 
                             /* WRITE COMEBACK */
                             try {
-                                this.datagram.write_comeback(this.comeback);
+                                this.datagram.writeString(5, this.comeback);
                             } catch (IOException e) {
                                 System.out.println("C- ERROR: " + e.getMessage());
                                 this.gameBool = false;
@@ -337,7 +397,7 @@ public class Game {
                         /* WRITE SHOUT */
                         try {
                             clientShout = this.database.getShoutByEnumAddName(ShoutType.I_WIN, this.server.getName());
-                            this.datagram.write_shout(clientShout);
+                            this.datagram.writeString(6, clientShout);
                         } catch (IOException e) {
                             System.out.println("C- ERROR: " + e.getMessage());
                             this.gameBool = false;
@@ -362,7 +422,7 @@ public class Game {
                         /* WRITE SHOUT */
                         try {
                             clientShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN, this.server.getName());
-                            this.datagram.write_shout(clientShout);
+                            this.datagram.writeString(6, clientShout);
                         } catch (IOException e) {
                             System.out.println("C- ERROR: " + e.getMessage());
                             this.gameBool = false;
@@ -386,7 +446,7 @@ public class Game {
 
                     /* READ SHOUT */
                     try {
-                        serverShout = this.datagram.read_shout();
+                        serverShout = this.datagram.readString(this.datagram.readByte(), 6);
                     } catch (Exception e) {
                         System.out.println("C- ERROR: " + e.getMessage());
                         if (e instanceof IOException) this.errorType = ErrorType.TIMEOUT;
@@ -413,7 +473,7 @@ public class Game {
 
                     /* WRITE ERROR */
                     try {
-                        this.datagram.write_error(errorMessage);
+                        this.datagram.writeString(7, errorMessage);
                     } catch (IOException e) {
                         System.out.println("C- ERROR: " + e.getMessage());
                     }
@@ -444,7 +504,7 @@ public class Game {
 
                     /* WRITE HELLO */
                     try {
-                        this.datagram.write_hello(this.client.generateId(), this.client.getName());
+                        this.datagram.writeIntString(1, this.client.generateId(), this.client.getName());
                     } catch (IOException e) {
                         System.out.println("C- ERROR: " + e.getMessage());
                         this.gameBool = false;
@@ -453,8 +513,9 @@ public class Game {
 
                     /* READ HELLO */
                     try {
-                        this.server.setName(this.datagram.read_hello());
-                        this.server.setId(this.datagram.getIdOpponent());
+                        String[] str = this.datagram.readStringArray(this.datagram.readByte(), 1);
+                        this.server.setId(Integer.parseInt(str[0]));
+                        this.server.setName(str[1]);
                     } catch (IOException | OpcodeException e) {
                         System.out.println("C- ERROR: " + e.getMessage());
                         this.errorType = ErrorType.WRONG_OPCODE;
@@ -478,7 +539,7 @@ public class Game {
 
                     /* WRITE HASH */
                     try {
-                        this.datagram.write_hash(this.client.generateSecret());
+                        this.datagram.writeHash(2, this.client.generateSecret());
                         this.client.setHash(this.getHash(this.client.getSecret()));
                     } catch (IOException e) {
                         System.out.println("C- ERROR: " + e.getMessage());
@@ -488,7 +549,7 @@ public class Game {
 
                     /* READ HASH */
                     try {
-                        this.server.setHash(this.datagram.read_hash());
+                        this.server.setHash(this.datagram.readHash(this.datagram.readByte(), 2));
                     } catch (IOException | OpcodeException e) {
                         System.out.println("C- ERROR: " + e.getMessage());
                         this.errorType = ErrorType.WRONG_OPCODE;
@@ -507,7 +568,7 @@ public class Game {
 
                     /* WRITE SECRET */
                     try {
-                        this.datagram.write_secret(this.client.getSecret());
+                        this.datagram.writeString(3, this.client.getSecret());
                     } catch (IOException e) {
                         System.out.println("C- ERROR: " + e.getMessage());
                         this.gameBool = false;
@@ -516,7 +577,7 @@ public class Game {
 
                     /* READ SECRET */
                     try {
-                        this.server.setSecret(this.datagram.read_secret());
+                        this.server.setSecret(this.datagram.readString(this.datagram.readByte(), 3));
                     } catch (IOException | OpcodeException e) {
                         System.out.println("C- ERROR: " + e.getMessage());
                         this.errorType = ErrorType.WRONG_OPCODE;
@@ -570,7 +631,7 @@ public class Game {
 
                             /* WRITE INSULT */
                             try {
-                                this.datagram.write_insult(this.insult);
+                                this.datagram.writeString(4, this.insult);
                             } catch (IOException e) {
                                 System.out.println("C- ERROR: " + e.getMessage());
                                 this.gameBool = false;
@@ -579,7 +640,7 @@ public class Game {
 
                             /* READ COMEBACK */
                             try {
-                                this.opponentComeback = this.datagram.read_comeback();
+                                this.opponentComeback = this.datagram.readString(this.datagram.readByte(), 5);
                             } catch (IOException | OpcodeException e) {
                                 System.out.println("C- ERROR: " + e.getMessage());
                                 this.errorType = ErrorType.WRONG_OPCODE;
@@ -628,7 +689,7 @@ public class Game {
 
                             /* READ INSULT */
                             try {
-                                this.opponentInsult = this.datagram.read_insult();
+                                this.opponentInsult = this.datagram.readString(this.datagram.readByte(), 4);
                             } catch (IOException | OpcodeException e) {
                                 System.out.println("C- ERROR: " + e.getMessage());
                                 this.errorType = ErrorType.WRONG_OPCODE;
@@ -654,7 +715,7 @@ public class Game {
 
                             /* WRITE COMEBACK */
                             try {
-                                this.datagram.write_comeback(this.comeback);
+                                this.datagram.writeString(5, this.comeback);
                             } catch (IOException e) {
                                 System.out.println("C- ERROR: " + e.getMessage());
                                 this.gameBool = false;
@@ -691,7 +752,7 @@ public class Game {
                         /* WRITE SHOUT */
                         try {
                             clientShout = this.database.getShoutByEnumAddName(ShoutType.I_WIN, this.server.getName());
-                            this.datagram.write_shout(clientShout);
+                            this.datagram.writeString(6, clientShout);
                         } catch (IOException e) {
                             System.out.println("C- ERROR: " + e.getMessage());
                             this.gameBool = false;
@@ -710,7 +771,7 @@ public class Game {
                         /* WRITE SHOUT */
                         try {
                             clientShout = this.database.getShoutByEnumAddName(ShoutType.YOU_WIN, this.server.getName());
-                            this.datagram.write_shout(clientShout);
+                            this.datagram.writeString(6, clientShout);
                         } catch (IOException e) {
                             System.out.println("C- ERROR: " + e.getMessage());
                             this.gameBool = false;
@@ -725,7 +786,7 @@ public class Game {
 
                     /* READ SHOUT */
                     try {
-                        serverShout = this.datagram.read_shout();
+                        serverShout = this.datagram.readString(this.datagram.readByte(), 6);
                     } catch (IOException | OpcodeException e) {
                         System.out.println("C- ERROR: " + e.getMessage());
                         this.errorType = ErrorType.WRONG_OPCODE;
@@ -751,7 +812,7 @@ public class Game {
 
                     /* WRITE ERROR */
                     try {
-                        this.datagram.write_error(errorMessage);
+                        this.datagram.writeString(7, errorMessage);
                     } catch (IOException e) {
                         System.out.println("C- ERROR: " + e.getMessage());
                     }

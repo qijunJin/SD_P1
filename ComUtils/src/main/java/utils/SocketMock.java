@@ -1,3 +1,5 @@
+package utils;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -5,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <h1>SocketMock class</h1>
+ * utils.SocketMock class
  * Mock of socket for the test propose.
  */
 public class SocketMock extends Socket {

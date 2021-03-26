@@ -25,7 +25,7 @@ public class DatabaseProvider {
     /**
      * Getter of the size of insults. As it will be extracted in pair, the size remains the same.
      *
-     * @return
+     * @return the size of pair that remains
      */
     public int getSize() {
         return this.insults.size();
