@@ -95,8 +95,8 @@ public class Datagram extends ComUtils {
     }
 
     public void writeHashArray(int opcode, byte[] bytes) throws IOException {
-        writeByte(opcode); // OPCODE
-        writeHashArray(bytes); // HASH
+        writeByte(opcode);
+        writeHashArray(bytes);
     }
 }
 

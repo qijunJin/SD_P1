@@ -415,7 +415,6 @@ public class Game {
                     this.client.resetRound();
                     this.server.resetRound();
 
-
                     break;
 
                 case 0x07:
