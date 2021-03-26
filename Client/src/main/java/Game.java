@@ -754,6 +754,7 @@ public class Game {
                         this.client.resetDuel();
                         this.server.resetDuel();
                         this.gameBool = false;
+                        System.out.println("[Connexion closed]");
                     } else {
                         try {
                             this.datagram.writeHash(2, this.client.generateSecret());

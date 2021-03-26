@@ -58,7 +58,7 @@ public class Server {
             }
 
         } else if (args.length == 1 && args[0].equals("-h")) {
-            System.out.println("Use: java Server -p <port> -m [1|2]");
+            System.out.println("Use: java -jar server-1.0-jar-with-dependencies.jar -p <port> -m [1|2]");
         } else {
             System.out.println("Parameters are incorrect. Use: java Server -p <port> -m [1|2]");
         }

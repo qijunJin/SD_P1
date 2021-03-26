@@ -14,11 +14,11 @@ public class Client {
      * Main program of client.
      * @param args arguments expected: -s [SERVER] -p [PORT] -i [0 o 1] or -h.
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         /* HELP */
         if (args.length == 1 && args[0].equals("-h")) {
-            System.out.println("Use: java Client -s <hostname> -p <port> [-i 0|1]");
+            System.out.println("Use: java -jar client-1.0-jar-with-dependencies.jar -s <hostname> -p <port> [-i 0|1]");
 
         } else if (args.length == 4 | (args.length == 6 && args[4].equals("-i"))) {
 
@@ -41,7 +41,7 @@ public class Client {
                     if (mode != 0 && mode != 1) throw new Exception();
                 }
             } catch (Exception e) {
-                System.out.println("Parameters introduced are wrong!");
+                throw new Exception("Parameters introduced are wrong!");
             }
 
             /* CREATE SOCKET & GAME */
@@ -66,7 +66,7 @@ public class Client {
             }
 
         } else {
-            System.out.println("Use: java Client -h");
+            System.out.println("Parameters are incorrect. Use: java -jar client-1.0-jar-with-dependencies.jar -s <hostname> -p <port> [-i 0|1]");
         }
     }
 }
