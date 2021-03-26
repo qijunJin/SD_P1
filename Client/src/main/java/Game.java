@@ -2,21 +2,19 @@ import shared.database.Database;
 import shared.enumType.ErrorType;
 import shared.enumType.ShoutType;
 import shared.exception.OpcodeException;
+import shared.functions.Functions;
 import shared.model.DatabaseProvider;
 import shared.model.Player;
 import utils.Datagram;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 /**
  * <h1>Game class</h1>
  * The logic of both manual mode and automatic mode of the game.
  */
-public class Game {
+public class Game implements Functions {
     private DatabaseProvider dp;
     private final Database database;
     private final Datagram datagram;
@@ -115,7 +113,7 @@ public class Game {
 
                     try {
                         this.datagram.writeHash(2, this.client.generateSecret());
-                        this.client.setHash(this.getHash(this.client.getSecret()));
+                        this.client.setHash(Functions.toHash(this.client.getSecret()));
                         System.out.println("C- HASH: " + Arrays.toString(this.client.getHash()));
                     } catch (IOException e) {
                         System.out.println("C- EXCEPTION: " + e.getMessage());
@@ -167,9 +165,9 @@ public class Game {
                     }
 
                     /* PROOF HASH - NOT EQUAL ID - EVEN/ODD ^ GREATER/LESSER -> DECIDE STATE */
-                    if (this.proofHash(this.server.getSecret(), this.server.getHash())) {
+                    if (Functions.proofHash(this.server.getSecret(), this.server.getHash())) {
                         if (this.client.getId() != this.server.getId()) {
-                            if (isEven(client.getSecret(), server.getSecret()) ^ (client.getId() > server.getId())) {
+                            if (Functions.isEven(client.getSecret(), server.getSecret()) ^ (client.getId() > server.getId())) {
 
                                 this.insult = this.menu.getOption(this.client.getInsults(), "insult");
                                 try {
@@ -389,7 +387,7 @@ public class Game {
                     } else {
                         try {
                             this.datagram.writeHash(2, this.client.generateSecret());
-                            this.client.setHash(this.getHash(this.client.getSecret()));
+                            this.client.setHash(Functions.toHash(this.client.getSecret()));
                             System.out.println("C- HASH: " + Arrays.toString(this.client.getHash()));
                         } catch (IOException e) {
                             System.out.println("C- ERROR: " + e.getMessage());
@@ -480,7 +478,7 @@ public class Game {
 
                     try {
                         this.datagram.writeHash(2, this.client.generateSecret());
-                        this.client.setHash(this.getHash(this.client.getSecret()));
+                        this.client.setHash(Functions.toHash(this.client.getSecret()));
                         System.out.println("C- HASH: " + Arrays.toString(this.client.getHash()));
                     } catch (IOException e) {
                         System.out.println("C- ERROR: " + e.getMessage());
@@ -532,9 +530,9 @@ public class Game {
                     }
 
                     /* PROOF HASH - NOT EQUAL ID - EVEN/ODD ^ GREATER/LESSER -> DECIDE STATE */
-                    if (this.proofHash(this.server.getSecret(), this.server.getHash())) {
+                    if (Functions.proofHash(this.server.getSecret(), this.server.getHash())) {
                         if (this.client.getId() != this.server.getId()) {
-                            if (isEven(client.getSecret(), server.getSecret()) ^ (client.getId() > server.getId())) {
+                            if (Functions.isEven(client.getSecret(), server.getSecret()) ^ (client.getId() > server.getId())) {
 
                                 this.insult = this.client.getRandomInsult();
                                 try {
@@ -749,7 +747,7 @@ public class Game {
                     } else {
                         try {
                             this.datagram.writeHash(2, this.client.generateSecret());
-                            this.client.setHash(this.getHash(this.client.getSecret()));
+                            this.client.setHash(Functions.toHash(this.client.getSecret()));
                             System.out.println("C- HASH: " + Arrays.toString(this.client.getHash()));
                         } catch (IOException e) {
                             System.out.println("C- ERROR: " + e.getMessage());
@@ -780,65 +778,5 @@ public class Game {
                     break;
             }
         }
-    }
-
-    /**
-     * Function to check if the hash of given secret is coincident to the given hash
-     *
-     * @param secret the given secret in String
-     * @param hash   the given hash in Array
-     * @return true as they are coincident, false adversely.
-     */
-    public boolean proofHash(String secret, byte[] hash) {
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        if (secret != null || hash != null) {
-            byte[] encodedhash = digest.digest(
-                    secret.getBytes(StandardCharsets.UTF_8));
-
-            return Arrays.equals(encodedhash, hash);
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Function that returns the hash of the given secret
-     *
-     * @param secret the given secret in String
-     * @return the hash value of the secret
-     */
-    public byte[] getHash(String secret) {
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-
-        byte[] encodedhash = new byte[32];
-        if (secret != null) {
-            encodedhash = digest.digest(
-                    secret.getBytes(StandardCharsets.UTF_8));
-        }
-
-        return encodedhash;
-    }
-
-    /**
-     * Function to check the parity of two numbers
-     *
-     * @param s1 first number in String
-     * @param s2 second number in String
-     * @return the parity of given numbers, true as even, false as odd
-     */
-    public boolean isEven(String s1, String s2) {
-        int n1 = Integer.parseInt(s1);
-        int n2 = Integer.parseInt(s2);
-        return ((n1 + n2) % 2 == 0);
     }
 }
