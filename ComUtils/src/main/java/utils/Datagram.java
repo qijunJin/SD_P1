@@ -1,5 +1,6 @@
-import exception.OpcodeException;
-import utils.ComUtils;
+package utils;
+
+import shared.exception.OpcodeException;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -27,9 +28,9 @@ public class Datagram extends ComUtils {
      * @throws IOException     read exception.
      * @throws OpcodeException not coincident opcode.
      */
-    public String readString(int opcode, int requiredOpcode) throws IOException, OpcodeException {
-        if (opcode == requiredOpcode) return readString();
-        throw new OpcodeException(opcode, requiredOpcode);
+    public String readString(int opcode, int writtenOpcode) throws IOException, OpcodeException {
+        if (opcode == writtenOpcode) return readString();
+        throw new OpcodeException(writtenOpcode, opcode);
     }
 
     /**
@@ -39,9 +40,9 @@ public class Datagram extends ComUtils {
      * @throws IOException     read exception.
      * @throws OpcodeException not coincident opcode.
      */
-    public String[] readStringArray(int opcode, int requiredOpcode) throws IOException, OpcodeException {
-        if (opcode == requiredOpcode) return new String[]{String.valueOf(readInt32()), readString()};
-        throw new OpcodeException(opcode, requiredOpcode);
+    public String[] readIntString(int opcode, int writtenOpcode) throws IOException, OpcodeException {
+        if (opcode == writtenOpcode) return new String[]{String.valueOf(readInt32()), readString()};
+        throw new OpcodeException(writtenOpcode, opcode);
     }
 
     /**
@@ -51,9 +52,9 @@ public class Datagram extends ComUtils {
      * @throws IOException     read exception.
      * @throws OpcodeException not coincident opcode.
      */
-    public byte[] readHash(int opcode, int requiredOpcode) throws IOException, OpcodeException {
-        if (opcode == requiredOpcode) return readHash();
-        throw new OpcodeException(opcode, requiredOpcode);
+    public byte[] readHash(int opcode, int writtenOpcode) throws IOException, OpcodeException {
+        if (opcode == writtenOpcode) return readHash();
+        throw new OpcodeException(writtenOpcode, opcode);
     }
 
     /**
@@ -91,6 +92,11 @@ public class Datagram extends ComUtils {
     public void writeHash(int opcode, String str) throws IOException {
         writeByte(opcode);
         writeHash(str);
+    }
+
+    public void writeHashArray(int opcode, byte[] bytes) throws IOException {
+        writeByte(opcode); // OPCODE
+        writeHashArray(bytes); // HASH
     }
 }
 

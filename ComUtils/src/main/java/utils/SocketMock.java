@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * utils.SocketMock class
+ * SocketMock class
  * Mock of socket for the test propose.
  */
 public class SocketMock extends Socket {

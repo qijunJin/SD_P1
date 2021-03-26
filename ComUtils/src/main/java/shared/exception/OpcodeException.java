@@ -1,4 +1,4 @@
-package exception;
+package shared.exception;
 
 public class OpcodeException extends Exception {
 

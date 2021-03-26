@@ -1,4 +1,8 @@
+package model;
+
 import org.junit.Test;
+import shared.database.Database;
+import shared.model.DatabaseProvider;
 
 import java.util.ArrayList;
 

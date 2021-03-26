@@ -6,7 +6,6 @@ import java.util.Scanner;
  * Output/Input interaction with the payer.
  */
 public class Menu {
-    private static final String ALPHABETS = "^[a-zA-Z]*$";
     Scanner scan = new Scanner(System.in);
 
     /**
@@ -17,7 +16,7 @@ public class Menu {
 
         System.out.println("Insert your name:");
         boolean check = true;
-        String name = "";
+        String name;
 
         do {
             name = scan.next();
@@ -42,15 +41,12 @@ public class Menu {
     public int getId() {
         System.out.println("Insert your id:");
         boolean check = true;
-        String id = "";
+        String id;
 
         do {
             id = scan.next();
-            if (id.matches("[0-9]+")) {
-                check = false;
-            } else {
-                System.out.println("Invalid id, insert your id with digits: ");
-            }
+            if (id.matches("[0-9]+")) check = false;
+            else System.out.println("Invalid id, insert your id with digits: ");
         } while (check);
 
         return Integer.parseInt(id);
@@ -85,11 +81,8 @@ public class Menu {
             tmp = scan.next();
             if (tmp.matches("[0-9]+")) {
                 option = Integer.parseInt(tmp);
-                if (option >= 0 && option <= list.size()) {
-                    break;
-                } else {
-                    System.out.println("Invalid option, try again: ");
-                }
+                if (option >= 0 && option <= list.size()) break;
+                else System.out.println("Invalid option, try again: ");
             } else {
                 System.out.println("Invalid option, try again: ");
             }

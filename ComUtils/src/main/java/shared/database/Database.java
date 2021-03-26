@@ -1,15 +1,24 @@
-import enumType.ErrorType;
-import enumType.ShoutType;
+package shared.database;
+
+import shared.enumType.ErrorType;
+import shared.enumType.ShoutType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * <h1>Database class</h1>
+ * Database of the game, includes insults, comebacks, shouts, errors.
+ */
 public class Database {
 
     private final HashMap<String, String> sources;
     private final HashMap<ShoutType, String> shouts;
     private final HashMap<ErrorType, String> errors;
 
+    /**
+     * Constructor of database.
+     */
     public Database() {
         this.sources = new HashMap<>();
         this.shouts = new HashMap<>();
@@ -20,6 +29,9 @@ public class Database {
         this.initShoutsTyped();
     }
 
+    /**
+     * Initialization of insults and comebacks.
+     */
     private void initInsultsComebacks() {
 
         this.sources.put("¿Has dejado ya de usar pañales?", "¿Por qué? ¿Acaso querías pedir uno prestado?");
@@ -41,14 +53,20 @@ public class Database {
 
     }
 
+    /**
+     * Initialization of errors.
+     */
     private void initErrorsTyped() {
 
         this.errors.put(ErrorType.WRONG_OPCODE, "¡Código de operación inválido, marinero de agua dulce! ¡Hasta la vista!");
         this.errors.put(ErrorType.INCOMPLETE_MESSAGE, "¡Mensaje incompleto, grumete! ¡Hasta la vista!");
         this.errors.put(ErrorType.TIMEOUT, "¡Me he candado de esperar tus mensajes, mequetrefe! ¡Hasta la vista!");
-
+        this.errors.put(ErrorType.SAME, "¡No eres tú, soy yo! !Hasta la vista!");
     }
 
+    /**
+     * Initialization of shouts.
+     */
     private void initShoutsTyped() {
 
         this.shouts.put(ShoutType.I_WIN, "¡He ganado, *!");
@@ -57,45 +75,95 @@ public class Database {
 
     }
 
-    /* GETTER */
+    /**
+     * Getter of all insults.
+     *
+     * @return list of insults.
+     */
     public ArrayList<String> getInsults() {
         return new ArrayList<>(this.sources.keySet());
     }
 
+    /**
+     * Getter of all comebacks.
+     *
+     * @return list of comebacks.
+     */
     public ArrayList<String> getComebacks() {
         return new ArrayList<>(this.sources.values());
     }
 
-    public HashMap<ErrorType, String> getErrors() { // For test
+    /**
+     * Getter of all errors.
+     *
+     * @return list of errors.
+     */
+    public HashMap<ErrorType, String> getErrors() {
         return this.errors;
     }
 
-    public HashMap<ShoutType, String> getShouts() { // For test
+    /**
+     * Getter of all shouts.
+     *
+     * @return list of shouts.
+     */
+    public HashMap<ShoutType, String> getShouts() {
         return this.shouts;
     }
 
-    /* TESTED */
-    public boolean isInsult(String insult) {
-        return this.getInsults().contains(insult);
-    }
 
-    /* TESTED */
-    public boolean isComeback(String comeback) {
-        return this.getComebacks().contains(comeback);
-    }
-
-    /* TESTED */
-    public boolean isRightComeback(String insult, String comeback) {
-        return this.sources.get(insult).equals(comeback);
-    }
-
-    /* TESTED */
+    /**
+     * Getter of one shout according to type of shout that requires name.
+     *
+     * @param s    the type of shout.
+     * @param name the name given.
+     * @return the specific shout with name added.
+     */
     public String getShoutByEnumAddName(ShoutType s, String name) {
         return this.shouts.get(s).replace("*", name);
     }
 
-    /* TESTED */
+    /**
+     * Getter of one error according to type of error.
+     *
+     * @param e the type of error.
+     * @return the specific error.
+     */
     public String getErrorByEnum(ErrorType e) {
         return this.errors.get(e);
+    }
+
+    /**
+     * Check if insult is in our database.
+     *
+     * @param insult the insult to check.
+     * @return true if it is our database and false if it is not in our database.
+     */
+    public boolean isInsult(String insult) {
+        return this.getInsults().contains(insult);
+    }
+
+    /**
+     * Check if comeback is in our database.
+     *
+     * @param comeback the comeback to check.
+     * @return true if it is our database and false if it is not in our database.
+     */
+    public boolean isComeback(String comeback) {
+        return this.getComebacks().contains(comeback);
+    }
+
+    /**
+     * Check if it is the right comeback to the insult.
+     *
+     * @param insult   the insult to check.
+     * @param comeback the comeback to check.
+     * @return true if it is the right comeback to the insult according to our database.
+     */
+    public boolean isRightComeback(String insult, String comeback) {
+        if (insult != null && comeback != null) {
+            return this.sources.get(insult).equals(comeback);
+        }
+        return false;
     }
 }

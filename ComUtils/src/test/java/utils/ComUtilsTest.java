@@ -1,6 +1,6 @@
+package utils;
+
 import org.junit.Test;
-import utils.ComUtils;
-import utils.SocketMock;
 
 import java.io.IOException;
 import java.net.Socket;
