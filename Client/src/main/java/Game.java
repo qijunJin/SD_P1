@@ -744,6 +744,7 @@ public class Game {
                     if (this.client.getDuel() == 3 | this.server.getDuel() == 3) {
                         this.client.resetDuel();
                         this.server.resetDuel();
+                        System.out.println("[Connexion closed]");
                         this.inGame = false;
                     } else {
                         try {
