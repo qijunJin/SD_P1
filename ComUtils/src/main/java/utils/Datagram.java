@@ -25,8 +25,8 @@ public class Datagram extends ComUtils {
      * Function that requires opcode to read the single data from stream.
      *
      * @return one stream data.
-     * @throws IOException     read exception.
-     * @throws OpcodeException not coincident opcode.
+     * @throws IOException     IOException.
+     * @throws OpcodeException OpcodeException.
      */
     public String readString(int opcode, int writtenOpcode) throws IOException, OpcodeException {
         if (opcode == writtenOpcode) return readString();
@@ -37,8 +37,8 @@ public class Datagram extends ComUtils {
      * Function that requires opcode to read the double data from stream.
      *
      * @return two stream data.
-     * @throws IOException     read exception.
-     * @throws OpcodeException not coincident opcode.
+     * @throws IOException     IOException.
+     * @throws OpcodeException OpcodeException.
      */
     public String[] readIntString(int opcode, int writtenOpcode) throws IOException, OpcodeException {
         if (opcode == writtenOpcode) return new String[]{String.valueOf(readInt32()), readString()};
@@ -49,8 +49,8 @@ public class Datagram extends ComUtils {
      * Function that requires opcode 0x02 to read the hash message.
      *
      * @return the hash message.
-     * @throws IOException     read exception.
-     * @throws OpcodeException not coincident opcode.
+     * @throws IOException     IOException.
+     * @throws OpcodeException OpcodeException.
      */
     public byte[] readHash(int opcode, int writtenOpcode) throws IOException, OpcodeException {
         if (opcode == writtenOpcode) return readHash();
@@ -61,7 +61,7 @@ public class Datagram extends ComUtils {
      * Function that write the one stream data with opcode.
      *
      * @param str one stream data.
-     * @throws IOException write exception.
+     * @throws IOException IOException.
      */
     public void writeString(int opcode, String str) throws IOException {
         writeByte(opcode);
@@ -74,7 +74,7 @@ public class Datagram extends ComUtils {
      *
      * @param id  Player's ID
      * @param str Player's name
-     * @throws IOException write exception.
+     * @throws IOException IOException.
      */
     public void writeIntString(int opcode, int id, String str) throws IOException {
         writeByte(opcode);
@@ -87,13 +87,20 @@ public class Datagram extends ComUtils {
      * Function that write the hash message with opcode 0x02.
      *
      * @param str the hash message.
-     * @throws IOException write exception.
+     * @throws IOException IOException.
      */
     public void writeHash(int opcode, String str) throws IOException {
         writeByte(opcode);
         writeHash(str);
     }
 
+    /**
+     * Function that write the hash message with opcode 0x02.
+     *
+     * @param opcode
+     * @param bytes  the hash message in array of bytes.
+     * @throws IOException IOException.
+     */
     public void writeHashArray(int opcode, byte[] bytes) throws IOException {
         writeByte(opcode);
         writeHashArray(bytes);
