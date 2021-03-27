@@ -5,8 +5,15 @@ import java.io.PrintStream;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * ServerTest class
+ * Class to test all the Server methods.
+ */
 public class ServerTest {
 
+    /**
+     * Test the help command.
+     */
     @Test
     public void help_test() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -16,6 +23,9 @@ public class ServerTest {
         assertEquals(out.toString().trim(), Server.HELP);
     }
 
+    /**
+     * Test with incomplete parameters.
+     */
     @Test
     public void wrong_num_parameters_test() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -25,6 +35,9 @@ public class ServerTest {
         assertEquals(out.toString().trim(), Server.WRONG_PARAMETERS_USE);
     }
 
+    /**
+     * Test with wrong parameters.
+     */
     @Test
     public void wrong_parameters_test() {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
