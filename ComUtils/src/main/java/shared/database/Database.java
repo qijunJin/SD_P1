@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * <h1>Database class</h1>
+ * Database class
  * Database of the game, includes insults, comebacks, shouts, errors.
  */
 public class Database {
@@ -33,7 +33,6 @@ public class Database {
      * Initialization of insults and comebacks.
      */
     private void initInsultsComebacks() {
-
         this.sources.put("¿Has dejado ya de usar pañales?", "¿Por qué? ¿Acaso querías pedir uno prestado?");
         this.sources.put("¡No hay palabras para describir lo asqueroso que eres!", "Sí que las hay, sólo que nunca las has aprendido.");
         this.sources.put("¡He hablado con simios más educados que tu!", "Me alegra que asistieras a tu reunión familiar diaria.");
@@ -50,14 +49,12 @@ public class Database {
         this.sources.put("¡La gente cae a mis pies al verme llegar!", "¿Incluso antes de que huelan tu aliento?");
         this.sources.put("¡Demasiado bobo para mi nivel de inteligencia!", "Estaría acabado si la usases alguna vez.");
         this.sources.put("Obtuve esta cicatriz en una batalla a muerte!", "Espero que ya hayas aprendido a no tocarte la nariz.");
-
     }
 
     /**
      * Initialization of errors.
      */
     private void initErrorsTyped() {
-
         this.errors.put(ErrorType.WRONG_OPCODE, "¡Código de operación inválido, marinero de agua dulce! ¡Hasta la vista!");
         this.errors.put(ErrorType.INCOMPLETE_MESSAGE, "¡Mensaje incompleto, grumete! ¡Hasta la vista!");
         this.errors.put(ErrorType.TIMEOUT, "¡Me he candado de esperar tus mensajes, mequetrefe! ¡Hasta la vista!");
@@ -68,11 +65,9 @@ public class Database {
      * Initialization of shouts.
      */
     private void initShoutsTyped() {
-
         this.shouts.put(ShoutType.I_WIN, "¡He ganado, *!");
         this.shouts.put(ShoutType.YOU_WIN, "¡Has ganado, *!");
         this.shouts.put(ShoutType.YOU_WIN_FINAL, "¡Has ganado, *. Eres tan bueno que podrias luchar contra la Sword Master de la isla Mêlée!");
-
     }
 
     /**
@@ -161,9 +156,6 @@ public class Database {
      * @return true if it is the right comeback to the insult according to our database.
      */
     public boolean isRightComeback(String insult, String comeback) {
-        if (insult != null && comeback != null) {
-            return this.sources.get(insult).equals(comeback);
-        }
-        return false;
+        return this.sources.get(insult).equals(comeback);
     }
 }

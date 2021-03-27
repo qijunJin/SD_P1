@@ -2,17 +2,18 @@ import java.io.IOException;
 import java.net.Socket;
 
 /**
- * <h1> Thread of the server</h1>
+ * Thread of the server
  */
 public class ServerThread implements Runnable {
 
-    private Game game;
+    private final Game game;
 
     /**
      * Costructor of the server thread.
+     *
      * @param s1 instance of socket of the first player.
      * @param s2 instance of socket of the second player.
-     * @throws IOException
+     * @throws IOException exception of log.
      */
     public ServerThread(Socket s1, Socket s2) throws IOException {
         game = new Game(s1, s2);

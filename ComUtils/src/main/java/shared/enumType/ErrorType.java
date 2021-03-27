@@ -1,7 +1,7 @@
 package shared.enumType;
 
 /**
- * <h1>Types of errors</h1>
+ * Types of errors
  */
 public enum ErrorType {
     WRONG_OPCODE,

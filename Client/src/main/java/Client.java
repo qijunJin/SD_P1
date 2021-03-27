@@ -5,58 +5,46 @@ import java.net.Socket;
 import java.util.HashMap;
 
 /**
- * <h1>Client class</h1>
- * Main class of the project client.
+ * Client class
+ * Main class of the project Client.
  */
 public class Client {
 
+    static final String HELP = "Use: java -jar client-1.0-jar-with-dependencies.jar -s <hostname> -p <port> [-i 0|1]";
+    static final String WRONG_PARAMETERS_USE = "Parameters are incorrect. Use: java -jar client-1.0-jar-with-dependencies.jar -s <hostname> -p <port> [-i 0|1]";
+    static final String WRONG_PARAMETERS = "Parameters introduced are wrong!";
+
     /**
-     * Main program of client.
-     * @param args arguments expected: -s [SERVER] -p [PORT] -i [0 o 1] or -h.
+     * Main programme of Client.
+     *
+     * @param args arguments expected: -s [SERVER] -p [PORT] -i [0 | 1] or -h.
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
-        /* HELP */
-        if (args.length == 1 && args[0].equals("-h")) {
-            System.out.println("Use: java -jar client-1.0-jar-with-dependencies.jar -s <hostname> -p <port> [-i 0|1]");
-
-        } else if (args.length == 4 | (args.length == 6 && args[4].equals("-i"))) {
-
-            /* CONTROL OF PARAMETERS */
-            HashMap<String, String> options = new HashMap<>();
-            for (int i = 0; i < args.length; i = i + 2)
-                options.put(args[i], args[i + 1]);
-
-            String hostname = "";
-            int port = 0;
-            int mode = 0; // By default
-
+        if (args.length == 4 | (args.length == 6 && args[4].equals("-i"))) { // Control of parameters
+            int port;
+            int mode = 0;
+            String hostname;
             Socket socket = null;
 
-            try {
-                hostname = options.get("-s");
-                port = Integer.parseInt(options.get("-p"));
-                if (options.containsKey("-i")) {
-                    mode = Integer.parseInt(options.get("-i"));
-                    if (mode != 0 && mode != 1) throw new Exception();
-                }
-            } catch (Exception e) {
-                throw new Exception("Parameters introduced are wrong!");
+            HashMap<String, String> options = new HashMap<>();
+            for (int i = 0; i < args.length; i = i + 2) options.put(args[i], args[i + 1]);
+            hostname = options.get("-s");
+            port = Integer.parseInt(options.get("-p"));
+            if (options.containsKey("-i")) mode = Integer.parseInt(options.get("-i"));
+            if (mode != 0 && mode != 1) {
+                System.out.println("Parameters introduced are wrong!");
+                return;
             }
 
-            /* CREATE SOCKET & GAME */
-            try {
-                InetAddress host = InetAddress.getByName(hostname);
-                socket = new Socket(host, port);
+            try { // Connexion & create game
+                socket = new Socket(InetAddress.getByName(hostname), port);
                 socket.setSoTimeout(30 * 1000);
                 System.out.println("Connexion established!");
-
                 Datagram datagram = new Datagram(socket);
                 Game game = new Game(datagram, mode);
-
             } catch (Exception e) {
-                System.out.println("Connexion failed!");
-
+                System.out.println("IOException: " + e.getMessage());
             } finally {
                 try {
                     if (socket != null) socket.close();
@@ -64,9 +52,6 @@ public class Client {
                     System.out.println("Connexion closed");
                 }
             }
-
-        } else {
-            System.out.println("Parameters are incorrect. Use: java -jar client-1.0-jar-with-dependencies.jar -s <hostname> -p <port> [-i 0|1]");
-        }
+        } else System.out.println(args.length == 1 && args[0].equals("-h") ? HELP : WRONG_PARAMETERS_USE);
     }
 }

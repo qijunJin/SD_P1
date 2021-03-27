@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * <h1>Database Provider class</h1>
+ * Database Provider class
  * It contains the insult - comeback pairs and only can be extracted in pair by random generated index.
  * The relation of player with this class is 1 to 1.
  */
