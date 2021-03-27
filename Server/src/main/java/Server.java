@@ -10,7 +10,8 @@ import java.util.HashMap;
 public class Server {
 
     static final String HELP = "Use: java -jar server-1.0-jar-with-dependencies.jar -p <port> -m [1|2]";
-    static final String WRONG_PARAMETERS = "Parameters are incorrect. Use: java Server -p <port> -m [1|2]";
+    static final String WRONG_PARAMETERS_USE = "Parameters are incorrect. Use: java -jar server-1.0-jar-with-dependencies.jar -p <port> -m [1|2]";
+    static final String WRONG_PARAMETERS = "Parameters introduced are wrong!";
 
     /**
      * Main programme of Server.
@@ -29,7 +30,7 @@ public class Server {
             numPort = Integer.parseInt(options.get("-p"));
             if (options.containsKey("-m")) mode = Integer.parseInt(options.get("-m"));
             if (mode != 1 && mode != 2) {
-                System.out.println("Parameters introduced are wrong!");
+                System.out.println(WRONG_PARAMETERS);
                 return;
             }
 
@@ -47,7 +48,7 @@ public class Server {
                     System.out.println("Connexion closed");
                 }
             }
-        } else System.out.println(args.length == 1 && args[0].equals("-h") ? HELP : WRONG_PARAMETERS);
+        } else System.out.println(args.length == 1 && args[0].equals("-h") ? HELP : WRONG_PARAMETERS_USE);
     }
 
     /**

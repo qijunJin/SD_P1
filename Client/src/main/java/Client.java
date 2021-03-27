@@ -11,7 +11,8 @@ import java.util.HashMap;
 public class Client {
 
     static final String HELP = "Use: java -jar client-1.0-jar-with-dependencies.jar -s <hostname> -p <port> [-i 0|1]";
-    static final String WRONG_PARAMETERS = "Parameters are incorrect. Use: java -jar client-1.0-jar-with-dependencies.jar -s <hostname> -p <port> [-i 0|1]";
+    static final String WRONG_PARAMETERS_USE = "Parameters are incorrect. Use: java -jar client-1.0-jar-with-dependencies.jar -s <hostname> -p <port> [-i 0|1]";
+    static final String WRONG_PARAMETERS = "Parameters introduced are wrong!";
 
     /**
      * Main programme of Client.
@@ -51,6 +52,6 @@ public class Client {
                     System.out.println("Connexion closed");
                 }
             }
-        } else System.out.println(args.length == 1 && args[0].equals("-h") ? HELP : WRONG_PARAMETERS);
+        } else System.out.println(args.length == 1 && args[0].equals("-h") ? HELP : WRONG_PARAMETERS_USE);
     }
 }
