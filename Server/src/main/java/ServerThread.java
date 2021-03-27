@@ -6,7 +6,7 @@ import java.net.Socket;
  */
 public class ServerThread implements Runnable {
 
-    private Game game;
+    private final Game game;
 
     /**
      * Costructor of the server thread.

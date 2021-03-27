@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
- * <h1>Game class</h1>
+ * Game class
  * The logic of both manual mode and automatic mode of the game.
  */
 public class Game implements Functions {

@@ -9,6 +9,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
+/**
+ * ComUtils class
+ */
 public class ComUtils {
 
     private final DataInputStream dataInputStream;
