@@ -32,10 +32,10 @@ public class Game implements Functions {
     private int opcode;
 
     /**
-     * Constructor of game
+     * Constructor of game.
      *
-     * @param datagram instance of datagram
-     * @param mode     mode of game
+     * @param datagram instance of datagram.
+     * @param mode     mode of game.
      */
     public Game(Datagram datagram, int mode) {
         this.database = new Database();
@@ -49,7 +49,7 @@ public class Game implements Functions {
     }
 
     /**
-     * Game in manual mode
+     * Game in manual mode.
      */
     public void manualMode() {
 
@@ -416,6 +416,12 @@ public class Game implements Functions {
         }
     }
 
+    /**
+     * Method that write error to stream.
+     *
+     * @param s         exception message.
+     * @param errorType type of error to write.
+     */
     private void writeErrorToStream(String s, ErrorType errorType) {
         System.out.println("S- EXCEPTION: " + s);
         try {
@@ -429,7 +435,7 @@ public class Game implements Functions {
     }
 
     /**
-     * Game in automatic mode
+     * Game in automatic mode.
      */
     public void automaticMode() {
 

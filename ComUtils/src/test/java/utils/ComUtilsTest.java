@@ -10,8 +10,16 @@ import java.security.NoSuchAlgorithmException;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+/**
+ * ComUtils test class
+ */
 public class ComUtilsTest {
 
+    /**
+     * Test to check I/O of byte.
+     *
+     * @throws IOException IOException.
+     */
     @Test
     public void byte_test() throws IOException {
         ComUtils com = new ComUtils(new SocketMock());
@@ -20,6 +28,11 @@ public class ComUtilsTest {
         assertEquals(i, com.readByte());
     }
 
+    /**
+     * Test to check I/O of String.
+     *
+     * @throws IOException IOException.
+     */
     @Test
     public void string_test() throws IOException {
         ComUtils com = new ComUtils(new SocketMock());
@@ -29,6 +42,11 @@ public class ComUtilsTest {
         assertEquals(s, com.readString());
     }
 
+    /**
+     * Test to check I/O of Hash.
+     *
+     * @throws IOException IOException.
+     */
     @Test
     public void hash_test() throws IOException, NoSuchAlgorithmException {
         ComUtils com = new ComUtils(new SocketMock());
@@ -40,6 +58,11 @@ public class ComUtilsTest {
         assertArrayEquals(encodedhash, readedBytes);
     }
 
+    /**
+     * Test to check I/O of int.
+     *
+     * @throws IOException IOException.
+     */
     @Test
     public void int32_test() throws IOException {
         ComUtils com = new ComUtils(new SocketMock());

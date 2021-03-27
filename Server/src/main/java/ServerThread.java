@@ -1,5 +1,6 @@
+import utils.Datagram;
+
 import java.io.IOException;
-import java.net.Socket;
 
 /**
  * Thread of the server
@@ -9,14 +10,14 @@ public class ServerThread implements Runnable {
     private final Game game;
 
     /**
-     * Costructor of the server thread.
+     * Constructor of the server thread.
      *
-     * @param s1 instance of socket of the first player.
-     * @param s2 instance of socket of the second player.
-     * @throws IOException exception of log.
+     * @param d  instance of datagram of the first player.
+     * @param d2 instance of datagram of the second player.
+     * @throws IOException IOException.
      */
-    public ServerThread(Socket s1, Socket s2) throws IOException {
-        game = new Game(s1, s2);
+    public ServerThread(Datagram d, Datagram d2) throws IOException {
+        game = new Game(d, d2);
     }
 
     /**

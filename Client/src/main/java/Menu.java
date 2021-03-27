@@ -14,11 +14,9 @@ public class Menu {
      * @return player's name.
      */
     public String getName() {
-
         System.out.println("Insert your name:");
         boolean check = true;
         String name;
-
         do {
             name = scan.next();
             for (int i = 0; i < name.length(); i++) {
@@ -29,7 +27,6 @@ public class Menu {
                 } else check = false;
             }
         } while (check);
-
         return name;
     }
 
@@ -42,13 +39,11 @@ public class Menu {
         System.out.println("Insert your id:");
         boolean check = true;
         String id;
-
         do {
             id = scan.next();
             if (id.matches("[0-9]+")) check = false;
             else System.out.println("Invalid id, insert your id with digits: ");
         } while (check);
-
         return Integer.parseInt(id);
     }
 
@@ -75,7 +70,6 @@ public class Menu {
         for (int i = 0; i <= list.size() - 1; i++) {
             System.out.println(i + 1 + ". " + list.get(i));
         }
-
         String tmp;
         int option;
         do {
@@ -88,7 +82,6 @@ public class Menu {
                 System.out.println("Invalid option, try again: ");
             }
         } while (true);
-
         return list.get(option - 1);
     }
 }

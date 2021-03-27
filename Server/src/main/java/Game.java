@@ -1,7 +1,7 @@
-import shared.functions.Functions;
 import shared.database.Database;
 import shared.enumType.ShoutType;
 import shared.exception.OpcodeException;
+import shared.functions.Functions;
 import shared.model.DatabaseProvider;
 import shared.model.Player;
 import utils.Datagram;
@@ -10,11 +10,14 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
+/**
+ * Game class
+ * The logic of both single player and multiplayer mode of the game.
+ */
 public class Game implements Functions {
 
     private DatabaseProvider dp;
@@ -28,20 +31,24 @@ public class Game implements Functions {
     private final Player client = new Player();
     private final Player client2 = new Player();
 
-    private String opponentInsult, opponentComeback;
     private String insult, comeback;
     private boolean gameBool = true;
-    private boolean contained;
     private int opcode1, opcode2;
     private boolean turn, a, b;
 
-    public Game(Socket s1, Socket s2) throws IOException {
-
+    /**
+     * Constructor of game
+     *
+     * @param d  instance of datagram 1.
+     * @param d2 instance of datagram 2.
+     * @throws IOException IOException.
+     */
+    public Game(Datagram d, Datagram d2) throws IOException {
         this.database = new Database();
-        this.datagram1 = new Datagram(s1);
+        this.datagram1 = d;
 
-        if (s2 != null) {
-            this.datagram2 = new Datagram(s2);
+        if (d2 != null) {
+            this.datagram2 = d2;
             turn = true;
             a = false;
             b = false;
@@ -55,6 +62,11 @@ public class Game implements Functions {
         this.log = new BufferedWriter(new FileWriter(f));
     }
 
+    /**
+     * Method to start the game.
+     *
+     * @throws IOException IOException.
+     */
     public void run() throws IOException {
         if (this.datagram2 == null) {
             this.singlePlayer();
@@ -64,6 +76,11 @@ public class Game implements Functions {
         this.log.close();
     }
 
+    /**
+     * Game in single player mode.
+     *
+     * @throws IOException IOException.
+     */
     public void singlePlayer() throws IOException {
 
         while (gameBool) {
@@ -77,6 +94,8 @@ public class Game implements Functions {
                 break;
             }
 
+            boolean contained;
+            String opponentInsult, opponentComeback;
             switch (this.opcode1) {
 
                 case 0x01:
@@ -226,7 +245,7 @@ public class Game implements Functions {
 
                     /* READ INSULT */
                     try {
-                        this.opponentInsult = this.datagram1.readString(4, this.opcode1);
+                        opponentInsult = this.datagram1.readString(4, this.opcode1);
                     } catch (IOException | OpcodeException e) {
                         this.log.write("S- ERROR: " + e.getMessage());
                         this.log.flush();
@@ -234,13 +253,13 @@ public class Game implements Functions {
                         break;
                     }
 
-                    this.log.write("C- INSULT: " + this.opponentInsult + "\n");
+                    this.log.write("C- INSULT: " + opponentInsult + "\n");
                     this.log.flush();
 
                     /* ADD COMEBACK AS LEARNED */
-                    if (this.database.isInsult(this.opponentInsult)) {
+                    if (this.database.isInsult(opponentInsult)) {
 
-                        this.server.addInsult(this.opponentInsult);
+                        this.server.addInsult(opponentInsult);
 
                         /* SELECT & WRITE COMEBACK */
                         this.comeback = this.server.getRandomComeback();
@@ -258,7 +277,7 @@ public class Game implements Functions {
                         this.log.flush();
 
                         /* CHECK INSULT - COMEBACK WINNER */
-                        if (this.database.isRightComeback(this.opponentInsult, this.comeback)) {
+                        if (this.database.isRightComeback(opponentInsult, this.comeback)) {
                             this.server.addRound();
 
                             /* WRITE INSULT */
@@ -380,7 +399,7 @@ public class Game implements Functions {
 
                     /* READ COMEBACK */
                     try {
-                        this.opponentComeback = this.datagram1.readString(5, this.opcode1);
+                        opponentComeback = this.datagram1.readString(5, this.opcode1);
                     } catch (IOException | OpcodeException e) {
                         this.log.write("S- ERROR: " + e.getMessage());
                         this.log.flush();
@@ -388,15 +407,15 @@ public class Game implements Functions {
                         break;
                     }
 
-                    this.log.write("C- COMEBACK: " + this.opponentComeback + "\n");
+                    this.log.write("C- COMEBACK: " + opponentComeback + "\n");
                     this.log.flush();
 
                     /* ADD COMEBACK AS LEARNED */
-                    if (this.database.isComeback(this.opponentComeback)) {
-                        this.server.addComeback(this.opponentComeback);
+                    if (this.database.isComeback(opponentComeback)) {
+                        this.server.addComeback(opponentComeback);
 
                         /* CHECK INSULT - COMEBACK WINNER */
-                        if (this.database.isRightComeback(this.insult, this.opponentComeback)) {
+                        if (this.database.isRightComeback(this.insult, opponentComeback)) {
                             this.client.addRound();
 
                             if (this.client.getRound() == 2) {
@@ -557,6 +576,11 @@ public class Game implements Functions {
         }
     }
 
+    /**
+     * Game in multiplayer mode.
+     *
+     * @throws IOException IOException.
+     */
     public void multiPlayer() throws IOException {
 
         while (gameBool) {

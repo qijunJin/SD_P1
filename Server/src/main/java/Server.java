@@ -1,3 +1,5 @@
+import utils.Datagram;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -72,7 +74,8 @@ public class Server {
             }
 
             try { // Create game
-                Thread t = new Thread(new ServerThread(socket, null));
+                Datagram datagram = new Datagram(socket);
+                Thread t = new Thread(new ServerThread(datagram, null));
                 t.start();
             } catch (IOException e) {
                 System.out.println("IOException: " + e.getMessage());
@@ -110,7 +113,9 @@ public class Server {
             }
 
             try { // Create game
-                Thread t = new Thread(new ServerThread(socket, socket2));
+                Datagram datagram = new Datagram(socket);
+                Datagram datagram2 = new Datagram(socket2);
+                Thread t = new Thread(new ServerThread(datagram, datagram2));
                 t.start();
             } catch (IOException e) {
                 System.out.println(e.getMessage());
