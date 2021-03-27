@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Random;
 
 /**
- * <h1>Player class</h1>
+ * Player class
  * Store all tha data of a player.
  */
 public class Player implements Functions {

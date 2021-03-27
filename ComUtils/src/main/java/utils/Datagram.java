@@ -30,7 +30,7 @@ public class Datagram extends ComUtils {
      */
     public String readString(int opcode, int writtenOpcode) throws IOException, OpcodeException {
         if (opcode == writtenOpcode) return readString();
-        throw new OpcodeException(writtenOpcode, opcode);
+        throw new OpcodeException(opcode, writtenOpcode);
     }
 
     /**
@@ -42,7 +42,7 @@ public class Datagram extends ComUtils {
      */
     public String[] readIntString(int opcode, int writtenOpcode) throws IOException, OpcodeException {
         if (opcode == writtenOpcode) return new String[]{String.valueOf(readInt32()), readString()};
-        throw new OpcodeException(writtenOpcode, opcode);
+        throw new OpcodeException(opcode, writtenOpcode);
     }
 
     /**
@@ -54,7 +54,7 @@ public class Datagram extends ComUtils {
      */
     public byte[] readHash(int opcode, int writtenOpcode) throws IOException, OpcodeException {
         if (opcode == writtenOpcode) return readHash();
-        throw new OpcodeException(writtenOpcode, opcode);
+        throw new OpcodeException(opcode, writtenOpcode);
     }
 
     /**

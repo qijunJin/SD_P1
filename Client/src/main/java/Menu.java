@@ -2,14 +2,15 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * <h1>Menu class</h1>
- * Output/Input interaction with the payer.
+ * Menu class
+ * I/O interaction with the player.
  */
 public class Menu {
     Scanner scan = new Scanner(System.in);
 
     /**
      * Method to get the player's name.
+     *
      * @return player's name.
      */
     public String getName() {
@@ -25,9 +26,7 @@ public class Menu {
                     System.out.println("Invalid name, insert your name with alphabets:");
                     check = true;
                     break;
-                } else {
-                    check = false;
-                }
+                } else check = false;
             }
         } while (check);
 
@@ -35,8 +34,9 @@ public class Menu {
     }
 
     /**
-     * Method to get the player's id.
-     * @return player's id.
+     * Method to get the player's ID.
+     *
+     * @return player's ID.
      */
     public int getId() {
         System.out.println("Insert your id:");
@@ -54,8 +54,8 @@ public class Menu {
 
     /**
      * Method to exit or continue the game.
-     * @return true to Continue and false to Exit the game.
      *
+     * @return true with 'C' or 'c', false with the rest of the keys.
      */
     public boolean getExit() {
         System.out.println("To continue playing press (C), other key will exit game");
@@ -64,8 +64,9 @@ public class Menu {
     }
 
     /**
-     * Method to ask the player which option he wants.
-     * @param list list with all the possible insults.
+     * Method to ask the player which option to choose.
+     *
+     * @param list  list of all the possible insults.
      * @param title title of the list.
      * @return the chosen option by player.
      */

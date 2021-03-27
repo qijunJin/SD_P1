@@ -1,7 +1,7 @@
 package shared.enumType;
 
 /**
- * <h1>Types of shouts</h1>
+ * Types of shouts
  */
 public enum ShoutType {
     I_WIN,
