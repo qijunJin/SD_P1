@@ -10,8 +10,15 @@ import java.util.HashMap;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * DatabaseTest class
+ * Class to test all the Database methods.
+ */
 public class DatabaseTest {
 
+    /**
+     * Test to check if the received insult is correct.
+     */
     @Test
     public void isInsult_test() {
         Database database = new Database();
@@ -24,6 +31,9 @@ public class DatabaseTest {
         assertTrue(b);
     }
 
+    /**
+     * Test to check if the received insult isn't correct.
+     */
     @Test
     public void isInsult_false_test() {
         Database database = new Database();
@@ -32,6 +42,9 @@ public class DatabaseTest {
         assertFalse(database.isInsult(insult));
     }
 
+    /**
+     * Test to check if the received comeback is correct.
+     */
     @Test
     public void isComeback_test() {
         Database database = new Database();
@@ -44,6 +57,9 @@ public class DatabaseTest {
         assertTrue(b);
     }
 
+    /**
+     * Test to check if the received comeback isn't correct.
+     */
     @Test
     public void isComeback_false_test() {
         Database database = new Database();
@@ -52,6 +68,9 @@ public class DatabaseTest {
         assertFalse(database.isComeback(insult));
     }
 
+    /**
+     * Test to check if the received comeback is correct against an insult.
+     */
     @Test
     public void isRightComeback_test() {
         Database database = new Database();
@@ -65,6 +84,9 @@ public class DatabaseTest {
         assertTrue(b);
     }
 
+    /**
+     * Test to check if all the shout messages, selected by enums, are correct.
+     */
     @Test
     public void getShoutByEnum_test() {
         Database database = new Database();
@@ -81,6 +103,9 @@ public class DatabaseTest {
         assertTrue(b);
     }
 
+    /**
+     * Test to check if all the error messages, selected by enums, are correct.
+     */
     @Test
     public void getErrorByEnum_test() {
         Database database = new Database();

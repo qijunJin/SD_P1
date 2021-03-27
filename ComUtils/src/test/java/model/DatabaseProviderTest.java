@@ -8,8 +8,15 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.assertTrue;
 
+/**
+ * DatabaseProviderTest class
+ * Class to test all the DatabaseProvider methods.
+ */
 public class DatabaseProviderTest {
 
+    /**
+     * Test to check if the given insult and comeback are a good match.
+     */
     @Test
     public void getRandomInsultComeback_test() {
         Database database = new Database();
