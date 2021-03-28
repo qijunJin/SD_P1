@@ -22,7 +22,7 @@ public class Game implements Functions {
     private final Database database = new Database();
     private final Player client = new Player();
     private final Player server = new Player();
-    private final Datagram datagram;
+    private Datagram datagram;
     private DatabaseProvider dp;
 
     private String insult, comeback;
@@ -361,10 +361,10 @@ public class Game implements Functions {
     public void automaticMode() {
 
         while (true) {
-
             if (this.newGame) {
 
                 this.client.setName("IA Player");
+                this.dp = new DatabaseProvider(this.database.getInsults(), this.database.getComebacks());
 
                 do {
                     contained = this.client.containsWithAddInsultComeback(this.dp.getRandomInsultComeback());
@@ -387,6 +387,7 @@ public class Game implements Functions {
             }
 
             if (this.opcode == 0x01) {
+
                 try {
                     String[] str = this.datagram.readIntString(1, this.opcode);
                     this.server.setId(Integer.parseInt(str[0]));
@@ -613,6 +614,7 @@ public class Game implements Functions {
                     this.client.resetDuel();
                     this.server.resetDuel();
                     System.out.println("[Connexion closed]");
+                    break;
 
                 } else {
                     try {
