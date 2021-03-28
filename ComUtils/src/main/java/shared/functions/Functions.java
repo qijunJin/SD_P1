@@ -49,4 +49,31 @@ public interface Functions {
         return (Integer.parseInt(s1) + Integer.parseInt(s2)) % 2 == 0;
     }
 
+    /**
+     * Function that convert byte to hexadecimal representation.
+     *
+     * @param num the byte value.
+     * @return the hexadecimal value.
+     */
+    static String byteToHex(byte num) {
+        char[] hexDigits = new char[2];
+        hexDigits[0] = Character.forDigit((num >> 4) & 0xF, 16);
+        hexDigits[1] = Character.forDigit((num & 0xF), 16);
+        return new String(hexDigits).toUpperCase();
+    }
+
+    /**
+     * Function that encode array of byte to hexadecimal representation.
+     *
+     * @param byteArray array of byte values.
+     * @return array of hexadecimal values.
+     */
+    static String encodeHexString(byte[] byteArray) {
+        StringBuffer hexStringBuffer = new StringBuffer();
+        for (int i = 0; i < byteArray.length; i++) {
+            hexStringBuffer.append(byteToHex(byteArray[i]));
+            if (i < byteArray.length - 1) hexStringBuffer.append(" ");
+        }
+        return hexStringBuffer.toString();
+    }
 }

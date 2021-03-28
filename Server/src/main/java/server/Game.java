@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -153,7 +152,7 @@ public class Game implements Functions {
                     }
 
                     /* LOG OUTPUT */
-                    this.log.write("C- HASH: " + Arrays.toString(this.client.getHash()) + "\n");
+                    this.log.write("C- HASH: " + Functions.encodeHexString(this.client.getHash()) + "\n");
                     this.log.flush();
 
                     /* WRITE HASH */
@@ -167,7 +166,7 @@ public class Game implements Functions {
                     }
 
                     /* LOG OUTPUT */
-                    this.log.write("S- HASH: " + Arrays.toString(this.server.getHash()) + "\n");
+                    this.log.write("S- HASH: " + Functions.encodeHexString(this.server.getHash()) + "\n");
                     this.log.flush();
 
                     break;
@@ -695,7 +694,7 @@ public class Game implements Functions {
                 }
 
                 /* LOG OUTPUT */
-                this.log.write("C1- HASH: " + Arrays.toString(this.client.getHash()) + "\n");
+                this.log.write("C1- HASH: " + Functions.encodeHexString(this.client.getHash()) + "\n");
                 this.log.flush();
                 this.opcode1 = 0x00;
                 turn = false;
@@ -722,7 +721,7 @@ public class Game implements Functions {
 
                 /* LOG OUTPUT */
 
-                this.log.write("C2- HASH: " + Arrays.toString(this.client2.getHash()) + "\n");
+                this.log.write("C2- HASH: " + Functions.encodeHexString(this.client2.getHash()) + "\n");
                 this.log.flush();
                 this.opcode2 = 0x00;
                 turn = true;

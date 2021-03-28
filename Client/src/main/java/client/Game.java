@@ -101,7 +101,7 @@ public class Game implements Functions {
                 try {
                     this.datagram.writeHash(2, this.client.generateSecret());
                     this.client.setHash(Functions.toHash(this.client.getSecret()));
-                    System.out.println("C- HASH: " + Arrays.toString(this.client.getHash()));
+                    System.out.println("C- HASH: " + Functions.encodeHexString(this.client.getHash()));
                 } catch (IOException e) {
                     System.out.println("C- EXCEPTION: " + e.getMessage());
                     break;
@@ -115,7 +115,7 @@ public class Game implements Functions {
 
                 try {
                     this.server.setHash(this.datagram.readHash(2, this.opcode));
-                    System.out.println("S- HASH: " + Arrays.toString(this.server.getHash()));
+                    System.out.println("S- HASH: " + Functions.encodeHexString(this.server.getHash()));
                 } catch (IOException | OpcodeException e) {
                     if (e instanceof IOException) writeErrorToStream(e.getMessage(), ErrorType.TIMEOUT);
                     if (e instanceof OpcodeException) writeErrorToStream(e.getMessage(), ErrorType.WRONG_OPCODE);
@@ -316,7 +316,7 @@ public class Game implements Functions {
                     try {
                         this.datagram.writeHash(2, this.client.generateSecret());
                         this.client.setHash(Functions.toHash(this.client.getSecret()));
-                        System.out.println("C- HASH: " + Arrays.toString(this.client.getHash()));
+                        System.out.println("C- HASH: " + Functions.encodeHexString(this.client.getHash()));
                     } catch (IOException e) {
                         System.out.println("C- EXCEPTION: " + e.getMessage());
                         break;
@@ -402,7 +402,7 @@ public class Game implements Functions {
                 try {
                     this.datagram.writeHash(2, this.client.generateSecret());
                     this.client.setHash(Functions.toHash(this.client.getSecret()));
-                    System.out.println("C- HASH: " + Arrays.toString(this.client.getHash()));
+                    System.out.println("C- HASH: " + Functions.encodeHexString(this.client.getHash()));
                 } catch (IOException e) {
                     System.out.println("C- EXCEPTION: " + e.getMessage());
                     break;
@@ -416,7 +416,7 @@ public class Game implements Functions {
 
                 try {
                     this.server.setHash(this.datagram.readHash(2, this.opcode));
-                    System.out.println("S- HASH: " + Arrays.toString(this.server.getHash()));
+                    System.out.println("S- HASH: " + Functions.encodeHexString(this.server.getHash()) );
                 } catch (IOException | OpcodeException e) {
                     if (e instanceof IOException) writeErrorToStream(e.getMessage(), ErrorType.TIMEOUT);
                     if (e instanceof OpcodeException) writeErrorToStream(e.getMessage(), ErrorType.WRONG_OPCODE);
@@ -620,7 +620,7 @@ public class Game implements Functions {
                     try {
                         this.datagram.writeHash(2, this.client.generateSecret());
                         this.client.setHash(Functions.toHash(this.client.getSecret()));
-                        System.out.println("C- HASH: " + Arrays.toString(this.client.getHash()));
+                        System.out.println("C- HASH: " + Functions.encodeHexString(this.client.getHash()));
                     } catch (IOException e) {
                         System.out.println("C- EXCEPTION: " + e.getMessage());
                         break;
