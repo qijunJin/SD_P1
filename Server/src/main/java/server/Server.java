@@ -66,11 +66,11 @@ public class Server {
         while (onGame) {
             System.out.println("------------------------------------------------------------------------------------");
             System.out.println("Waiting for player");
-            Socket socket = null;
+            Socket socket1 = null;
 
             try { // Connexion
-                socket = serverSocket.accept();
-                socket.setSoTimeout(60 * 1000);
+                socket1 = serverSocket.accept();
+                socket1.setSoTimeout(60 * 1000);
                 System.out.println("Player connected");
             } catch (IOException e) {
                 System.out.println("IOException: " + e.getMessage());
@@ -78,8 +78,8 @@ public class Server {
             }
 
             try { // Create game
-                Datagram datagram = new Datagram(socket);
-                Thread t = new Thread(new ServerThread(datagram, null));
+                Datagram datagram1 = new Datagram(socket1);
+                Thread t = new Thread(new ServerThread(datagram1, null));
                 t.start();
             } catch (IOException e) {
                 System.out.println("IOException: " + e.getMessage());

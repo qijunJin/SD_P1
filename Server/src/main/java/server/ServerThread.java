@@ -14,12 +14,12 @@ public class ServerThread implements Runnable {
     /**
      * Constructor of the server thread.
      *
-     * @param d  instance of datagram of the first player.
-     * @param d2 instance of datagram of the second player.
+     * @param datagram1 instance of datagram of the first player.
+     * @param datagram2 instance of datagram of the second player.
      * @throws IOException IOException.
      */
-    public ServerThread(Datagram d, Datagram d2) throws IOException {
-        game = new Game(d, d2);
+    public ServerThread(Datagram datagram1, Datagram datagram2) throws IOException {
+        game = new Game(datagram1, datagram2);
     }
 
     /**
