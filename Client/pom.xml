@@ -46,8 +46,8 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>Client</mainClass>
+                            <classpathPrefix>lib/client/</classpathPrefix>
+                            <mainClass>client.Client</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -58,7 +58,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>Client</mainClass>
+                            <mainClass>client.Client</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

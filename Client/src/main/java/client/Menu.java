@@ -17,18 +17,11 @@ public class Menu {
      */
     public String getName() {
         System.out.println("Insert your name:");
-        boolean check = true;
         String name;
         do {
             name = scan.next();
-            for (int i = 0; i < name.length(); i++) {
-                if (name.charAt(i) >= '0' && name.charAt(i) <= '9') {
-                    System.out.println("Invalid name, insert your name with alphabets:");
-                    check = true;
-                    break;
-                } else check = false;
-            }
-        } while (check);
+            if (!name.matches("[a-zA-Z]+")) System.out.println("Invalid name, insert your name with alphabets:");
+        } while (!name.matches("[a-zA-Z]+"));
         return name;
     }
 
@@ -39,14 +32,11 @@ public class Menu {
      */
     public int getId() {
         System.out.println("Insert your id:");
-        boolean check = true;
-        String id;
         do {
-            id = scan.next();
-            if (id.matches("[0-9]+")) check = false;
-            else System.out.println("Invalid id, insert your id with digits: ");
-        } while (check);
-        return Integer.parseInt(id);
+            if (scan.hasNextInt()) return scan.nextInt();
+            System.out.println("Invalid id, insert your id with digits: ");
+            scan.next();
+        } while (true);
     }
 
     /**
@@ -69,21 +59,13 @@ public class Menu {
      */
     public String getOption(ArrayList<String> list, String title) {
         System.out.println("Insert the number of " + title + ":");
-        for (int i = 0; i <= list.size() - 1; i++) {
-            System.out.println(i + 1 + ". " + list.get(i));
-        }
-        String tmp;
-        int option;
+        for (int i = 0; i <= list.size() - 1; i++) System.out.println(i + 1 + ". " + list.get(i));
         do {
-            tmp = scan.next();
-            if (tmp.matches("[0-9]+")) {
-                option = Integer.parseInt(tmp);
-                if (option >= 0 && option <= list.size()) break;
-                else System.out.println("Invalid option, try again: ");
-            } else {
-                System.out.println("Invalid option, try again: ");
-            }
+            if (scan.hasNextInt()) {
+                int option = scan.nextInt();
+                if (option >= 0 && option <= list.size()) return list.get(option - 1);
+            } else scan.next();
+            System.out.println("Invalid option, try again: ");
         } while (true);
-        return list.get(option - 1);
     }
 }
