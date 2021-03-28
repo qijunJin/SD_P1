@@ -1,7 +1,6 @@
-package database;
+package shared.database;
 
 import org.junit.Test;
-import shared.database.Database;
 import shared.enumType.ErrorType;
 import shared.enumType.ShoutType;
 

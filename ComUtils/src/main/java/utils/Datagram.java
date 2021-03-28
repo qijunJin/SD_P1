@@ -15,7 +15,7 @@ public class Datagram extends ComUtils {
      * Constructor of datagram.
      *
      * @param socket instance of socket.
-     * @throws IOException comUtils operations exception
+     * @throws IOException IOException.
      */
     public Datagram(Socket socket) throws IOException {
         super(socket);
@@ -24,6 +24,8 @@ public class Datagram extends ComUtils {
     /**
      * Function that requires opcode to read the single data from stream.
      *
+     * @param opcode        required opcode.
+     * @param writtenOpcode written opcode.
      * @return one stream data.
      * @throws IOException     IOException.
      * @throws OpcodeException OpcodeException.
@@ -36,6 +38,8 @@ public class Datagram extends ComUtils {
     /**
      * Function that requires opcode to read the double data from stream.
      *
+     * @param opcode        required opcode.
+     * @param writtenOpcode written opcode.
      * @return two stream data.
      * @throws IOException     IOException.
      * @throws OpcodeException OpcodeException.
@@ -48,6 +52,8 @@ public class Datagram extends ComUtils {
     /**
      * Function that requires opcode 0x02 to read the hash message.
      *
+     * @param opcode        required opcode.
+     * @param writtenOpcode written opcode.
      * @return the hash message.
      * @throws IOException     IOException.
      * @throws OpcodeException OpcodeException.
@@ -60,7 +66,8 @@ public class Datagram extends ComUtils {
     /**
      * Function that write the one stream data with opcode.
      *
-     * @param str one stream data.
+     * @param opcode required opcode.
+     * @param str    one stream data.
      * @throws IOException IOException.
      */
     public void writeString(int opcode, String str) throws IOException {
@@ -72,8 +79,9 @@ public class Datagram extends ComUtils {
     /**
      * Function that write the hello message with opcode 0x01.
      *
-     * @param id  Player's ID
-     * @param str Player's name
+     * @param opcode required opcode.
+     * @param id     Player's ID
+     * @param str    Player's name
      * @throws IOException IOException.
      */
     public void writeIntString(int opcode, int id, String str) throws IOException {
@@ -86,7 +94,8 @@ public class Datagram extends ComUtils {
     /**
      * Function that write the hash message with opcode 0x02.
      *
-     * @param str the hash message.
+     * @param opcode required opcode.
+     * @param str    the hash message.
      * @throws IOException IOException.
      */
     public void writeHash(int opcode, String str) throws IOException {
@@ -97,7 +106,7 @@ public class Datagram extends ComUtils {
     /**
      * Function that write the hash message with opcode 0x02.
      *
-     * @param opcode
+     * @param opcode required opcode.
      * @param bytes  the hash message in array of bytes.
      * @throws IOException IOException.
      */

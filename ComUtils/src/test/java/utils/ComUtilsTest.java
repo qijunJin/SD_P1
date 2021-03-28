@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * ComUtils test class
+ * Class to test all the ComUtils methods.
  */
 public class ComUtilsTest {
 
@@ -45,7 +46,8 @@ public class ComUtilsTest {
     /**
      * Test to check I/O of Hash.
      *
-     * @throws IOException IOException.
+     * @throws IOException              IOException.
+     * @throws NoSuchAlgorithmException NoSuchAlgorithmException.
      */
     @Test
     public void hash_test() throws IOException, NoSuchAlgorithmException {

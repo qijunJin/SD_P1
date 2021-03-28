@@ -1,3 +1,5 @@
+package server;
+
 import utils.Datagram;
 
 import java.io.IOException;
@@ -60,25 +62,28 @@ public class Server {
      */
     private static void singlePlayer(ServerSocket serverSocket) {
 
-        while (true) {
+        boolean onGame = true;
+        while (onGame) {
             System.out.println("------------------------------------------------------------------------------------");
             System.out.println("Waiting for player");
-            Socket socket = null;
+            Socket socket1 = null;
 
             try { // Connexion
-                socket = serverSocket.accept();
-                socket.setSoTimeout(60 * 1000);
+                socket1 = serverSocket.accept();
+                socket1.setSoTimeout(60 * 1000);
                 System.out.println("Player connected");
             } catch (IOException e) {
                 System.out.println("IOException: " + e.getMessage());
+                onGame = false;
             }
 
             try { // Create game
-                Datagram datagram = new Datagram(socket);
-                Thread t = new Thread(new ServerThread(datagram, null));
+                Datagram datagram1 = new Datagram(socket1);
+                Thread t = new Thread(new ServerThread(datagram1, null));
                 t.start();
             } catch (IOException e) {
                 System.out.println("IOException: " + e.getMessage());
+                onGame = false;
             }
         }
     }
@@ -90,7 +95,8 @@ public class Server {
      */
     private static void multiPlayer(ServerSocket serverSocket) {
 
-        while (true) {
+        boolean onGame = true;
+        while (onGame) {
             System.out.println("------------------------------------------------------------------------------------");
             System.out.println("Waiting for players [0/2]");
             Socket socket = null;
@@ -102,6 +108,7 @@ public class Server {
                 System.out.println("Player connected [1/2]");
             } catch (IOException e) {
                 System.out.println("IOException: " + e.getMessage());
+                onGame = false;
             }
 
             try { // Connexion socket 2
@@ -110,6 +117,7 @@ public class Server {
                 System.out.println("Player connected [2/2]");
             } catch (IOException e) {
                 System.out.println("IOException: " + e.getMessage());
+                onGame = false;
             }
 
             try { // Create game
@@ -119,6 +127,7 @@ public class Server {
                 t.start();
             } catch (IOException e) {
                 System.out.println(e.getMessage());
+                onGame = false;
             }
         }
     }
