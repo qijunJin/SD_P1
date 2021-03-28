@@ -22,46 +22,38 @@ import java.util.Date;
  */
 public class Game implements Functions {
 
-    private DatabaseProvider dp;
     private final BufferedWriter log;
-    private final Database database;
-    Datagram datagram1;
-    Datagram datagram2;
-
-    String clientShout, serverShout;
+    private final Database database = new Database();
     private final Player server = new Player();
     private final Player client = new Player();
     private final Player client2 = new Player();
 
+    private DatabaseProvider dp;
+    private final Datagram datagram1;
+    private Datagram datagram2;
+
+    private String clientShout, serverShout;
     private String insult, comeback;
-    private boolean gameBool = true;
     private int opcode1, opcode2;
-    private boolean turn, a, b;
+    private boolean gameBool, turn = true;
+    private boolean key1, key2 = false;
 
     /**
      * Constructor of game
      *
-     * @param d  instance of datagram 1.
-     * @param d2 instance of datagram 2.
+     * @param datagram1 instance of datagram 1.
+     * @param datagram2 instance of datagram 2.
      * @throws IOException IOException.
      */
-    public Game(Datagram d, Datagram d2) throws IOException {
-        this.database = new Database();
-        this.datagram1 = d;
+    public Game(Datagram datagram1, Datagram datagram2) throws IOException {
 
-        if (d2 != null) {
-            this.datagram2 = d2;
-            turn = true;
-            a = false;
-            b = false;
-        }
+        this.datagram1 = datagram1;
+        if (datagram2 != null) this.datagram2 = datagram2;
 
-        Date asd = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH.mm.ss");
-        String lg = "Server_" + Thread.currentThread().getId() + "_" + formatter.format(asd) + ".log"; // File name
+        String lg = "Server_" + Thread.currentThread().getId() + "_" + formatter.format(new Date()) + ".log"; // File name
         boolean directoryCreated = (new File("../../logs")).mkdir(); // Directory
-        File f = new File("../../logs/" + lg); // File
-        this.log = new BufferedWriter(new FileWriter(f));
+        this.log = new BufferedWriter(new FileWriter("../../logs/" + lg));
     }
 
     /**
@@ -70,11 +62,8 @@ public class Game implements Functions {
      * @throws IOException IOException.
      */
     public void run() throws IOException {
-        if (this.datagram2 == null) {
-            this.singlePlayer();
-        } else {
-            this.multiPlayer();
-        }
+        if (this.datagram2 == null) this.singlePlayer();
+        else this.multiPlayer();
         this.log.close();
     }
 
@@ -118,7 +107,7 @@ public class Game implements Functions {
                         this.client.setId(Integer.parseInt(str[0]));
                         this.client.setName(str[1]);
                     } catch (IOException | OpcodeException e) {
-                        this.log.write("S- ERROR: " + e.getMessage());
+                        this.log.write("S- EXCEPTION: " + e.getMessage());
                         this.log.flush();
                         this.gameBool = false;
                         break;
@@ -132,7 +121,7 @@ public class Game implements Functions {
                     try {
                         this.datagram1.writeIntString(1, this.server.generateId(), this.server.getName());
                     } catch (IOException e) {
-                        this.log.write("S- ERROR: " + e.getMessage());
+                        this.log.write("S- EXCEPTION: " + e.getMessage());
                         this.log.flush();
                         this.gameBool = false;
                         break;
@@ -155,7 +144,7 @@ public class Game implements Functions {
                     try {
                         this.client.setHash(this.datagram1.readHash(2, this.opcode1));
                     } catch (IOException | OpcodeException e) {
-                        this.log.write("S- ERROR: " + e.getMessage());
+                        this.log.write("S- EXCEPTION: " + e.getMessage());
                         this.log.flush();
                         this.gameBool = false;
                         break;
@@ -169,7 +158,7 @@ public class Game implements Functions {
                     try {
                         this.datagram1.writeHash(2, this.server.generateSecret());
                     } catch (IOException e) {
-                        this.log.write("S- ERROR: " + e.getMessage());
+                        this.log.write("S- EXCEPTION: " + e.getMessage());
                         this.log.flush();
                         this.gameBool = false;
                         break;
@@ -187,7 +176,7 @@ public class Game implements Functions {
                     try {
                         this.client.setSecret(this.datagram1.readString(3, this.opcode1));
                     } catch (IOException | OpcodeException e) {
-                        this.log.write("S- ERROR: " + e.getMessage());
+                        this.log.write("S- EXCEPTION: " + e.getMessage());
                         this.log.flush();
                         this.gameBool = false;
                         break;
@@ -201,7 +190,7 @@ public class Game implements Functions {
                     try {
                         this.datagram1.writeString(3, this.server.getSecret());
                     } catch (IOException e) {
-                        this.log.write("S- ERROR: " + e.getMessage());
+                        this.log.write("S- EXCEPTION: " + e.getMessage());
                         this.log.flush();
                         this.gameBool = false;
                         break;
@@ -222,20 +211,20 @@ public class Game implements Functions {
                                     this.log.write("S- INSULT: " + this.insult + "\n");
                                     this.log.flush();
                                 } catch (IOException e) {
-                                    this.log.write("S- ERROR: " + e.getMessage());
+                                    this.log.write("S- EXCEPTION: " + e.getMessage());
                                     this.log.flush();
                                     this.gameBool = false;
                                     break;
                                 }
                             }
                         } else {
-                            this.log.write("S- ERROR: SAME ID");
+                            this.log.write("S- EXCEPTION: SAME ID");
                             this.log.flush();
                             this.gameBool = false;
                             break;
                         }
                     } else {
-                        this.log.write("S- ERROR: NOT COINCIDENT HASH");
+                        this.log.write("S- EXCEPTION: NOT COINCIDENT HASH");
                         this.log.flush();
                         this.gameBool = false;
                         break;
@@ -249,7 +238,7 @@ public class Game implements Functions {
                     try {
                         opponentInsult = this.datagram1.readString(4, this.opcode1);
                     } catch (IOException | OpcodeException e) {
-                        this.log.write("S- ERROR: " + e.getMessage());
+                        this.log.write("S- EXCEPTION: " + e.getMessage());
                         this.log.flush();
                         this.gameBool = false;
                         break;
@@ -269,7 +258,7 @@ public class Game implements Functions {
                         try {
                             this.datagram1.writeString(5, this.comeback);
                         } catch (IOException e) {
-                            this.log.write("S- ERROR: " + e.getMessage());
+                            this.log.write("S- EXCEPTION: " + e.getMessage());
                             this.log.flush();
                             this.gameBool = false;
                             break;
@@ -291,7 +280,7 @@ public class Game implements Functions {
                                     this.log.flush();
                                     break;
                                 } catch (IOException e) {
-                                    this.log.write("S- ERROR: " + e.getMessage());
+                                    this.log.write("S- EXCEPTION: " + e.getMessage());
                                     this.log.flush();
                                     this.gameBool = false;
                                     break;
@@ -309,7 +298,7 @@ public class Game implements Functions {
                                         this.log.write("S- SHOUT: " + serverShout + "\n");
                                         this.log.flush();
                                     } catch (IOException e) {
-                                        this.log.write("S- ERROR: " + e.getMessage());
+                                        this.log.write("S- EXCEPTION: " + e.getMessage());
                                         this.log.flush();
                                         this.gameBool = false;
                                         break;
@@ -329,7 +318,7 @@ public class Game implements Functions {
                                         this.log.write("S- SHOUT: " + serverShout + "\n");
                                         this.log.flush();
                                     } catch (IOException e) {
-                                        this.log.write("S- ERROR: " + e.getMessage());
+                                        this.log.write("S- EXCEPTION: " + e.getMessage());
                                         this.log.flush();
                                         this.gameBool = false;
                                         break;
@@ -356,7 +345,7 @@ public class Game implements Functions {
                                         this.log.write("S- SHOUT: " + serverShout + "\n");
                                         this.log.flush();
                                     } catch (IOException e) {
-                                        this.log.write("S- ERROR: " + e.getMessage());
+                                        this.log.write("S- EXCEPTION: " + e.getMessage());
                                         this.log.flush();
                                         this.gameBool = false;
                                         break;
@@ -376,7 +365,7 @@ public class Game implements Functions {
                                         this.log.write("S- SHOUT: " + serverShout + "\n");
                                         this.log.flush();
                                     } catch (IOException e) {
-                                        this.log.write("S- ERROR: " + e.getMessage());
+                                        this.log.write("S- EXCEPTION: " + e.getMessage());
                                         this.log.flush();
                                         this.gameBool = false;
                                         break;
@@ -389,7 +378,7 @@ public class Game implements Functions {
                             }
                         }
                     } else {
-                        this.log.write("S- ERROR: WRONG INSULT");
+                        this.log.write("S- EXCEPTION: MESSAGE INCOMPLETE");
                         this.log.flush();
                         this.gameBool = false;
                         break;
@@ -403,7 +392,7 @@ public class Game implements Functions {
                     try {
                         opponentComeback = this.datagram1.readString(5, this.opcode1);
                     } catch (IOException | OpcodeException e) {
-                        this.log.write("S- ERROR: " + e.getMessage());
+                        this.log.write("S- EXCEPTION: " + e.getMessage());
                         this.log.flush();
                         this.gameBool = false;
                         break;
@@ -432,7 +421,7 @@ public class Game implements Functions {
                                         this.log.write("S- SHOUT: " + serverShout + "\n");
                                         this.log.flush();
                                     } catch (IOException e) {
-                                        this.log.write("S- ERROR: " + e.getMessage());
+                                        this.log.write("S- EXCEPTION: " + e.getMessage());
                                         this.log.flush();
                                         this.gameBool = false;
                                         break;
@@ -453,7 +442,7 @@ public class Game implements Functions {
                                         this.log.write("S- SHOUT: " + serverShout + "\n");
                                         this.log.flush();
                                     } catch (IOException e) {
-                                        this.log.write("S- ERROR: " + e.getMessage());
+                                        this.log.write("S- EXCEPTION: " + e.getMessage());
                                         this.log.flush();
                                         this.gameBool = false;
                                         break;
@@ -478,7 +467,7 @@ public class Game implements Functions {
                                     this.log.flush();
                                     break;
                                 } catch (IOException e) {
-                                    this.log.write("S- ERROR: " + e.getMessage());
+                                    this.log.write("S- EXCEPTION: " + e.getMessage());
                                     this.log.flush();
                                     this.gameBool = false;
                                     break;
@@ -496,7 +485,7 @@ public class Game implements Functions {
                                         this.log.write("S- SHOUT: " + serverShout + "\n");
                                         this.log.flush();
                                     } catch (IOException e) {
-                                        this.log.write("S- ERROR: " + e.getMessage());
+                                        this.log.write("S- EXCEPTION: " + e.getMessage());
                                         this.log.flush();
                                         this.gameBool = false;
                                         break;
@@ -516,7 +505,7 @@ public class Game implements Functions {
                                         this.log.write("S- SHOUT: " + serverShout + "\n");
                                         this.log.flush();
                                     } catch (IOException e) {
-                                        this.log.write("S- ERROR: " + e.getMessage());
+                                        this.log.write("S- EXCEPTION: " + e.getMessage());
                                         this.log.flush();
                                         this.gameBool = false;
                                         break;
@@ -529,7 +518,7 @@ public class Game implements Functions {
                             }
                         }
                     } else {
-                        this.log.write("S- ERROR: WRONG COMEBACK");
+                        this.log.write("S- EXCEPTION: MESSAGE INCOMPLETE");
                         this.log.flush();
                         this.gameBool = false;
                         break;
@@ -544,7 +533,7 @@ public class Game implements Functions {
                     try {
                         clientShout = this.datagram1.readString(6, this.opcode1);
                     } catch (IOException | OpcodeException e) {
-                        this.log.write("S- ERROR: " + e.getMessage());
+                        this.log.write("S- EXCEPTION: " + e.getMessage());
                         this.log.flush();
                         this.gameBool = false;
                         break;
@@ -558,21 +547,17 @@ public class Game implements Functions {
 
                 case 0x07:
 
-                    String error;
-
                     /* READ ERROR */
                     try {
-                        error = this.datagram1.readString(7, this.opcode1);
+                        this.log.write("S- ERROR: " + this.datagram1.readString(7, this.opcode1));
+                        this.gameBool = false;
                     } catch (IOException | OpcodeException e) {
-                        this.log.write("S- ERROR: " + e.getMessage());
+                        this.log.write("S- EXCEPTION: " + e.getMessage());
                         this.log.flush();
                         this.gameBool = false;
                         break;
                     }
 
-                    /* LOG OUTPUT */
-                    this.log.write("S- ERROR: " + error);
-                    this.gameBool = false;
                     break;
             }
         }
@@ -638,7 +623,7 @@ public class Game implements Functions {
                     this.client.setId(Integer.parseInt(str[0]));
                     this.client.setName(str[1]);
                 } catch (IOException | OpcodeException e) {
-                    this.log.write("C1- HELLO ERROR READ " + e.getMessage() + "\n");
+                    this.log.write("C1- EXCEPTION: " + e.getMessage() + "\n");
                     this.log.flush();
                     break;
                 }
@@ -647,7 +632,7 @@ public class Game implements Functions {
                 try {
                     this.datagram2.writeIntString(1, this.client.getId(), this.client.getName());
                 } catch (IOException e) {
-                    this.log.write("C2- HELLO ERROR WRITE" + e.getMessage() + "\n");
+                    this.log.write("C2- EXCEPTION: " + e.getMessage() + "\n");
                     this.log.flush();
                     break;
                 }
@@ -667,7 +652,7 @@ public class Game implements Functions {
                     this.client2.setId(Integer.parseInt(str[0]));
                     this.client2.setName(str[1]);
                 } catch (IOException | OpcodeException e) {
-                    this.log.write("C2- HELLO ERROR READ " + e.getMessage() + "\n");
+                    this.log.write("C2- EXCEPTION: " + e.getMessage() + "\n");
                     this.log.flush();
                     break;
                 }
@@ -676,7 +661,7 @@ public class Game implements Functions {
                 try {
                     this.datagram1.writeIntString(1, this.client2.getId(), this.client2.getName());
                 } catch (IOException e) {
-                    this.log.write("C1- HELLO ERROR WRITE" + e.getMessage() + "\n");
+                    this.log.write("C1- EXCEPTION: " + e.getMessage() + "\n");
                     this.log.flush();
                     break;
                 }
@@ -693,7 +678,7 @@ public class Game implements Functions {
                 try {
                     this.client.setHash(this.datagram1.readHash(2, this.opcode1));
                 } catch (IOException | OpcodeException e) {
-                    this.log.write("C1- HASH ERROR READ" + e.getMessage() + "\n");
+                    this.log.write("C1- EXCEPTION: " + e.getMessage() + "\n");
                     this.log.flush();
                     break;
                 }
@@ -702,7 +687,7 @@ public class Game implements Functions {
                 try {
                     this.datagram2.writeHashArray(2, this.client.getHash());
                 } catch (IOException e) {
-                    this.log.write("C2- HASH ERROR WRITE" + e.getMessage() + "\n");
+                    this.log.write("C2- EXCEPTION: " + e.getMessage() + "\n");
                     this.log.flush();
                     break;
                 }
@@ -719,7 +704,7 @@ public class Game implements Functions {
                 try {
                     this.client2.setHash(this.datagram2.readHash(2, this.opcode2));
                 } catch (IOException | OpcodeException e) {
-                    this.log.write("C2- HASH ERROR READ" + e.getMessage() + "\n");
+                    this.log.write("C2- EXCEPTION: " + e.getMessage() + "\n");
                     this.log.flush();
                     break;
                 }
@@ -728,7 +713,7 @@ public class Game implements Functions {
                 try {
                     this.datagram1.writeHashArray(2, this.client2.getHash());
                 } catch (IOException e) {
-                    this.log.write("C1- HASH ERROR WRITE" + e.getMessage() + "\n");
+                    this.log.write("C1- EXCEPTION: " + e.getMessage() + "\n");
                     this.log.flush();
                     break;
                 }
@@ -746,7 +731,7 @@ public class Game implements Functions {
                 try {
                     this.client.setSecret(this.datagram1.readString(3, this.opcode1));
                 } catch (IOException | OpcodeException e) {
-                    this.log.write("SECRET ERROR READ" + e.getMessage() + "\n");
+                    this.log.write("C1- EXCEPTION: " + e.getMessage() + "\n");
                     this.log.flush();
                     break;
                 }
@@ -755,7 +740,7 @@ public class Game implements Functions {
                 try {
                     this.datagram2.writeString(3, this.client.getSecret());
                 } catch (IOException e) {
-                    this.log.write("C2- SECRET ERROR WRITE" + e.getMessage() + "\n");
+                    this.log.write("C2- EXCEPTION: " + e.getMessage() + "\n");
                     this.log.flush();
                     break;
                 }
@@ -772,7 +757,7 @@ public class Game implements Functions {
                 try {
                     this.client2.setSecret(this.datagram2.readString(3, this.opcode2));
                 } catch (IOException | OpcodeException e) {
-                    this.log.write("SECRET ERROR READ" + e.getMessage() + "\n");
+                    this.log.write("C2- EXCEPTION: " + e.getMessage() + "\n");
                     this.log.flush();
                     break;
                 }
@@ -781,7 +766,7 @@ public class Game implements Functions {
                 try {
                     this.datagram1.writeString(3, this.client2.getSecret());
                 } catch (IOException e) {
-                    this.log.write("C1- SECRET ERROR WRITE" + e.getMessage() + "\n");
+                    this.log.write("C1- EXCEPTION: " + e.getMessage() + "\n");
                     this.log.flush();
                     break;
                 }
@@ -799,7 +784,7 @@ public class Game implements Functions {
                 try {
                     this.insult = this.datagram1.readString(4, this.opcode1);
                 } catch (OpcodeException e) {
-                    this.log.write("ERROR");
+                    this.log.write("C1- EXCEPTION" + e.getMessage());
                     this.log.flush();
                 }
 
@@ -807,7 +792,7 @@ public class Game implements Functions {
                 try {
                     this.datagram2.writeString(4, this.insult);
                 } catch (IOException e) {
-                    this.log.write("ERROR");
+                    this.log.write("C2- EXCEPTION" + e.getMessage());
                     this.log.flush();
                 }
 
@@ -823,7 +808,7 @@ public class Game implements Functions {
                 try {
                     this.insult = this.datagram2.readString(4, this.opcode2);
                 } catch (OpcodeException e) {
-                    this.log.write("ERROR");
+                    this.log.write("C2- EXCEPTION" + e.getMessage());
                     this.log.flush();
                 }
 
@@ -831,7 +816,7 @@ public class Game implements Functions {
                 try {
                     this.datagram1.writeString(4, this.insult);
                 } catch (IOException e) {
-                    this.log.write("ERROR");
+                    this.log.write("C1- EXCEPTION" + e.getMessage());
                     this.log.flush();
                 }
 
@@ -847,7 +832,7 @@ public class Game implements Functions {
                 try {
                     this.comeback = this.datagram1.readString(5, this.opcode1);
                 } catch (IOException | OpcodeException e) {
-                    this.log.write("C1- COMEBACK ERROR");
+                    this.log.write("C1- EXCEPTION" + e.getMessage());
                     this.log.flush();
                     break;
                 }
@@ -855,7 +840,7 @@ public class Game implements Functions {
                 try {
                     this.datagram2.writeString(5, this.comeback);
                 } catch (IOException e) {
-                    this.log.write("C2- COMEBACK ERROR");
+                    this.log.write("C2- EXCEPTION" + e.getMessage());
                     this.log.flush();
                     break;
                 }
@@ -865,19 +850,14 @@ public class Game implements Functions {
                 this.log.flush();
                 this.opcode1 = 0x00;
 
-                if (this.database.isInsult(this.insult)) {
-                    this.turn = this.database.isRightComeback(this.insult, this.comeback);
-                } else {
-                    this.turn = true;
-                }
-
+                this.turn = !this.database.isInsult(this.insult) || this.database.isRightComeback(this.insult, this.comeback);
 
             } else if (this.opcode2 == 0x05) {
 
                 try {
                     this.comeback = this.datagram2.readString(5, this.opcode2);
                 } catch (IOException | OpcodeException e) {
-                    this.log.write("COMEBACK ERROR");
+                    this.log.write("C2- EXCEPTION" + e.getMessage());
                     this.log.flush();
                     break;
                 }
@@ -885,7 +865,7 @@ public class Game implements Functions {
                 try {
                     this.datagram1.writeString(5, this.comeback);
                 } catch (IOException e) {
-                    this.log.write("COMEBACK ERROR");
+                    this.log.write("C1- EXCEPTION" + e.getMessage());
                     this.log.flush();
                     break;
                 }
@@ -894,18 +874,15 @@ public class Game implements Functions {
                 this.log.write("C2- COMEBACK: " + this.comeback + "\n");
                 this.log.flush();
                 this.opcode2 = 0x00;
-                if (this.database.isInsult(this.insult)) {
-                    this.turn = !this.database.isRightComeback(this.insult, this.comeback);
-                } else {
-                    this.turn = false;
-                }
+
+                this.turn = this.database.isInsult(this.insult) && !this.database.isRightComeback(this.insult, this.comeback);
 
             } else if (this.opcode1 == 0x06) {
 
                 try {
                     this.clientShout = this.datagram1.readString(6, this.opcode1);
                 } catch (IOException | OpcodeException e) {
-                    this.log.write("C1- ERROR SHOUT READ");
+                    this.log.write("C1- EXCEPTION" + e.getMessage());
                     this.log.flush();
                     break;
                 }
@@ -913,7 +890,7 @@ public class Game implements Functions {
                 try {
                     this.datagram2.writeString(6, clientShout);
                 } catch (IOException e) {
-                    this.log.write("C1- ERROR SHOUT WRITE");
+                    this.log.write("C2- EXCEPTION" + e.getMessage());
                     this.log.flush();
                     break;
                 }
@@ -922,12 +899,12 @@ public class Game implements Functions {
                 this.log.flush();
                 this.opcode1 = 0x00;
 
-                a = true;
+                key1 = true;
                 turn = false;
 
-                if (b) {
-                    a = false;
-                    b = false;
+                if (key2) {
+                    key1 = false;
+                    key2 = false;
                     turn = true;
                 }
 
@@ -936,7 +913,7 @@ public class Game implements Functions {
                 try {
                     this.serverShout = this.datagram2.readString(6, this.opcode2);
                 } catch (IOException | OpcodeException e) {
-                    this.log.write("C2- ERROR SHOUT READ");
+                    this.log.write("C2- EXCEPTION" + e.getMessage());
                     this.log.flush();
                     break;
                 }
@@ -944,7 +921,7 @@ public class Game implements Functions {
                 try {
                     this.datagram1.writeString(6, serverShout);
                 } catch (IOException e) {
-                    this.log.write("C1- ERROR SHOUT WRITE");
+                    this.log.write("C1- EXCEPTION" + e.getMessage());
                     this.log.flush();
                     break;
                 }
@@ -953,39 +930,33 @@ public class Game implements Functions {
                 this.log.flush();
                 this.opcode2 = 0x00;
 
-                b = true;
-                if (a) {
-                    a = false;
-                    b = false;
+                key2 = true;
+                if (key1) {
+                    key1 = false;
+                    key2 = false;
                 }
                 turn = true;
 
             } else if (this.opcode1 == 0x07) {
 
-                String e1 = "";
                 try {
-                    e1 = this.datagram1.readString(7, this.opcode1);
+                    this.log.write("C1- ERROR: " + this.datagram1.readString(7, this.opcode1));
+                    this.log.flush();
                 } catch (IOException | OpcodeException e) {
                     System.out.println("C1- EXIT");
                 }
-
-                this.log.write("C1- ERROR: " + e1);
-                this.log.flush();
 
                 this.gameBool = false;
                 break;
 
             } else if (this.opcode2 == 0x07) {
 
-                String e2 = "";
                 try {
-                    e2 = this.datagram2.readString(7, this.opcode2);
+                    this.log.write("C2- ERROR: " + this.datagram2.readString(7, this.opcode2));
+                    this.log.flush();
                 } catch (IOException | OpcodeException e) {
                     System.out.println("C2- EXIT");
                 }
-
-                this.log.write("C2- ERROR: " + e2);
-                this.log.flush();
 
                 this.gameBool = false;
                 break;
