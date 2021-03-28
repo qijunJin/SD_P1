@@ -29,14 +29,16 @@ public class Game implements Functions {
     private final Player client2 = new Player();
 
     private DatabaseProvider dp;
-    private final Datagram datagram1;
+    private Datagram datagram1;
     private Datagram datagram2;
 
     private String clientShout, serverShout;
     private String insult, comeback;
     private int opcode1, opcode2;
-    private boolean gameBool, turn = true;
-    private boolean key1, key2 = false;
+    private boolean gameBool = true;
+    private boolean turn = true;
+    private boolean key1 = false;
+    private boolean key2 = false;
 
     /**
      * Constructor of game
