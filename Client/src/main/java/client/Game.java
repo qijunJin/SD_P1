@@ -1,3 +1,5 @@
+package client;
+
 import shared.database.Database;
 import shared.enumType.ErrorType;
 import shared.enumType.ShoutType;
@@ -104,10 +106,8 @@ public class Game implements Functions {
                         this.server.setName(str[1]);
                         System.out.println("S- HELLO: " + this.server.getId() + " " + this.server.getName());
                     } catch (IOException | OpcodeException e) {
-                        if (e instanceof IOException)
-                            writeErrorToStream(e.getMessage(), ErrorType.TIMEOUT);
-                        if (e instanceof OpcodeException)
-                            writeErrorToStream(e.getMessage(), ErrorType.WRONG_OPCODE);
+                        if (e instanceof IOException) writeErrorToStream(e.getMessage(), ErrorType.TIMEOUT);
+                        if (e instanceof OpcodeException) writeErrorToStream(e.getMessage(), ErrorType.WRONG_OPCODE);
                         break;
                     }
 

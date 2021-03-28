@@ -211,8 +211,9 @@ public class Player implements Functions {
 
     /**
      * Method to check if the value specified it's the same as the player.
+     *
      * @param id value to compare it with the player's ID.
-     * @return
+     * @return true if it's the same id or false if not.
      */
     public boolean hasSameId(int id) {
         return this.id == id;

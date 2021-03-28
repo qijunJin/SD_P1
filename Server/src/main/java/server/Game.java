@@ -1,3 +1,5 @@
+package server;
+
 import shared.database.Database;
 import shared.enumType.ShoutType;
 import shared.exception.OpcodeException;
@@ -57,7 +59,7 @@ public class Game implements Functions {
         Date asd = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH.mm.ss");
         String lg = "Server_" + Thread.currentThread().getId() + "_" + formatter.format(asd) + ".log"; // File name
-        (new File("../../logs")).mkdir(); // Directory
+        boolean directoryCreated = (new File("../../logs")).mkdir(); // Directory
         File f = new File("../../logs/" + lg); // File
         this.log = new BufferedWriter(new FileWriter(f));
     }

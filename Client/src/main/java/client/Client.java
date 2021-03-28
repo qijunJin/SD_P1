@@ -1,3 +1,5 @@
+package client;
+
 import utils.Datagram;
 
 import java.net.InetAddress;
@@ -33,7 +35,7 @@ public class Client {
             port = Integer.parseInt(options.get("-p"));
             if (options.containsKey("-i")) mode = Integer.parseInt(options.get("-i"));
             if (mode != 0 && mode != 1) {
-                System.out.println("Parameters introduced are wrong!");
+                System.out.println(WRONG_PARAMETERS);
                 return;
             }
 

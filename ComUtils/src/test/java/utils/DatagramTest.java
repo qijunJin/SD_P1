@@ -16,8 +16,18 @@ import java.util.ArrayList;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+/**
+ * Datagram test class
+ * Class to test all the Datagram methods.
+ */
 public class DatagramTest {
 
+    /**
+     * Test to check I/O of hello message.
+     *
+     * @throws IOException     IOException.
+     * @throws OpcodeException OpcodeException.
+     */
     @Test
     public void hello_test() throws IOException, OpcodeException {
         Datagram datagram = new Datagram(new SocketMock());
@@ -29,6 +39,13 @@ public class DatagramTest {
         assertEquals(str, readedStr[1]);
     }
 
+    /**
+     * Test to check I/O of hash message.
+     *
+     * @throws IOException              IOException.
+     * @throws OpcodeException          OpcodeException.
+     * @throws NoSuchAlgorithmException NoSuchAlgorithmException.
+     */
     @Test
     public void hash_test() throws IOException, OpcodeException, NoSuchAlgorithmException {
         Datagram datagram = new Datagram(new SocketMock());
@@ -39,6 +56,12 @@ public class DatagramTest {
         assertArrayEquals(encodedhash, datagram.readHash(2, datagram.readByte()));
     }
 
+    /**
+     * Test to check I/O of secret message.
+     *
+     * @throws IOException     IOException.
+     * @throws OpcodeException OpcodeException.
+     */
     @Test
     public void secret_test() throws IOException, OpcodeException {
         Datagram datagram = new Datagram(new SocketMock());
@@ -47,6 +70,12 @@ public class DatagramTest {
         assertEquals(str, datagram.readString(3, datagram.readByte()));
     }
 
+    /**
+     * Test to check I/O of insult message.
+     *
+     * @throws IOException     IOException.
+     * @throws OpcodeException OpcodeException.
+     */
     @Test
     public void insult_test() throws IOException, OpcodeException {
         Datagram datagram = new Datagram(new SocketMock());
@@ -57,6 +86,12 @@ public class DatagramTest {
         assertEquals(str.get(0), datagram.readString(4, datagram.readByte()));
     }
 
+    /**
+     * Test to check I/O of comeback message.
+     *
+     * @throws IOException     IOException.
+     * @throws OpcodeException OpcodeException.
+     */
     @Test
     public void comeback_test() throws IOException, OpcodeException {
         Datagram datagram = new Datagram(new SocketMock());
@@ -67,6 +102,12 @@ public class DatagramTest {
         assertEquals(str.get(1), datagram.readString(5, datagram.readByte()));
     }
 
+    /**
+     * Test to check I/O of shout message.
+     *
+     * @throws IOException     IOException.
+     * @throws OpcodeException OpcodeException.
+     */
     @Test
     public void shout_test() throws IOException, OpcodeException {
         Datagram datagram = new Datagram(new SocketMock());
@@ -77,6 +118,12 @@ public class DatagramTest {
         assertEquals(str, datagram.readString(6, datagram.readByte()));
     }
 
+    /**
+     * Test to check I/O of error message.
+     *
+     * @throws IOException     IOException.
+     * @throws OpcodeException OpcodeException.
+     */
     @Test
     public void error_test() throws IOException, OpcodeException {
         Datagram datagram = new Datagram(new SocketMock());
@@ -86,6 +133,9 @@ public class DatagramTest {
         assertEquals(str, datagram.readString(7, datagram.readByte()));
     }
 
+    /**
+     * Test to check the exception of I/O wrong opcode.
+     */
     @Test
     public void opcodeException_test() {
         OpcodeException ex = new OpcodeException(4, 1);
