@@ -63,7 +63,7 @@ public class Menu {
         do {
             if (scan.hasNextInt()) {
                 int option = scan.nextInt();
-                if (option >= 0 && option <= list.size()) return list.get(option - 1);
+                if (option > 0 && option <= list.size()) return list.get(option - 1);
             } else scan.next();
             System.out.println("Invalid option, try again: ");
         } while (true);
