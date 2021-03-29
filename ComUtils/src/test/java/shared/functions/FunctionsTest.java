@@ -55,4 +55,35 @@ public class FunctionsTest {
         byte[] encodedhash = digest.digest(str.getBytes(StandardCharsets.UTF_8));
         assertArrayEquals(Functions.toHash(str), encodedhash);
     }
+
+    /**
+     * Test to check the conversion from byte to hexadecimal.
+     */
+    @Test
+    public void byteToHex_test() {
+        Random random = new Random();
+        byte number = (byte) (random.nextInt(255) - 127);
+        String hex = String.format("%02X ", number).toUpperCase().trim();
+        assertEquals(hex, Functions.byteToHex(number));
+    }
+
+    /**
+     * Test to check the conversion from array of byte to array of hexadecimal.
+     */
+    @Test
+    public void encodeHexString_test() {
+        Random random = new Random();
+        byte byte1 = (byte) (random.nextInt(255) - 127);
+        byte byte2 = (byte) (random.nextInt(255) - 127);
+
+        byte[] numberArray = new byte[2];
+        numberArray[0] = byte1;
+        numberArray[1] = byte2;
+
+        String hex1 = String.format("%02X ", byte1).toUpperCase().trim();
+        String hex2 = String.format("%02X ", byte2).toUpperCase().trim();
+
+        String hex = hex1 + " " + hex2;
+        assertEquals(hex, Functions.encodeHexString(numberArray));
+    }
 }

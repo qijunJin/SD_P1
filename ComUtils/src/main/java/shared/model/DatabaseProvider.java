@@ -1,17 +1,17 @@
 package shared.model;
 
+import shared.functions.Functions;
+
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * Database Provider class
  * It contains the insult - comeback pairs and only can be extracted in pair by random generated index.
  * The relation of player with this class is 1 to 1.
  */
-public class DatabaseProvider {
+public class DatabaseProvider implements Functions {
     private final ArrayList<String> insults;
     private final ArrayList<String> comebacks;
-    private final Random random = new Random();
 
     /**
      * Constructor of database provider.

@@ -82,7 +82,8 @@ public class Game implements Functions {
             try {
                 this.opcode = this.datagram.readByte();
             } catch (Exception e) {
-                writeErrorToStream(e.getMessage(), ErrorType.WRONG_OPCODE);
+                writeErrorToStream(e.getMessage(), ErrorType.TIMEOUT);
+                break;
             }
 
             if (this.opcode == 0x01) {
@@ -101,7 +102,7 @@ public class Game implements Functions {
                 try {
                     this.datagram.writeHash(2, this.client.generateSecret());
                     this.client.setHash(Functions.toHash(this.client.getSecret()));
-                    System.out.println("C- HASH: " + Arrays.toString(this.client.getHash()));
+                    System.out.println("C- HASH: " + Functions.encodeHexString(this.client.getHash()));
                 } catch (IOException e) {
                     System.out.println("C- EXCEPTION: " + e.getMessage());
                     break;
@@ -115,7 +116,7 @@ public class Game implements Functions {
 
                 try {
                     this.server.setHash(this.datagram.readHash(2, this.opcode));
-                    System.out.println("S- HASH: " + Arrays.toString(this.server.getHash()));
+                    System.out.println("S- HASH: " + Functions.encodeHexString(this.server.getHash()));
                 } catch (IOException | OpcodeException e) {
                     if (e instanceof IOException) writeErrorToStream(e.getMessage(), ErrorType.TIMEOUT);
                     if (e instanceof OpcodeException) writeErrorToStream(e.getMessage(), ErrorType.WRONG_OPCODE);
@@ -155,11 +156,7 @@ public class Game implements Functions {
                                 break;
                             }
                         }
-                    } else {
-                        this.writeErrorToStream("C- EXCEPTION: SAME ID", ErrorType.SAME);
                     }
-                } else {
-                    this.writeErrorToStream("C- EXCEPTION: NOT COINCIDENT HASH", ErrorType.SAME);
                 }
 
             } else if (this.opcode == 0x04) { // Read insult
@@ -167,7 +164,7 @@ public class Game implements Functions {
                 try {
                     this.opponentInsult = this.datagram.readString(4, this.opcode);
                     System.out.println("------------------------------------------------------------------------------------");
-                    System.out.println("INSULT: " + this.opponentInsult);
+                    System.out.println("S- INSULT: " + this.opponentInsult);
                 } catch (IOException | OpcodeException e) {
                     if (e instanceof IOException) writeErrorToStream(e.getMessage(), ErrorType.TIMEOUT);
                     if (e instanceof OpcodeException) writeErrorToStream(e.getMessage(), ErrorType.WRONG_OPCODE);
@@ -206,7 +203,7 @@ public class Game implements Functions {
                         if (this.server.getRound() == 2) this.server.addDuel();
                     }
                 } else {
-                    this.writeErrorToStream("C- EXCEPTION: MESSAGE INCOMPLETE", ErrorType.INCOMPLETE_MESSAGE);
+                    this.writeErrorToStream("MESSAGE INCOMPLETE", ErrorType.INCOMPLETE_MESSAGE);
                     break;
                 }
 
@@ -265,7 +262,7 @@ public class Game implements Functions {
                         }
                     }
                 } else {
-                    this.writeErrorToStream("C- EXCEPTION: MESSAGE INCOMPLETE", ErrorType.INCOMPLETE_MESSAGE);
+                    this.writeErrorToStream("MESSAGE INCOMPLETE", ErrorType.INCOMPLETE_MESSAGE);
                     break;
                 }
 
@@ -303,7 +300,6 @@ public class Game implements Functions {
 
                 if (this.menu.getExit()) {
                     System.out.println("[Connexion closed]");
-
                     break;
                 }
 
@@ -316,7 +312,7 @@ public class Game implements Functions {
                     try {
                         this.datagram.writeHash(2, this.client.generateSecret());
                         this.client.setHash(Functions.toHash(this.client.getSecret()));
-                        System.out.println("C- HASH: " + Arrays.toString(this.client.getHash()));
+                        System.out.println("C- HASH: " + Functions.encodeHexString(this.client.getHash()));
                     } catch (IOException e) {
                         System.out.println("C- EXCEPTION: " + e.getMessage());
                         break;
@@ -329,6 +325,8 @@ public class Game implements Functions {
 
                 try {
                     System.out.println("S- ERROR: " + this.datagram.readString(7, this.opcode) + "\n");
+                    System.out.println("[Connexion closed]");
+                    break;
                 } catch (IOException | OpcodeException e) {
                     if (e instanceof IOException) writeErrorToStream(e.getMessage(), ErrorType.TIMEOUT);
                     if (e instanceof OpcodeException) writeErrorToStream(e.getMessage(), ErrorType.WRONG_OPCODE);
@@ -383,7 +381,8 @@ public class Game implements Functions {
             try {
                 this.opcode = this.datagram.readByte();
             } catch (Exception e) {
-                writeErrorToStream(e.getMessage(), ErrorType.WRONG_OPCODE);
+                writeErrorToStream(e.getMessage(), ErrorType.TIMEOUT);
+                break;
             }
 
             if (this.opcode == 0x01) {
@@ -402,7 +401,7 @@ public class Game implements Functions {
                 try {
                     this.datagram.writeHash(2, this.client.generateSecret());
                     this.client.setHash(Functions.toHash(this.client.getSecret()));
-                    System.out.println("C- HASH: " + Arrays.toString(this.client.getHash()));
+                    System.out.println("C- HASH: " + Functions.encodeHexString(this.client.getHash()));
                 } catch (IOException e) {
                     System.out.println("C- EXCEPTION: " + e.getMessage());
                     break;
@@ -416,7 +415,7 @@ public class Game implements Functions {
 
                 try {
                     this.server.setHash(this.datagram.readHash(2, this.opcode));
-                    System.out.println("S- HASH: " + Arrays.toString(this.server.getHash()));
+                    System.out.println("S- HASH: " + Functions.encodeHexString(this.server.getHash()) );
                 } catch (IOException | OpcodeException e) {
                     if (e instanceof IOException) writeErrorToStream(e.getMessage(), ErrorType.TIMEOUT);
                     if (e instanceof OpcodeException) writeErrorToStream(e.getMessage(), ErrorType.WRONG_OPCODE);
@@ -456,11 +455,7 @@ public class Game implements Functions {
                                 break;
                             }
                         }
-                    } else {
-                        this.writeErrorToStream("C- EXCEPTION: SAME ID", ErrorType.SAME);
                     }
-                } else {
-                    this.writeErrorToStream("C- EXCEPTION: NOT COINCIDENT HASH", ErrorType.SAME);
                 }
 
             } else if (this.opcode == 0x04) {
@@ -468,7 +463,7 @@ public class Game implements Functions {
                 try {
                     this.opponentInsult = this.datagram.readString(4, this.opcode);
                     System.out.println("------------------------------------------------------------------------------------");
-                    System.out.println("INSULT: " + this.opponentInsult);
+                    System.out.println("S- INSULT: " + this.opponentInsult);
                 } catch (IOException | OpcodeException e) {
                     if (e instanceof IOException) writeErrorToStream(e.getMessage(), ErrorType.TIMEOUT);
                     if (e instanceof OpcodeException) writeErrorToStream(e.getMessage(), ErrorType.WRONG_OPCODE);
@@ -507,13 +502,12 @@ public class Game implements Functions {
                         if (this.server.getRound() == 2) this.server.addDuel();
                     }
                 } else {
-                    this.writeErrorToStream("C- EXCEPTION: MESSAGE INCOMPLETE", ErrorType.INCOMPLETE_MESSAGE);
+                    this.writeErrorToStream("MESSAGE INCOMPLETE", ErrorType.INCOMPLETE_MESSAGE);
                     break;
                 }
 
                 /* CLIENT - WIN GAME - WIN DUEL */
                 if (this.client.getDuel() == 3 | this.client.getRound() == 2) {
-
                     try {
                         this.datagram.writeString(6, this.database.getShoutByEnumAddName(ShoutType.I_WIN, this.server.getName()));
                         System.out.println("C- SHOUT: " + this.database.getShoutByEnumAddName(ShoutType.I_WIN, this.server.getName()));
@@ -525,7 +519,6 @@ public class Game implements Functions {
 
                 /* SERVER - WIN GAME - WIN DUEL */
                 if (this.server.getDuel() == 3 | this.server.getRound() == 2) {
-
                     try {
                         this.datagram.writeString(6, this.database.getShoutByEnumAddName(ShoutType.YOU_WIN, this.server.getName()));
                         System.out.println("C- SHOUT: " + this.database.getShoutByEnumAddName(ShoutType.YOU_WIN, this.server.getName()));
@@ -571,7 +564,7 @@ public class Game implements Functions {
                         }
                     }
                 } else {
-                    this.writeErrorToStream("C- EXCEPTION: MESSAGE INCOMPLETE", ErrorType.INCOMPLETE_MESSAGE);
+                    this.writeErrorToStream("MESSAGE INCOMPLETE", ErrorType.INCOMPLETE_MESSAGE);
                     break;
                 }
 
@@ -620,7 +613,7 @@ public class Game implements Functions {
                     try {
                         this.datagram.writeHash(2, this.client.generateSecret());
                         this.client.setHash(Functions.toHash(this.client.getSecret()));
-                        System.out.println("C- HASH: " + Arrays.toString(this.client.getHash()));
+                        System.out.println("C- HASH: " + Functions.encodeHexString(this.client.getHash()));
                     } catch (IOException e) {
                         System.out.println("C- EXCEPTION: " + e.getMessage());
                         break;
@@ -634,6 +627,8 @@ public class Game implements Functions {
 
                 try {
                     System.out.println("S- ERROR: " + this.datagram.readString(7, this.opcode) + "\n");
+                    System.out.println("[Connexion closed]");
+                    break;
                 } catch (IOException | OpcodeException e) {
                     if (e instanceof IOException) writeErrorToStream(e.getMessage(), ErrorType.TIMEOUT);
                     if (e instanceof OpcodeException) writeErrorToStream(e.getMessage(), ErrorType.WRONG_OPCODE);

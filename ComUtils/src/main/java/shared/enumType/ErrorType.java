@@ -7,5 +7,6 @@ public enum ErrorType {
     WRONG_OPCODE,
     INCOMPLETE_MESSAGE,
     TIMEOUT,
-    SAME
+    NOT_IDENTIFIED,
+    SAME_ID
 }

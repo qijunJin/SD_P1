@@ -1,6 +1,7 @@
 package server;
 
 import shared.database.Database;
+import shared.enumType.ErrorType;
 import shared.enumType.ShoutType;
 import shared.exception.OpcodeException;
 import shared.functions.Functions;
@@ -13,7 +14,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -153,7 +153,7 @@ public class Game implements Functions {
                     }
 
                     /* LOG OUTPUT */
-                    this.log.write("C- HASH: " + Arrays.toString(this.client.getHash()) + "\n");
+                    this.log.write("C- HASH: " + Functions.encodeHexString(this.client.getHash()) + "\n");
                     this.log.flush();
 
                     /* WRITE HASH */
@@ -167,7 +167,7 @@ public class Game implements Functions {
                     }
 
                     /* LOG OUTPUT */
-                    this.log.write("S- HASH: " + Arrays.toString(this.server.getHash()) + "\n");
+                    this.log.write("S- HASH: " + Functions.encodeHexString(this.server.getHash()) + "\n");
                     this.log.flush();
 
                     break;
@@ -220,16 +220,32 @@ public class Game implements Functions {
                                 }
                             }
                         } else {
-                            this.log.write("S- EXCEPTION: SAME ID");
+                            try {
+                                this.datagram1.writeString(7, this.database.getErrorByEnum(ErrorType.SAME_ID));
+                                this.log.write("S- ERROR: " + this.database.getErrorByEnum(ErrorType.SAME_ID));
+                                this.log.write("[Connexion closed]");
+                                this.gameBool = false;
+                                break;
+                            } catch (IOException e) {
+                                this.log.write("S- EXCEPTION: " + e.getMessage());
+                                this.log.flush();
+                                this.gameBool = false;
+                                break;
+                            }
+                        }
+                    } else {
+                        try {
+                            this.datagram1.writeString(7, this.database.getErrorByEnum(ErrorType.NOT_IDENTIFIED));
+                            this.log.write("S- ERROR: " + this.database.getErrorByEnum(ErrorType.NOT_IDENTIFIED) + "\n");
+                            this.log.write("[Connexion closed]");
+                            this.gameBool = false;
+                            break;
+                        } catch (IOException e) {
+                            this.log.write("S- EXCEPTION: " + e.getMessage());
                             this.log.flush();
                             this.gameBool = false;
                             break;
                         }
-                    } else {
-                        this.log.write("S- EXCEPTION: NOT COINCIDENT HASH");
-                        this.log.flush();
-                        this.gameBool = false;
-                        break;
                     }
 
                     break;
@@ -380,10 +396,16 @@ public class Game implements Functions {
                             }
                         }
                     } else {
-                        this.log.write("S- EXCEPTION: MESSAGE INCOMPLETE");
-                        this.log.flush();
-                        this.gameBool = false;
-                        break;
+                        try {
+                            this.datagram1.writeString(7, this.database.getErrorByEnum(ErrorType.INCOMPLETE_MESSAGE));
+                            this.gameBool = false;
+                            break;
+                        } catch (IOException e) {
+                            this.log.write("S- EXCEPTION: " + e.getMessage());
+                            this.log.flush();
+                            this.gameBool = false;
+                            break;
+                        }
                     }
 
                     break;
@@ -433,7 +455,6 @@ public class Game implements Functions {
                                     this.client.resetRound();
                                     this.client.resetDuel();
                                     this.server.resetDuel();
-                                    break;
 
                                 } else {
 
@@ -457,6 +478,7 @@ public class Game implements Functions {
                             }
 
                         } else {
+
                             this.server.addRound();
 
                             /* WRITE INSULT */
@@ -467,7 +489,6 @@ public class Game implements Functions {
                                     this.datagram1.writeString(4, this.insult);
                                     this.log.write("S- INSULT: " + this.insult + "\n");
                                     this.log.flush();
-                                    break;
                                 } catch (IOException e) {
                                     this.log.write("S- EXCEPTION: " + e.getMessage());
                                     this.log.flush();
@@ -497,7 +518,7 @@ public class Game implements Functions {
                                     this.client.resetRound();
                                     this.client.resetDuel();
                                     this.server.resetDuel();
-                                    break;
+
                                 } else {
 
                                     /* WRITE SHOUT */
@@ -520,12 +541,17 @@ public class Game implements Functions {
                             }
                         }
                     } else {
-                        this.log.write("S- EXCEPTION: MESSAGE INCOMPLETE");
-                        this.log.flush();
-                        this.gameBool = false;
-                        break;
+                        try {
+                            this.datagram1.writeString(7, this.database.getErrorByEnum(ErrorType.INCOMPLETE_MESSAGE));
+                            this.gameBool = false;
+                            break;
+                        } catch (IOException e) {
+                            this.log.write("S- EXCEPTION: " + e.getMessage());
+                            this.log.flush();
+                            this.gameBool = false;
+                            break;
+                        }
                     }
-
 
                     break;
 
@@ -647,7 +673,6 @@ public class Game implements Functions {
 
             } else if (this.opcode2 == 0x01) {
 
-
                 /* READ HELLO PLAYER2 */
                 try {
                     String[] str = this.datagram2.readIntString(1, this.opcode2);
@@ -695,7 +720,7 @@ public class Game implements Functions {
                 }
 
                 /* LOG OUTPUT */
-                this.log.write("C1- HASH: " + Arrays.toString(this.client.getHash()) + "\n");
+                this.log.write("C1- HASH: " + Functions.encodeHexString(this.client.getHash()) + "\n");
                 this.log.flush();
                 this.opcode1 = 0x00;
                 turn = false;
@@ -722,7 +747,7 @@ public class Game implements Functions {
 
                 /* LOG OUTPUT */
 
-                this.log.write("C2- HASH: " + Arrays.toString(this.client2.getHash()) + "\n");
+                this.log.write("C2- HASH: " + Functions.encodeHexString(this.client2.getHash()) + "\n");
                 this.log.flush();
                 this.opcode2 = 0x00;
                 turn = true;
@@ -751,6 +776,22 @@ public class Game implements Functions {
                 this.log.flush();
 
                 this.opcode1 = 0x00;
+
+                if (!Functions.proofHash(this.client.getSecret(), this.client.getHash())) {
+                    try {
+                        this.datagram1.writeString(7, this.database.getErrorByEnum(ErrorType.NOT_IDENTIFIED));
+                        this.log.write("C1- ERROR: " + this.database.getErrorByEnum(ErrorType.NOT_IDENTIFIED)+"\n");
+                        this.log.write("C1- [Connexion closed]");
+                        this.gameBool = false;
+                        break;
+                    } catch (IOException e) {
+                        this.log.write("S- EXCEPTION: " + e.getMessage());
+                        this.log.flush();
+                        this.gameBool = false;
+                        break;
+                    }
+                }
+
                 turn = false;
 
             } else if (this.opcode2 == 0x03) {
@@ -778,6 +819,45 @@ public class Game implements Functions {
 
                 this.opcode2 = 0x00;
 
+                if (!Functions.proofHash(this.client2.getSecret(), this.client2.getHash())) {
+                    try {
+                        this.datagram2.writeString(7, this.database.getErrorByEnum(ErrorType.NOT_IDENTIFIED));
+                        this.log.write("C2- ERROR: " + this.database.getErrorByEnum(ErrorType.NOT_IDENTIFIED)+ "\n");
+                        this.log.write("C2- [Connexion closed]");
+                        this.gameBool = false;
+                        break;
+                    } catch (IOException e) {
+                        this.log.write("S- EXCEPTION: " + e.getMessage());
+                        this.log.flush();
+                        this.gameBool = false;
+                        break;
+                    }
+                }
+
+                if (this.client.getId() == this.client2.getId()) {
+                    try {
+                        this.datagram1.writeString(7, this.database.getErrorByEnum(ErrorType.SAME_ID));
+                        this.log.write("C1- ERROR: " + this.database.getErrorByEnum(ErrorType.SAME_ID) + "\n");
+                        this.log.write("C1- [Connexion closed]"+ "\n");
+                        this.gameBool = false;
+                    } catch (IOException e) {
+                        this.log.write("S- EXCEPTION: " + e.getMessage());
+                        this.log.flush();
+                        this.gameBool = false;
+                    }
+
+                    try {
+                        this.datagram2.writeString(7, this.database.getErrorByEnum(ErrorType.SAME_ID));
+                        this.log.write("C2- ERROR: " + this.database.getErrorByEnum(ErrorType.SAME_ID)+ "\n");
+                        this.log.write("C2- [Connexion closed]");
+                        this.gameBool = false;
+                    } catch (IOException e) {
+                        this.log.write("S- EXCEPTION: " + e.getMessage());
+                        this.log.flush();
+                        this.gameBool = false;
+                        break;
+                    }
+                }
                 turn = Functions.isEven(this.client.getSecret(), this.client2.getSecret()) == this.client2.getId() > this.client.getId();
 
             } else if (this.opcode1 == 0x04) {
@@ -786,7 +866,7 @@ public class Game implements Functions {
                 try {
                     this.insult = this.datagram1.readString(4, this.opcode1);
                 } catch (OpcodeException e) {
-                    this.log.write("C1- EXCEPTION" + e.getMessage());
+                    this.log.write("C1- EXCEPTION: " + e.getMessage());
                     this.log.flush();
                 }
 
@@ -794,7 +874,7 @@ public class Game implements Functions {
                 try {
                     this.datagram2.writeString(4, this.insult);
                 } catch (IOException e) {
-                    this.log.write("C2- EXCEPTION" + e.getMessage());
+                    this.log.write("C2- EXCEPTION: " + e.getMessage());
                     this.log.flush();
                 }
 
@@ -810,7 +890,7 @@ public class Game implements Functions {
                 try {
                     this.insult = this.datagram2.readString(4, this.opcode2);
                 } catch (OpcodeException e) {
-                    this.log.write("C2- EXCEPTION" + e.getMessage());
+                    this.log.write("C2- EXCEPTION: " + e.getMessage());
                     this.log.flush();
                 }
 
@@ -818,7 +898,7 @@ public class Game implements Functions {
                 try {
                     this.datagram1.writeString(4, this.insult);
                 } catch (IOException e) {
-                    this.log.write("C1- EXCEPTION" + e.getMessage());
+                    this.log.write("C1- EXCEPTION: " + e.getMessage());
                     this.log.flush();
                 }
 
@@ -834,17 +914,15 @@ public class Game implements Functions {
                 try {
                     this.comeback = this.datagram1.readString(5, this.opcode1);
                 } catch (IOException | OpcodeException e) {
-                    this.log.write("C1- EXCEPTION" + e.getMessage());
+                    this.log.write("C1- EXCEPTION: " + e.getMessage());
                     this.log.flush();
-                    break;
                 }
 
                 try {
                     this.datagram2.writeString(5, this.comeback);
                 } catch (IOException e) {
-                    this.log.write("C2- EXCEPTION" + e.getMessage());
+                    this.log.write("C2- EXCEPTION: " + e.getMessage());
                     this.log.flush();
-                    break;
                 }
 
                 /* LOG OUTPUT */
@@ -859,17 +937,15 @@ public class Game implements Functions {
                 try {
                     this.comeback = this.datagram2.readString(5, this.opcode2);
                 } catch (IOException | OpcodeException e) {
-                    this.log.write("C2- EXCEPTION" + e.getMessage());
+                    this.log.write("C2- EXCEPTION: " + e.getMessage());
                     this.log.flush();
-                    break;
                 }
 
                 try {
                     this.datagram1.writeString(5, this.comeback);
                 } catch (IOException e) {
-                    this.log.write("C1- EXCEPTION" + e.getMessage());
+                    this.log.write("C1- EXCEPTION: " + e.getMessage());
                     this.log.flush();
-                    break;
                 }
 
                 /* LOG OUTPUT */
@@ -884,7 +960,7 @@ public class Game implements Functions {
                 try {
                     this.clientShout = this.datagram1.readString(6, this.opcode1);
                 } catch (IOException | OpcodeException e) {
-                    this.log.write("C1- EXCEPTION" + e.getMessage());
+                    this.log.write("C1- EXCEPTION: " + e.getMessage());
                     this.log.flush();
                     break;
                 }
@@ -892,7 +968,7 @@ public class Game implements Functions {
                 try {
                     this.datagram2.writeString(6, clientShout);
                 } catch (IOException e) {
-                    this.log.write("C2- EXCEPTION" + e.getMessage());
+                    this.log.write("C2- EXCEPTION: " + e.getMessage());
                     this.log.flush();
                     break;
                 }
@@ -915,7 +991,7 @@ public class Game implements Functions {
                 try {
                     this.serverShout = this.datagram2.readString(6, this.opcode2);
                 } catch (IOException | OpcodeException e) {
-                    this.log.write("C2- EXCEPTION" + e.getMessage());
+                    this.log.write("C2- EXCEPTION: " + e.getMessage());
                     this.log.flush();
                     break;
                 }
@@ -923,7 +999,7 @@ public class Game implements Functions {
                 try {
                     this.datagram1.writeString(6, serverShout);
                 } catch (IOException e) {
-                    this.log.write("C1- EXCEPTION" + e.getMessage());
+                    this.log.write("C1- EXCEPTION: " + e.getMessage());
                     this.log.flush();
                     break;
                 }

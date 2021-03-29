@@ -4,7 +4,6 @@ import shared.functions.Functions;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Random;
 
 /**
  * Player class
@@ -13,7 +12,6 @@ import java.util.Random;
 public class Player implements Functions {
     private final HashSet<String> insults;
     private final HashSet<String> comebacks;
-    private final Random random = new Random();
 
     private String name;
     private int id;
