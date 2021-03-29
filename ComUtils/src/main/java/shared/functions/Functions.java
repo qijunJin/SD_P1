@@ -4,12 +4,15 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * Functions interface
  * Basic functions of conversion and calculation.
  */
 public interface Functions {
+
+    Random random = new Random();
 
     /**
      * Function that returns the hash of the given secret.
