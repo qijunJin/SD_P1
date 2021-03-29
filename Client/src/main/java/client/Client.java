@@ -33,10 +33,13 @@ public class Client {
             for (int i = 0; i < args.length; i = i + 2) options.put(args[i], args[i + 1]);
             hostname = options.get("-s");
             port = Integer.parseInt(options.get("-p"));
-            if (options.containsKey("-i")) mode = Integer.parseInt(options.get("-i"));
-            if (mode != 0 && mode != 1) {
-                System.out.println(WRONG_PARAMETERS);
-                return;
+            if (options.containsKey("-i")) {
+                if (options.get("-i").equals("0") | options.get("-i").equals("1")) {
+                    mode = Integer.parseInt(options.get("-i"));
+                } else {
+                    System.out.println(WRONG_PARAMETERS);
+                    return;
+                }
             }
 
             try { // Connexion & create game

@@ -32,10 +32,13 @@ public class Server {
             HashMap<String, String> options = new HashMap<>();
             for (int i = 0; i < args.length; i = i + 2) options.put(args[i], args[i + 1]);
             numPort = Integer.parseInt(options.get("-p"));
-            if (options.containsKey("-m")) mode = Integer.parseInt(options.get("-m"));
-            if (mode != 1 && mode != 2) {
-                System.out.println(WRONG_PARAMETERS);
-                return;
+            if (options.containsKey("-m")) {
+                if (options.get("-m").equals("1") | options.get("-m").equals("2")) {
+                    mode = Integer.parseInt(options.get("-m"));
+                } else {
+                    System.out.println(WRONG_PARAMETERS);
+                    return;
+                }
             }
 
             try { // Connexion & create game
