@@ -1,0 +1,10 @@
+C1- HELLO: 123 Pfizer
+C2- HELLO: 123 AstraZeneca
+C1- HASH: A8 77 DD E3 24 21 3B BD 13 B2 D6 0D 34 AF 0A 6F 7D F4 10 1C 72 3C C6 C1 1B F3 0A 62 31 61 3A 16
+C2- HASH: D1 FE 1A 3B 3F 71 BD 40 DD D9 54 E1 41 EE 91 E2 52 7A E1 8B 8A E9 3B 7D 18 98 AE F7 2F 04 88 86
+C1- SECRET: 462561474
+C2- SECRET: 688243461
+C1- ERROR: ¡Copión del ID! !Hasta la vista!
+C1- [Connexion closed]
+C2- ERROR: ¡Copión del ID! !Hasta la vista!
+C2- [Connexion closed]

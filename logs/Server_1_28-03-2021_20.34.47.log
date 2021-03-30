@@ -1,0 +1,43 @@
+C- HELLO: 369225716 IA Player
+S- HELLO: 661110031 AlphaGo
+C- HASH: [103, -39, -4, 71, -123, -106, -60, 11, -6, 3, 16, -53, -36, -1, 66, -42, 82, 80, -18, 16, -29, -128, 60, 28, 14, 79, -3, -96, 101, 8, 32, -102]
+S- HASH: [100, 114, -121, 80, 45, 50, -83, 84, -75, -54, -34, 25, 32, -47, 0, -83, -114, -31, 24, 120, -6, -82, 16, 93, 2, 45, -128, 83, 101, 46, -103, -89]
+S- SECRET: 538627930
+C- SECRET: 1505004082
+C- INSULT: ¡No hay palabras para describir lo asqueroso que eres!
+S- COMEBACK: Quería asegurarme de que estuvieras a gusto conmigo.
+C- INSULT: ¡No hay palabras para describir lo asqueroso que eres!
+S- COMEBACK: Quería asegurarme de que estuvieras a gusto conmigo.
+S- SHOUT: ¡Has ganado, IA Player!
+C- SHOUT: ¡He ganado, AlphaGo!
+C- HASH: [92, 125, -1, 84, 32, 107, 88, -73, -72, -54, -47, 41, -99, -42, -4, -1, -92, -41, -49, -18, -107, 92, 114, -15, 74, 95, 5, -125, -8, -128, -84, 111]
+S- HASH: [-23, -12, -43, 45, 62, 24, -121, -97, 39, 109, 68, 114, 33, 38, 20, -60, -124, 126, 40, -46, -12, 14, -80, -3, -20, 79, 71, -10, 9, -80, 74, -58]
+S- SECRET: 575511613
+C- SECRET: 216177968
+S- INSULT: ¿Has dejado ya de usar pañales?
+C- COMEBACK: Te habrá enseñado todo lo que sabes.
+S- INSULT: ¡No hay palabras para describir lo asqueroso que eres!
+C- COMEBACK: Te habrá enseñado todo lo que sabes.
+S- SHOUT: ¡He ganado, IA Player!
+C- SHOUT: ¡Has ganado, AlphaGo!
+C- HASH: [-66, -71, -68, 73, -47, 71, -18, 104, -5, -50, 88, -15, 102, 119, -41, 45, -102, -4, 78, 25, 60, -125, 113, -126, -128, -81, -53, -28, 7, 66, 67, 126]
+S- HASH: [2, 23, 43, -65, -66, 81, -113, 127, -122, -50, -97, -50, 57, 11, -65, 98, 52, 89, -26, 99, 119, -70, 59, 123, -91, -115, 108, 110, -71, -115, 126, 38]
+S- SECRET: 445499139
+C- SECRET: 291823441
+C- INSULT: ¿Has dejado ya de usar pañales?
+S- COMEBACK: ¿Por qué? ¿Acaso querías pedir uno prestado?
+S- INSULT: ¡He hablado con simios más educados que tu!
+C- COMEBACK: Te habrá enseñado todo lo que sabes.
+S- SHOUT: ¡He ganado, IA Player!
+C- SHOUT: ¡Has ganado, AlphaGo!
+C- HASH: [-36, -119, -69, -88, 58, 9, -114, -127, -94, -81, -49, -13, -14, 89, -127, -33, -79, -75, 79, 35, 10, -23, 37, 88, -124, 18, 27, -9, -31, 5, -101, -54]
+S- HASH: [-63, 97, 109, 97, -124, 120, -18, -61, 74, -76, 70, -5, 63, 71, 115, -17, 104, -74, -90, -76, 41, 53, -64, 76, -7, -99, -41, -27, -5, 76, -62, 1]
+S- SECRET: 652442148
+C- SECRET: 1480339975
+S- INSULT: ¡Luchas como un ganadero!
+C- COMEBACK: Qué pena me da que nadie haya oído hablar de ti
+S- INSULT: ¿Has dejado ya de usar pañales?
+C- COMEBACK: Sí que las hay, sólo que nunca las has aprendido.
+S- SHOUT: ¡He ganado, IA Player!
+C- SHOUT: ¡Has ganado, AlphaGo!
+[Connexion closed]
