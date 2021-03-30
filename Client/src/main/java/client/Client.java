@@ -44,7 +44,7 @@ public class Client {
 
             try { // Connexion & create game
                 socket = new Socket(InetAddress.getByName(hostname), port);
-                socket.setSoTimeout(30 * 1000);
+                socket.setSoTimeout(60 * 1000);
                 System.out.println("Connexion established!");
                 Datagram datagram = new Datagram(socket);
                 Game game = new Game(datagram, mode);
