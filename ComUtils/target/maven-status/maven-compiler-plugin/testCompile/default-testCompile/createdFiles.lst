@@ -1,0 +1,6 @@
+shared/functions/FunctionsTest.class
+utils/DatagramTest.class
+shared/model/DatabaseProviderTest.class
+utils/ComUtilsTest.class
+shared/database/DatabaseTest.class
+shared/model/PlayerTest.class

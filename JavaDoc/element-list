@@ -1,0 +1,8 @@
+client
+server
+shared.database
+shared.enumType
+shared.exception
+shared.functions
+shared.model
+utils
